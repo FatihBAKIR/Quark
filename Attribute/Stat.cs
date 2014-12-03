@@ -7,7 +7,6 @@ namespace Quark
         public Stat(string Tag, string Name, AttributeBag Bag)
             : base(Tag, Name, Bag)
         {
-
         }
 
         public double Maximum
@@ -30,14 +29,14 @@ namespace Quark
 
         public void Decrease(double Difference)
         {
-            Events.StatChange(this.Owner, this, Difference);
+            //OnChange(this, Difference);
             this.LostValue += Difference;
             this.LostValue = System.Math.Min(this.Maximum, this.LostValue);
         }
 
         public void Increase(double Difference)
         {
-            Events.StatChange(this.Owner, this, Difference);
+            //OnChange(this, Difference);
             this.LostValue -= Difference;
             this.LostValue = System.Math.Max(0, this.LostValue);
         }

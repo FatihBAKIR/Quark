@@ -1,6 +1,18 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="../QuarkTests/Program.cs">
+    <Files>
+      <File FileName="Spell/TargetManager.cs" Line="22" Column="14" />
+      <File FileName="Utilities/Events.cs" Line="33" Column="34" />
+      <File FileName="Attribute/Stat.cs" Line="17" Column="10" />
+      <File FileName="Attribute/Attribute.cs" Line="154" Column="29" />
+      <File FileName="Character.cs" Line="81" Column="14" />
+      <File FileName="Utilities/Interfaces.cs" Line="5" Column="34" />
+      <File FileName="Utilities/Messenger.cs" Line="124" Column="10" />
+      <File FileName="Utilities/RegexDictionary.cs" Line="8" Column="6" />
+      <File FileName="../QuarkTests/Program.cs" Line="14" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

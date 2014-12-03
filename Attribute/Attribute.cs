@@ -2,7 +2,7 @@
 
 namespace Quark
 {
-    public class Attribute
+    public class Attribute : Identifiable
     {
         /// <summary>
         /// The attribute bag which this attribute is hold in.
@@ -147,6 +147,11 @@ namespace Quark
         public override string ToString()
         {
             return string.Format("[Attribute {0}: {1}]", Name, Value);
+        }
+
+        public string Identifier()
+        {
+            return this.Tag;
         }
     }
 }

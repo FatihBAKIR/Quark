@@ -23,7 +23,7 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="mv ${TargetFile} ../../UnityRPG/Assets/" workingdir="${ProjectDir}" externalConsole="True" pauseExternalConsole="True" />
+        <Command type="AfterBuild" command="cp ${TargetFile} ../../UnityRPG/Assets/" workingdir="${ProjectDir}" externalConsole="True" pauseExternalConsole="True" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -66,6 +66,8 @@
     <Compile Include="Spell\CastData.cs" />
     <Compile Include="Spell\Spell.cs" />
     <Compile Include="Spell\TargetManager.cs" />
+    <Compile Include="Utilities\Interfaces.cs" />
+    <Compile Include="Utilities\EventDictionary.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

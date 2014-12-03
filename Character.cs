@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Quark
 {
-    public class Character : MonoBehaviour
+    public class Character : MonoBehaviour, Identifiable
     {
         AttributeBag Attributes;
         List<CastData> casting;
@@ -92,6 +92,11 @@ namespace Quark
 
         protected virtual void OnGUI()
         {
+        }
+
+        public string Identifier()
+        {
+            return this.name + "(" +this.GetHashCode().ToString() + ")";
         }
     }
 }
