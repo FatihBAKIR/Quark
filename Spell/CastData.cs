@@ -17,8 +17,16 @@ namespace Quark
 
         public uint HitCount = 0;
 
+        public CastData()
+        {
+            Logger.GC("CastData::ctor");
+        }
+
         ~CastData()
         {
+            this.spell = null;
+            this.caster = null;
+            Logger.GC("CastData::dtor");
         }
 
         /// <summary>
@@ -212,8 +220,6 @@ namespace Quark
 
         public void Clear()
         {
-            this.spell = null;
-            this.caster = null;
         }
     }
 

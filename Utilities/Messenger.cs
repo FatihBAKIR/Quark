@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Quark;
-using System.Text.RegularExpressions;
 
 public delegate void Callback();
 public delegate void Callback<T>(T arg1);
@@ -100,15 +99,13 @@ static public class Messenger
     private static EventDictionary eventTable = MessengerInternal.eventTable;
 
     static public void AddListener(string eventType, Callback handler)
-    {
-        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
+    {        
         MessengerInternal.OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback)eventTable[eventType] + handler;
     }
 
     static public void RemoveListener(string eventType, Callback handler)
-    {
-        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
+    {        
         MessengerInternal.OnListenerRemoving(eventType, handler);	
         eventTable[eventType] = (Callback)eventTable[eventType] - handler;
         MessengerInternal.OnListenerRemoved(eventType);
@@ -126,7 +123,8 @@ static public class Messenger
         foreach (Delegate d in handlers)
         {
             Callback callback = (Callback)d;
-            callback();
+            if (callback != null)
+                callback();
         }
     }
 }
@@ -137,15 +135,14 @@ static public class Messenger<T>
     private static EventDictionary eventTable = MessengerInternal.eventTable;
 
     static public void AddListener(string eventType, Callback<T> handler)
-    {
-        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
+    {        
         MessengerInternal.OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback<T>)eventTable[eventType] + handler;
     }
 
     static public void RemoveListener(string eventType, Callback<T> handler)
     {
-        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
+        
         MessengerInternal.OnListenerRemoving(eventType, handler);
         eventTable[eventType] = (Callback<T>)eventTable[eventType] - handler;
         MessengerInternal.OnListenerRemoved(eventType);
@@ -167,7 +164,8 @@ static public class Messenger<T>
         foreach (Delegate d in handlers)
         {
             Callback<T> callback = d as Callback<T>;
-            callback(arg1);
+            if (callback != null)
+                callback(arg1);
         }
     }
 }
@@ -180,14 +178,14 @@ static public class Messenger<T, U>
 
     static public void AddListener(string eventType, Callback<T, U> handler)
     {
-        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
+        
         MessengerInternal.OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback<T, U>)eventTable[eventType] + handler;
     }
 
     static public void RemoveListener(string eventType, Callback<T, U> handler)
     {
-        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
+        
         MessengerInternal.OnListenerRemoving(eventType, handler);
         eventTable[eventType] = (Callback<T, U>)eventTable[eventType] - handler;
         MessengerInternal.OnListenerRemoved(eventType);
@@ -209,7 +207,9 @@ static public class Messenger<T, U>
         foreach (Delegate d in handlers)
         {
             Callback<T, U> callback = d as Callback<T, U>;
-            callback(arg1, arg2);
+            UnityEngine.Debug.Log(callback == null);
+            if (callback != null)
+                callback(arg1, arg2);
         }
     }
 }
@@ -222,14 +222,14 @@ static public class Messenger<T, U, V>
 
     static public void AddListener(string eventType, Callback<T, U, V> handler)
     {
-        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
+        
         MessengerInternal.OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback<T, U, V>)eventTable[eventType] + handler;
     }
 
     static public void RemoveListener(string eventType, Callback<T, U, V> handler)
     {
-        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
+        
         MessengerInternal.OnListenerRemoving(eventType, handler);
         eventTable[eventType] = (Callback<T, U, V>)eventTable[eventType] - handler;
         MessengerInternal.OnListenerRemoved(eventType);
@@ -251,7 +251,8 @@ static public class Messenger<T, U, V>
         foreach (Delegate d in handlers)
         {
             Callback<T, U, V> callback = d as Callback<T, U, V>;
-            callback(arg1, arg2, arg3);
+            if (callback != null)
+                callback(arg1, arg2, arg3);
         }
     }
 }

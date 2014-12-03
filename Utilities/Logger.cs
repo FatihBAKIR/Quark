@@ -7,12 +7,14 @@ namespace Quark
     {
         public static LogLevel Level = LogLevel.None;
         public static LogType Type = LogType.Unity | LogType.File;
+
         private static void Add(string message, LogLevel level)
         {
-            if (level > Logger.Level) return;
+            if (level > Logger.Level)
+                return;
             if ((Logger.Type & LogType.Unity) == LogType.Unity)
             {
-                if (Logger.Level >= LogLevel.Debug)
+                if (Logger.Level >= LogLevel.Debug || Logger.Level == LogLevel.GC)
                     UnityEngine.Debug.Log(message);
                 else if (Logger.Level == LogLevel.Warning)
                     UnityEngine.Debug.LogWarning(message);
@@ -45,15 +47,21 @@ namespace Quark
         {
             Logger.Add(message, LogLevel.Error);
         }
+
+        public static void GC(string message)
+        {
+            Logger.Add(message, LogLevel.GC);
+        }
     }
 
     public enum LogLevel
     {
-        Info = 5,
-        Log = 4,
-        Debug = 3,
-        Warning = 2,
-        Error = 1,
+        Info = 6,
+        Log = 5,
+        Debug = 4,
+        Warning = 3,
+        Error = 2,
+        GC = 1,
         None = 0
     }
 

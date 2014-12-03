@@ -8,16 +8,19 @@ namespace Quark
         protected float Interval;
         protected float Duration;
         protected Character Possessor;
-        protected CastData Data;
+        bool isDataSet = false;
+        private CastData data;
+        protected CastData Data { get { return data; } set { if (isDataSet) return; data = value; } }
+        public bool CleanedUp = false;
 
         public Buff()
         {
-            Debug.Log("Buff::ctor");
+            Logger.GC("Buff::ctor");
         }
 
         ~Buff()
         {
-            Debug.Log("Buff::dtor");
+            Logger.GC("Buff::dtor");
         }
 
         public void Dispose()
@@ -106,7 +109,7 @@ namespace Quark
         /// </summary>
         protected virtual void OnDone()
         {
-
+            this.CleanedUp = true;
         }
     }
 }

@@ -76,7 +76,8 @@ namespace Quark
 
         public Attribute[] GetAttributes
         {
-            get{
+            get
+            {
                 return this.Attributes.GetAttributes();
             }
         }
@@ -92,11 +93,12 @@ namespace Quark
 
         protected virtual void OnGUI()
         {
-        }
+        }   
 
         public string Identifier()
         {
-            return this.name + "(" +this.GetHashCode().ToString() + ")";
+            return this.GetHashCode().ToString();
+            //return this.name + "(" + this.GetHashCode().ToString() + ")";
         }
     }
 }
