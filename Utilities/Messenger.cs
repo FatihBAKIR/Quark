@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Quark;
+using System.Text.RegularExpressions;
 
 public delegate void Callback();
 public delegate void Callback<T>(T arg1);
@@ -100,12 +101,14 @@ static public class Messenger
 
     static public void AddListener(string eventType, Callback handler)
     {
+        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
         MessengerInternal.OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback)eventTable[eventType] + handler;
     }
 
     static public void RemoveListener(string eventType, Callback handler)
     {
+        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
         MessengerInternal.OnListenerRemoving(eventType, handler);	
         eventTable[eventType] = (Callback)eventTable[eventType] - handler;
         MessengerInternal.OnListenerRemoved(eventType);
@@ -135,12 +138,14 @@ static public class Messenger<T>
 
     static public void AddListener(string eventType, Callback<T> handler)
     {
+        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
         MessengerInternal.OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback<T>)eventTable[eventType] + handler;
     }
 
     static public void RemoveListener(string eventType, Callback<T> handler)
     {
+        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
         MessengerInternal.OnListenerRemoving(eventType, handler);
         eventTable[eventType] = (Callback<T>)eventTable[eventType] - handler;
         MessengerInternal.OnListenerRemoved(eventType);
@@ -175,12 +180,14 @@ static public class Messenger<T, U>
 
     static public void AddListener(string eventType, Callback<T, U> handler)
     {
+        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
         MessengerInternal.OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback<T, U>)eventTable[eventType] + handler;
     }
 
     static public void RemoveListener(string eventType, Callback<T, U> handler)
     {
+        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
         MessengerInternal.OnListenerRemoving(eventType, handler);
         eventTable[eventType] = (Callback<T, U>)eventTable[eventType] - handler;
         MessengerInternal.OnListenerRemoved(eventType);
@@ -215,12 +222,14 @@ static public class Messenger<T, U, V>
 
     static public void AddListener(string eventType, Callback<T, U, V> handler)
     {
+        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
         MessengerInternal.OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback<T, U, V>)eventTable[eventType] + handler;
     }
 
     static public void RemoveListener(string eventType, Callback<T, U, V> handler)
     {
+        eventType = Regex.Escape(eventType).Replace(@"\*", ".*").Replace(@"\?", ".");
         MessengerInternal.OnListenerRemoving(eventType, handler);
         eventTable[eventType] = (Callback<T, U, V>)eventTable[eventType] - handler;
         MessengerInternal.OnListenerRemoved(eventType);

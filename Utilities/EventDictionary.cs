@@ -10,9 +10,8 @@ namespace Quark
         {
             List<Delegate> matches = new List<Delegate>();
             foreach (string pattern in Keys)
-                if (Regex.IsMatch(Event, Regex.Escape(pattern).Replace( @"\*", ".*" ).Replace( @"\?", "." )))
+                if (Regex.IsMatch(Event, pattern))
                     matches.Add(this[pattern]);
-            UnityEngine.Debug.Log(matches.Count);
             return matches.ToArray();
         }
     }
