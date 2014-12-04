@@ -10,9 +10,7 @@ namespace Quark
             List<Delegate> matches = new List<Delegate>();
             foreach (string pattern in Keys)
                 if (MatchWildcardString(pattern, Event))
-                {
                     matches.Add(this[pattern]);
-                }
             return matches.ToArray();
         }
 

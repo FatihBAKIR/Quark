@@ -68,6 +68,8 @@
     <Compile Include="Spell\TargetManager.cs" />
     <Compile Include="Utilities\Interfaces.cs" />
     <Compile Include="Utilities\EventDictionary.cs" />
+    <Compile Include="Utilities\KeyBinding.cs" />
+    <Compile Include="Utilities\KeyBindings.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
