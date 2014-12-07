@@ -50,7 +50,6 @@
     <Compile Include="Character.cs" />
     <Compile Include="Exceptions\Targeting.cs" />
     <Compile Include="Utilities\AssemblyInfo.cs" />
-    <Compile Include="Utilities\Events.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\Messenger.cs" />
     <Compile Include="Utilities\Utils.cs" />

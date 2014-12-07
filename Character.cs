@@ -100,5 +100,17 @@ namespace Quark
             return this.GetHashCode().ToString();
             //return this.name + "(" + this.GetHashCode().ToString() + ")";
         }
+
+        void OnMouseEnter() {
+            this.renderer.material.color = Color.red;
+        }
+
+        void OnMouseExit() {
+            this.renderer.material.color = Color.white;
+        }
+
+        void OnMouseUp() {
+            this.renderer.material.color = Color.yellow;
+        }
     }
 }
