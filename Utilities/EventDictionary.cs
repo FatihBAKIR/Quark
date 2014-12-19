@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Quark
+namespace Quark.Utilities
 {
     public class EventDictionary : Dictionary<string, Delegate>
     {

@@ -1,7 +1,7 @@
-using System;
+using Quark.Targeting;
 using UnityEngine;
 
-namespace Quark
+namespace Quark.Utilities
 {
     public class Head : MonoBehaviour
     {
@@ -10,10 +10,12 @@ namespace Quark
             if (Head.head != null)
             {
                 DestroyImmediate(this);
-                Quark.Logger.Warn("Multiple Head Objects Are Forbidden");
+                Logger.Warn("Multiple Head Objects Are Forbidden");
                 return;
             }
             Head.head = this;
+            
+            TargetManager.Register();
             KeyBindings.Register();
             Logger.Info("Head Started");
         }

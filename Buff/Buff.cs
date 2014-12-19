@@ -1,7 +1,9 @@
 ﻿using System;
+using Quark.Spell;
+using Quark.Utilities;
 using UnityEngine;
 
-namespace Quark
+namespace Quark.Buff
 {
     public class Buff : IDisposable
     {

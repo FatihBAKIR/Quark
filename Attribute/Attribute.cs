@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Quark.Utilities;
 
-namespace Quark
+namespace Quark.Attribute
 {
     public class Attribute : Identifiable
     {

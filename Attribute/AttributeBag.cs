@@ -1,7 +1,8 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using Quark.Utilities;
 
-namespace Quark
+namespace Quark.Attribute
 {
     public class AttributeBag : IDisposable
     {
@@ -17,7 +18,7 @@ namespace Quark
 
         public AttributeBag(Character carrier)
         {
-            Quark.Logger.Debug("AttributeBag::ctor");
+            Logger.Debug("AttributeBag::ctor");
             this.carrier = carrier;
 
             this.Attributes = new Dictionary<string, Attribute>();
@@ -104,7 +105,7 @@ namespace Quark
         public void Dump()
         {
             foreach (Attribute attr in this.GetAttributes())
-                Quark.Logger.Debug(attr.ToString());        
+                Logger.Debug(attr.ToString());        
         }
     }
 }

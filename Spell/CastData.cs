@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Quark.Exceptions;
+using Quark.Targeting;
+using Quark.Utilities;
 using UnityEngine;
 
-namespace Quark
+namespace Quark.Spell
 {
     public class CastData
     {
@@ -11,7 +13,7 @@ namespace Quark
         float beginningTime;
         List<Character> targetChars;
         List<Vector3> targetPoints;
-        Spell spell;
+        Quark.Spell.Spell spell;
 
         LifeStep step = LifeStep.Null;
 
@@ -41,7 +43,7 @@ namespace Quark
         /// <param name='spell'>
         /// The instance of the spell to be cast.
         /// </param>
-        public static CastData PrepareCast(Character caster, Spell spell)
+        public static CastData PrepareCast(Character caster, Quark.Spell.Spell spell)
         {
             CastData data = new CastData();
             data.step = LifeStep.Null;
@@ -119,7 +121,7 @@ namespace Quark
             }
         }
 
-        public Spell Spell
+        public Quark.Spell.Spell Spell
         {
             get
             {
@@ -158,13 +160,19 @@ namespace Quark
             this.step = LifeStep.Begin;
             Logger.Debug("CastData.Begin");
             if (!caster.CanCast)
+            {
+                Messenger<CastError>.Broadcast("CastError", new BusyError());
                 return;
+            }
             caster.AddCast(this);
             spell.OnBegin();
-            this.Targeting();
+            BeginTargeting();
         }
 
-        void Targeting()
+        /// <summary>
+        /// Begin targeting logic
+        /// </summary>
+        void BeginTargeting()
         {
             this.step = LifeStep.Targeting;
             this.targetChars = new List<Character>();
@@ -172,15 +180,20 @@ namespace Quark
             TargetManager.GetTargets(this);
         }
 
+        public void TargetingFail()
+        {
+            Clear(LifeStep.Fail);
+        }
+
         /// <summary>
-        /// Targeting done logic.
+        /// BeginTargeting done logic.
         /// </summary>
         public void TargetingDone()
         {
             /*
-         * Copy the time and the point at the instant the targeting was done and check for the spell type, if it is an instant spell, immediately cast it
-         * otherwise, begin the casting logic
-         */
+             * Copy the time and the point at the instant the targeting was done and check for the spell type, if it is an instant spell, immediately cast it
+             * otherwise, begin the casting logic
+             */
             this.beginningTime = Time.timeSinceLevelLoad;
             this.beginPoint = caster.transform.position;
             spell.OnTargetingDone();
@@ -206,10 +219,7 @@ namespace Quark
 
         void CastDone()
         {
-            this.step = LifeStep.Done;
-            this.caster.ClearCast(this);
-            if (!spell.IsInstant)
-                Messenger.RemoveListener("Update", this.Update);
+            Clear(LifeStep.Done);
             spell.OnCastDone();
         }
 
@@ -218,8 +228,12 @@ namespace Quark
             controlCast();
         }
 
-        public void Clear()
+        void Clear(LifeStep step)
         {
+            this.step = step;
+            this.caster.ClearCast(this);
+            if (!spell.IsInstant)
+                Messenger.RemoveListener("Update", this.Update);
         }
     }
 
@@ -229,6 +243,7 @@ namespace Quark
         Begin,
         Targeting,
         Casting,
-        Done
+        Done,
+        Fail
     }
 }

@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Quark.Utilities;
+using UnityEngine;
 
-namespace Quark
+namespace Quark.Missile
 {
     public class MissileController
     {

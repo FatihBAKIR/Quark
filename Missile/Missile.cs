@@ -1,7 +1,9 @@
-using System;
+using Quark.Spell;
+using Quark.Targeting;
+using Quark.Utilities;
 using UnityEngine;
 
-namespace Quark
+namespace Quark.Missile
 {
     public class Missile : MonoBehaviour
     {
@@ -116,7 +118,7 @@ namespace Quark
                     Destroy(this.gameObject);
                 }
             }
-            Quark.Logger.Debug("Hit: " + c.gameObject.name + "\nTarget Was" + (hit == null ? " Not" : "") + " A Character");
+            Logger.Debug("Hit: " + c.gameObject.name + "\nTarget Was" + (hit == null ? " Not" : "") + " A Character");
         }
 
         protected virtual bool IsHitValid(Character hit)

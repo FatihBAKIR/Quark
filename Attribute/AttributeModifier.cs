@@ -1,7 +1,6 @@
-using System;
 using System.Text;
 
-namespace Quark
+namespace Quark.Attribute
 {
     public class AttributeModifier
     {

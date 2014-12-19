@@ -49,6 +49,7 @@
     <Compile Include="Effect.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="Exceptions\Targeting.cs" />
+    <Compile Include="Spell\CastError.cs" />
     <Compile Include="Utilities\AssemblyInfo.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\Messenger.cs" />
@@ -64,7 +65,7 @@
     <Compile Include="Buff\BuffContainer.cs" />
     <Compile Include="Spell\CastData.cs" />
     <Compile Include="Spell\Spell.cs" />
-    <Compile Include="Spell\TargetManager.cs" />
+    <Compile Include="Targeting\TargetManager.cs" />
     <Compile Include="Utilities\Interfaces.cs" />
     <Compile Include="Utilities\EventDictionary.cs" />
     <Compile Include="Utilities\KeyBinding.cs" />
@@ -72,7 +73,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <!--<PostBuildEvent>echo f | xcopy "$(TargetPath)" "..\..\..\..\UnityRPG\Assets\$(TargetFileName)" /v/y</PostBuildEvent>-->
+    <PostBuildEvent>echo f | xcopy "$(TargetPath)" "..\..\..\..\UnityRPG\Assets\$(TargetFileName)" /v/y</PostBuildEvent>
   </PropertyGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -84,12 +85,5 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <ItemGroup>
-    <Folder Include="Exceptions\" />
-    <Folder Include="Utilities\" />
-    <Folder Include="Attribute\" />
-    <Folder Include="Missile\" />
-    <Folder Include="Buff\" />
-    <Folder Include="Spell\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

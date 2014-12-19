@@ -1,7 +1,4 @@
-using System;
-using UnityEngine;
-
-namespace Quark
+namespace Quark.Utilities
 {
     public static class Logger
     {

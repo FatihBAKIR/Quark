@@ -1,15 +1,18 @@
 ﻿using System;
 
-public class NotTargetingException : Exception
+namespace Quark.Exceptions
 {
-    public NotTargetingException() : base()
+    public class NotTargetingException : Exception
     {
+        public NotTargetingException() : base()
+        {
+        }
     }
-}
 
-public class SingularSpellException : Exception
-{
-    public SingularSpellException() : base()
+    public class SingularSpellException : Exception
     {
+        public SingularSpellException() : base()
+        {
+        }
     }
 }

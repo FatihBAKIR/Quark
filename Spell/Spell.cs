@@ -1,8 +1,9 @@
-using System;
-using System.Collections.Generic;
+using Quark.Missile;
+using Quark.Targeting;
+using Quark.Utilities;
 using UnityEngine;
 
-namespace Quark
+namespace Quark.Spell
 {
 
     public class Spell
@@ -335,7 +336,6 @@ namespace Quark
                 effect.Data = Data;
                 effect.Apply();
             }
-            this.Data.Clear();
             this.Data = null;
         }
 
@@ -345,7 +345,7 @@ namespace Quark
         /// Collects a projectile which were created by this spell
         /// </summary>
         /// <param name="m">Missile to collect.</param>
-        public void CollectProjectile(Missile m)
+        public void CollectProjectile(Missile.Missile m)
         {
             Logger.Debug("Collecting Projectile");
             Missile_Count--;
@@ -363,13 +363,13 @@ namespace Quark
             foreach (Vector3 point in Data.TargetPoints)
             {
                 Missile_Count++;
-                Missile.Make(this.MissileObject, this.Controller, this.Data).Set(point);
+                Missile.Missile.Make(this.MissileObject, this.Controller, this.Data).Set(point);
             }
 
             foreach (Character target in Data.TargetCharacters)
             {
                 Missile_Count++;
-                Missile.Make(this.MissileObject, this.Controller, this.Data).Set(target);
+                Missile.Missile.Make(this.MissileObject, this.Controller, this.Data).Set(target);
             }
         }
     }

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Quark
+namespace Quark.Utilities
 {
     class KeyBindings
     {

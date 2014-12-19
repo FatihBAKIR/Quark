@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Quark
+namespace Quark.Utilities
 {
     public class Utils
     {
