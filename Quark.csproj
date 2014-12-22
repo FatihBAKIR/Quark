@@ -8,8 +8,6 @@
     <RootNamespace>Quark</RootNamespace>
     <AssemblyName>Quark</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -21,11 +19,6 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <CustomCommands>
-      <CustomCommands>
-        <!--<Command type="AfterBuild" command="cp ${TargetFile} ../../UnityRPG/Assets/" workingdir="${ProjectDir}" externalConsole="True" pauseExternalConsole="True" />-->
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -74,7 +67,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>echo f | xcopy "$(TargetPath)" "..\..\..\..\QuarkDemo\Assets\$(TargetFileName)" /v/y</PostBuildEvent>
+    <!--<PostBuildEvent>echo f | xcopy "$(TargetPath)" "..\..\..\..\QuarkDemo\Assets\$(TargetFileName)" /v/y</PostBuildEvent>-->
   </PropertyGroup>
   <ProjectExtensions>
     <MonoDevelop>

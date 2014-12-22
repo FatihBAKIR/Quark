@@ -6,37 +6,49 @@ using UnityEngine;
 
 namespace Quark.Targeting
 {
+    public interface IRanged
+    {
+        float CastRange
+        {
+            get;
+        }
+    }
+
     public class TargetMacro
     {
-        protected CastData Data { get; set; }
+        protected CastData Data { get; private set; }
         public TargetMacro()
         {
         }
 
         public virtual void Run()
         {
+            Cancel();
+        }
 
+        public virtual void Cancel()
+        {
+            TargetManager.FreeTargeter();
+            Data.TargetingFail();
+            Clear();
+        }
+
+        protected void Clear()
+        {
+            Data = null;
         }
 
         public void SetData(CastData data)
         {
-            this.Data = data;
-        }
-    }
-
-    public class PointTarget : TargetMacro
-    {
-        public override void Run()
-        {
-            TargetManager.ReserveTargeter(this);
-            TargetManager.RequestPoint(HandlePoint);
+            Data = data;
         }
 
-        private void HandlePoint(Vector3 point)
+        public Character Caster
         {
-            Data.AddTarget(point);
-            TargetManager.FreeTargeter();
-            Data.TargetingDone();
+            get
+            {
+                return Data.Caster;
+            }
         }
     }
 }

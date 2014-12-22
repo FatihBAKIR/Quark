@@ -17,7 +17,7 @@ namespace Quark.Targeting
 
         public static bool IsTargeting
         {
-            get { return _currentData != null; }
+            get { return _runningMacro != null; }
         }
 
         public static bool IsBusy
@@ -30,7 +30,6 @@ namespace Quark.Targeting
         public static void Register()
         {
             Messenger.AddListener("Update", CheckTargeting);
-            //Messenger<MouseArgs>.AddListener("*." + MouseEventType.Click + ".Mouse", OnCharacterClick);
         }
 
         private static void OnCharacterClick(MouseArgs mouseArgs)
@@ -52,17 +51,11 @@ namespace Quark.Targeting
             if (!IsPointValid)
             {
                 Messenger<CastError>.Broadcast("CastError", new RangeError());
-                FailTargeting();
                 return;
             }
 
             if (_pointCallback != null)
                 _pointCallback(point);
-            
-            return;
-
-            _currentData.AddTarget(point);
-            DoneTargeting();
         }
 
         static void CheckTargeting()
@@ -78,61 +71,11 @@ namespace Quark.Targeting
                     OnCharacterClick(null);
             }
 
+            if (Input.GetMouseButton(1) && IsTargeting)
+                _runningMacro.Cancel();
+
             if (Input.GetKeyUp(KeyCode.Escape))
-            {
-                Messenger<CastError>.Broadcast("CastError", new CancelError());
-                FailTargeting();
-            }
-        }
-
-        static void DoneTargeting()
-        {
-            _currentData.TargetingDone();
-            _currentData = null;
-        }
-
-        static void FailTargeting()
-        {
-            _currentData.TargetingFail();
-            _currentData = null;
-        }
-
-        private static CastData _currentData = null;
-
-        public static void GetTargets(CastData data)
-        {
-            if (IsTargeting)
-            {
-                Messenger<CastError>.Broadcast("CastError", new TargetingError());
-                data.TargetingFail();
-                return;
-            }
-
-            _currentData = data;
-
-            if (data.Spell.Targetables == TargetType.Character)
-            {
-                _currentData.AddTarget(_currentData.Caster);
-                DoneTargeting();
-            }
-
-            //Single character target and we already have a target, no need to wait input
-            if (_currentData.Spell.TargetForm == TargetForm.Singular &&
-                Utils.Checkflag(data.Spell.Targetables, TargetType.Character))
-            {
-                if (IsSelected)
-                {
-                    _currentData.AddTarget(SelectedCharacter);
-                    DoneTargeting();
-                }
-                else
-                    FailTargeting();
-                return;
-            }
-
-            //Otherwise, it is an asynchronous targeting, we simply broadcast the event and wait for targeting
-            Messenger<TargetType>.Broadcast("Targeting", data.Spell.Targetables);
-            Messenger<TargetType>.Broadcast(data.Spell.Targetables + ".Targeting", data.Spell.Targetables);
+                _runningMacro.Cancel();
         }
 
         static void RunRaycast()
@@ -145,9 +88,8 @@ namespace Quark.Targeting
 
             if (IsTargeting)
             {
-                if (Utils.Checkflag(_currentData.Spell.Targetables, TargetType.Point))
-                    if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << TerrainLayer.value))
-                        HoveringPoint = hit.point;
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << TerrainLayer.value))
+                    HoveringPoint = hit.point;
             }
             else if (Physics.Raycast(ray, out hit))
             {
@@ -196,7 +138,7 @@ namespace Quark.Targeting
         {
             get
             {
-                return Vector3.Distance(_currentData.Caster.transform.position, HoveringPoint);
+                return Vector3.Distance(_runningMacro.Caster.transform.position, HoveringPoint);
             }
         }
 
@@ -207,7 +149,10 @@ namespace Quark.Targeting
                 if (!IsTargeting)
                     return false;
 
-                if (PointDistance > _currentData.Spell.CastRange)
+                if (!(_runningMacro is IRanged))
+                    return true;
+
+                if (PointDistance > ((IRanged)_runningMacro).CastRange)
                     return false;
 
                 return true;
@@ -225,7 +170,8 @@ namespace Quark.Targeting
 
         public static void FreeTargeter()
         {
-            _currentData = null;
+            _runningMacro = null;
+            _pointCallback = null;
         }
 
         private static TargetMacro _runningMacro;

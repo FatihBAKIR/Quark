@@ -40,17 +40,6 @@ namespace Quark.Spell
         }
 
         /// <summary>
-        /// Gets the possible target kinds for this spell
-        /// </summary>
-        public virtual TargetType Targetables
-        {
-            get
-            {
-                return TargetType.Point;
-            }
-        }
-
-        /// <summary>
         /// Gets the target form of this spell
         /// </summary>
         public virtual TargetForm TargetForm
@@ -65,7 +54,7 @@ namespace Quark.Spell
         {
             get
             {
-                return new PointTarget();
+                return new TargetMacro();
             }
         }
 
@@ -82,18 +71,6 @@ namespace Quark.Spell
             get
             {
                 return new MissileController();
-            }
-        }
-
-        //
-        // Properties
-        //
-
-        public virtual float CastRange
-        {
-            get
-            {
-                return 1;
             }
         }
 
