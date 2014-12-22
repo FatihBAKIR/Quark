@@ -13,7 +13,7 @@ namespace Quark.Spell
         float beginningTime;
         List<Character> targetChars;
         List<Vector3> targetPoints;
-        Quark.Spell.Spell spell;
+        Spell spell;
 
         LifeStep step = LifeStep.Null;
 
@@ -177,7 +177,8 @@ namespace Quark.Spell
             this.step = LifeStep.Targeting;
             this.targetChars = new List<Character>();
             this.targetPoints = new List<Vector3>();
-            TargetManager.GetTargets(this);
+            spell.TargetMacro.SetData(this);
+            spell.TargetMacro.Run();
         }
 
         public void TargetingFail()

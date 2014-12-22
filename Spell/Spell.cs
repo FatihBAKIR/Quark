@@ -6,12 +6,15 @@ using UnityEngine;
 namespace Quark.Spell
 {
 
-    public class Spell
+    public class Spell : ITaggable
     {
         /// <summary>
-        /// The duration of the casting.
+        /// Gets the duration of the cast.
         /// </summary>
-        protected virtual float castDuration
+        /// <value>
+        /// The duration of the cast.
+        /// </value>
+        public virtual float CastDuration
         {
             get
             {
@@ -27,19 +30,42 @@ namespace Quark.Spell
             }
         }
 
-        protected virtual TargetType targetables
+        public virtual string[] Tags
         {
-            get
-            {
-                return TargetType.Enemy;
+            get{
+                return new string[] { "spell" };
+            }
+            set{
             }
         }
 
-        protected virtual TargetForm targetForm
+        /// <summary>
+        /// Gets the possible target kinds for this spell
+        /// </summary>
+        public virtual TargetType Targetables
+        {
+            get
+            {
+                return TargetType.Point;
+            }
+        }
+
+        /// <summary>
+        /// Gets the target form of this spell
+        /// </summary>
+        public virtual TargetForm TargetForm
         {
             get
             {
                 return TargetForm.Singular;
+            }
+        }
+
+        public virtual TargetMacro TargetMacro
+        {
+            get
+            {
+                return new PointTarget();
             }
         }
 
@@ -63,39 +89,11 @@ namespace Quark.Spell
         // Properties
         //
 
-        /// <summary>
-        /// Gets the duration of the cast.
-        /// </summary>
-        /// <value>
-        /// The duration of the cast.
-        /// </value>
-        public float CastDuration
+        public virtual float CastRange
         {
             get
             {
-                return this.castDuration;
-            }
-        }
-
-        /// <summary>
-        /// Gets the possible target kinds for this spell
-        /// </summary>
-        public TargetType Targetables
-        {
-            get
-            {
-                return this.targetables;
-            }
-        }
-
-        /// <summary>
-        /// Gets the target form of this spell
-        /// </summary>
-        public TargetForm TargetForm
-        {
-            get
-            {
-                return this.targetForm;
+                return 1;
             }
         }
 
@@ -107,7 +105,7 @@ namespace Quark.Spell
         {
             get
             {
-                return castDuration <= 0;
+                return CastDuration <= 0;
             }
         }
 

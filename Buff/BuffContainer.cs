@@ -6,28 +6,28 @@ namespace Quark.Buff
 {
     public class BuffContainer : IDisposable
     {
-        Character owner;
-        List<Buff> buffs;
+        Character _owner;
+        List<Buff> _buffs;
 
         public BuffContainer(Character owner)
         {
-            this.owner = owner;
-            this.buffs = new List<Buff>();
+            _owner = owner;
+            _buffs = new List<Buff>();
             Messenger.AddListener("Update", this.Update);
         }
 
         public void Dispose()
         {
-            this.owner = null;
-            this.buffs.Clear();
-            this.buffs = null;
+            _owner = null;
+            _buffs.Clear();
+            _buffs = null;
             Messenger.RemoveListener("Update", this.Update);
         }
 
         public void AttachBuff(Buff buff)
         {
-            this.buffs.Add(buff);
-            buff.OnPossess(owner);
+            _buffs.Add(buff);
+            buff.OnPossess(_owner);
         }
 
         bool CheckBuff(Buff buff)
@@ -37,25 +37,24 @@ namespace Quark.Buff
             return false;
         }
 
-        List<Buff> toDispose;
-
+        List<Buff> _toDispose;
         void Update()
         {
-            toDispose = new List<Buff>();
-            foreach (Buff buff in buffs)
+            _toDispose = new List<Buff>();
+            foreach (Buff buff in _buffs)
             {
                 if (CheckBuff(buff))
                 {
-                    toDispose.Add(buff);
+                    _toDispose.Add(buff);
                 }
             }
-            foreach (Buff buff in toDispose)
+            foreach (Buff buff in _toDispose)
             {
-                buffs.Remove(buff);
+                _buffs.Remove(buff);
                 buff.Dispose();
             }
-            toDispose.Clear();
-            toDispose = null;
+            _toDispose.Clear();
+            _toDispose = null;
         }
     }
 }

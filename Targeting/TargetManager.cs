@@ -2,14 +2,17 @@
 using Quark.Spell;
 using Quark.Utilities;
 using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 
 namespace Quark.Targeting
 {
     public static class TargetManager
     {
+        public static LayerMask TerrainLayer = LayerMask.NameToLayer("Terrain");
+
         public static bool IsSelected
         {
-            get { return SelecteCharacter != null; }
+            get { return SelectedCharacter != null; }
         }
 
         public static bool IsTargeting
@@ -17,7 +20,13 @@ namespace Quark.Targeting
             get { return _currentData != null; }
         }
 
-        public static Character SelecteCharacter { get; private set; }
+        public static bool IsBusy
+        {
+            get { return _runningMacro != null; }
+        }
+
+        public static Character SelectedCharacter { get; private set; }
+
         public static void Register()
         {
             Messenger.AddListener("Update", CheckTargeting);
@@ -26,28 +35,52 @@ namespace Quark.Targeting
 
         private static void OnCharacterClick(MouseArgs mouseArgs)
         {
-            SelecteCharacter = mouseArgs.Character;
+            OnCharacterClick(mouseArgs.Character);
         }
 
         private static void OnCharacterClick(Character character)
         {
-            SelecteCharacter = character;
+            Messenger.Broadcast("SelectedCharacterChanged");
+            SelectedCharacter = character;
+        }
+
+        private static void OnPointClick(Vector3 point)
+        {
+            if (!IsTargeting)
+                return;
+
+            if (!IsPointValid)
+            {
+                Messenger<CastError>.Broadcast("CastError", new RangeError());
+                FailTargeting();
+                return;
+            }
+
+            if (_pointCallback != null)
+                _pointCallback(point);
+            
+            return;
+
+            _currentData.AddTarget(point);
+            DoneTargeting();
         }
 
         static void CheckTargeting()
         {
+            RunRaycast();
             if (Input.GetMouseButtonUp(0))
             {
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit))
-                    OnCharacterClick(hit.collider.GetComponent<Character>());
-                else OnCharacterClick(null);
+                if (IsCharacterHovering)
+                    OnCharacterClick(HoveringCharacter);
+                else if (IsPointHovering)
+                    OnPointClick(HoveringPoint);
+                else
+                    OnCharacterClick(null);
             }
 
             if (Input.GetKeyUp(KeyCode.Escape))
             {
-                Messenger<CastError>.Broadcast("CastError", new CancelError()); 
+                Messenger<CastError>.Broadcast("CastError", new CancelError());
                 FailTargeting();
             }
         }
@@ -65,6 +98,7 @@ namespace Quark.Targeting
         }
 
         private static CastData _currentData = null;
+
         public static void GetTargets(CastData data)
         {
             if (IsTargeting)
@@ -76,50 +110,162 @@ namespace Quark.Targeting
 
             _currentData = data;
 
-            /*
-            if (Utils.Checkflag(data.Spell.Targetables, TargetType.Character))
-                data.AddTarget(GameObject.Find("Cylinder").GetComponent<Character>());
-
-            if (data.Spell.TargetForm == TargetForm.Plural && Utils.Checkflag(data.Spell.Targetables, TargetType.Point))
+            if (data.Spell.Targetables == TargetType.Character)
             {
-                data.AddTarget(new Vector3(0, 0, 0));
-                data.AddTarget(new Vector3(10, 0, 10));
-                data.AddTarget(new Vector3(10, 0, 0));
-                data.AddTarget(new Vector3(0, 0, 10));
+                _currentData.AddTarget(_currentData.Caster);
+                DoneTargeting();
             }
-             */
 
             //Single character target and we already have a target, no need to wait input
-            if (data.Spell.TargetForm == TargetForm.Singular &&
+            if (_currentData.Spell.TargetForm == TargetForm.Singular &&
                 Utils.Checkflag(data.Spell.Targetables, TargetType.Character))
             {
                 if (IsSelected)
                 {
-                    data.AddTarget(SelecteCharacter);
+                    _currentData.AddTarget(SelectedCharacter);
                     DoneTargeting();
                 }
                 else
                     FailTargeting();
                 return;
             }
+
+            //Otherwise, it is an asynchronous targeting, we simply broadcast the event and wait for targeting
+            Messenger<TargetType>.Broadcast("Targeting", data.Spell.Targetables);
+            Messenger<TargetType>.Broadcast(data.Spell.Targetables + ".Targeting", data.Spell.Targetables);
+        }
+
+        static void RunRaycast()
+        {
+            HoveringCharacter = null;
+            _hoveringPoint = null;
+
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (IsTargeting)
+            {
+                if (Utils.Checkflag(_currentData.Spell.Targetables, TargetType.Point))
+                    if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << TerrainLayer.value))
+                        HoveringPoint = hit.point;
+            }
+            else if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.GetComponent<Character>() != null)
+                    HoveringCharacter = hit.collider.GetComponent<Character>();
+            }
+        }
+
+        public static Character HoveringCharacter
+        {
+            get;
+            private set;
+        }
+
+        static Vector3? _hoveringPoint;
+
+        public static Vector3 HoveringPoint
+        {
+            get
+            {
+                return (Vector3)_hoveringPoint;
+            }
+            private set
+            {
+                _hoveringPoint = value;
+            }
+        }
+
+        public static bool IsCharacterHovering
+        {
+            get
+            {
+                return HoveringCharacter != null;
+            }
+        }
+
+        public static bool IsPointHovering
+        {
+            get
+            {
+                return _hoveringPoint != null;
+            }
+        }
+
+        public static float PointDistance
+        {
+            get
+            {
+                return Vector3.Distance(_currentData.Caster.transform.position, HoveringPoint);
+            }
+        }
+
+        public static bool IsPointValid
+        {
+            get
+            {
+                if (!IsTargeting)
+                    return false;
+
+                if (PointDistance > _currentData.Spell.CastRange)
+                    return false;
+
+                return true;
+            }
+        }
+
+        public static bool ReserveTargeter(TargetMacro macro)
+        {
+            if (IsBusy)
+                return false;
+
+            _runningMacro = macro;
+            return true;
+        }
+
+        public static void FreeTargeter()
+        {
+            _currentData = null;
+        }
+
+        private static TargetMacro _runningMacro;
+        private static Callback<Vector3> _pointCallback;
+
+        public static void RequestPoint(Callback<Vector3> handler)
+        {
+            _pointCallback = handler;
+        }
+
+        public static Character RequestCharacter()
+        {
+            return SelectedCharacter;
         }
     }
 
-    [Flags]
     public enum TargetType
     {
-        Point = 1,
-        Character = 2,
-        Allied = 4,
-        Neutral = 8,
-        Enemy = 16,
-        Self = 32,
-        AoE = 64
+        Point,
+        Character
     }
 
     public enum TargetForm
     {
+        /// <summary>
+        /// May hit multiple characters
+        /// </summary>
         Singular,
+        /// <summary>
+        /// May not hit multiple characters
+        /// </summary>
         Plural
+    }
+
+    [Flags]
+    public enum TargetConstraints
+    {
+        Allied = 1,
+        Neutral = 2,
+        Enemy = 4,
+        Self = 8
     }
 }

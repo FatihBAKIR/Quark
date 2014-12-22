@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Quark.Buff
 {
-    public class Buff : IDisposable
+    public class Buff : IDisposable, ITaggable
     {
         protected float Interval;
         protected float Duration;
@@ -66,6 +66,15 @@ namespace Quark.Buff
             {
                 this.Deregister();
                 this.OnDone();
+            }
+        }
+
+        public virtual string[] Tags
+        {
+            get{
+                return new string[] { "buff" };
+            }
+            set{
             }
         }
 

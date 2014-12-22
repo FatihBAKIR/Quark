@@ -35,4 +35,11 @@ namespace Quark.Spell
             : base("Cancelled casting")
         { }
     }
+
+    public class RangeError : CastError
+    {
+        public RangeError()
+            : base("Target out of range")
+        { }
+    }
 }

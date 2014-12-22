@@ -7,24 +7,24 @@ namespace Quark.Missile
 {
     public class Missile : MonoBehaviour
     {
-        const float NearEnough = 0.05F;
-        float InitialTime;
-        Vector3 InitialPosition;
-        Vector3 TargetPosition;
-        Character TargetCharacter;
-        CastData Data;
+        const float NearEnough = 0.1F;
+        float _initialTime;
+        Vector3 _initialPosition;
+        Vector3 _targetPosition;
+        Character _targetCharacter;
+        CastData _data;
 
-        MissileController Controller;
+        MissileController _controller;
 
         uint HitCount
         {
             get
             {
-                return Data.HitCount;
+                return _data.HitCount;
             }
             set
             {
-                Data.HitCount = value;
+                _data.HitCount = value;
             }
         }
 
@@ -36,7 +36,7 @@ namespace Quark.Missile
         {
             get
             {
-                return this.InitialPosition;
+                return this._initialPosition;
             }
         }
 
@@ -44,7 +44,7 @@ namespace Quark.Missile
         {
             get
             {
-                return ToPos ? this.TargetPosition : this.TargetCharacter.transform.position;
+                return ToPos ? this._targetPosition : this._targetCharacter.transform.position;
             }
         }
 
@@ -58,7 +58,7 @@ namespace Quark.Missile
         {
             get
             {
-                return this.InitialTime;
+                return this._initialTime;
             }
         }
 
@@ -66,7 +66,10 @@ namespace Quark.Missile
         {
             get
             {
-                return Vector3.Distance(this.transform.position, this.TargetPosition) <= NearEnough;
+                Vector3 a = transform.position, b = _targetPosition;
+                a.y = 0;
+                b.y = 0;
+                return Vector3.Distance(a, b) <= NearEnough;
             }   
         }
 
@@ -76,9 +79,9 @@ namespace Quark.Missile
         {
             GameObject obj = (GameObject)MonoBehaviour.Instantiate(prefab, data.CastBeginPoint, Quaternion.identity);
             Missile m = obj.AddComponent<Missile>();
-            m.Data = data;
-            m.Controller = controller;
-            m.Controller.Set(m);
+            m._data = data;
+            m._controller = controller;
+            m._controller.Set(m);
             return m;
         }
 
@@ -86,23 +89,23 @@ namespace Quark.Missile
 
         public void Set(Vector3 target)
         {
-            this.CastRotation = target - Data.CastBeginPoint;
+            this.CastRotation = target - _data.CastBeginPoint;
             this.ToPos = true;
-            this.TargetPosition = target;
+            this._targetPosition = target;
         }
 
         public void Set(Character target)
         {
-            this.CastRotation = target.transform.position - Data.CastBeginPoint;
-            this.TargetCharacter = target;
+            this.CastRotation = target.transform.position - _data.CastBeginPoint;
+            this._targetCharacter = target;
         }
 
         #endregion
 
         void Start()
         {
-            this.InitialPosition = this.transform.position;
-            this.InitialTime = Time.timeSinceLevelLoad;
+            _initialPosition = this.transform.position;
+            _initialTime = Time.timeSinceLevelLoad;
         }
 
         void OnTriggerEnter(Collider c)
@@ -110,11 +113,11 @@ namespace Quark.Missile
             Character hit = c.gameObject.GetComponent<Character>();
             if (IsHitValid(hit))
             {
-                Data.Spell.OnHit(hit);
+                _data.Spell.OnHit(hit);
 
-                if ((!ToPos && hit.Equals(this.TargetCharacter)) || (this.Data.Spell.TargetForm == TargetForm.Singular))
+                if ((!ToPos && hit.Equals(this._targetCharacter)) || (this._data.Spell.TargetForm == TargetForm.Singular))
                 {
-                    Data.Spell.CollectProjectile(this);
+                    _data.Spell.CollectProjectile(this);
                     Destroy(this.gameObject);
                 }
             }
@@ -123,25 +126,24 @@ namespace Quark.Missile
 
         protected virtual bool IsHitValid(Character hit)
         {
-            bool result = hit != null && !hit.Equals(Data.Caster);
+            bool result = hit != null && !hit.Equals(_data.Caster);
             if (result)
-                this.HitCount++;
+                HitCount++;
             return result;
         }
 
         void Update()
         {
             if (!ToPos)
-                this.TargetPosition = this.TargetCharacter.transform.position;
+                _targetPosition = _targetCharacter.transform.position;
         
-            Controller.Control();
-            Data.Spell.OnTravel(this.transform.position);
+            _controller.Control();
+            _data.Spell.OnTravel(transform.position);
 
-            if (ToPos && this.HasReached)
+            if (ToPos && HasReached)
             {
-                Data.Spell.CollectProjectile(this);
-                Destroy(this.gameObject);
-                return;
+                _data.Spell.CollectProjectile(this);
+                Destroy(gameObject);
             }
         }
     }

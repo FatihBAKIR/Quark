@@ -2,13 +2,47 @@
 using System.Collections.Generic;
 using Quark.Spell;
 using UnityEngine;
+using Quark.Utilities;
 
 namespace Quark
 {
-    public class Effect
+    public class Effect : ITaggable
     {
-        protected string name;
-        protected string description;
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
+        /// <value>
+        /// The name of this effect.
+        /// </value>
+        protected virtual string Name
+        {
+            get{
+                return "Effect";
+            }
+        }
+        /// <summary>
+        /// Gets the description.
+        /// </summary>
+        /// <value>
+        /// The description of this effect.
+        /// </value>
+        protected virtual string Description
+        {
+            get{
+                return "Core Mutator";
+            }
+        }
+
+        public virtual string[] Tags
+        {
+            get
+            {
+                return new string[] { "effect" };
+            }
+            set
+            {
+            }
+        }
 
         public CastData Data { get; set; }
 
@@ -44,32 +78,5 @@ namespace Quark
         {
         }
 
-        /// <summary>
-        /// Gets the description.
-        /// </summary>
-        /// <value>
-        /// The description of this effect.
-        /// </value>
-        public string Description
-        {
-            get
-            {
-                return description;
-            }
-        }
-
-        /// <summary>
-        /// Gets the name.
-        /// </summary>
-        /// <value>
-        /// The name of this effect.
-        /// </value>
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
     }
 }

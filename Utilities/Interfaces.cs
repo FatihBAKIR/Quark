@@ -14,4 +14,13 @@
     {
         void Register();
     }
+
+    public interface ITaggable
+    {
+        string[] Tags
+        {
+            get;
+            set;
+        }
+    }
 }
