@@ -17,7 +17,6 @@ namespace Quark.Spell
         TargetMacro _macro;
         LifeStep _step = LifeStep.Null;
 
-
         public uint HitCount = 0;
 
         public CastData()
@@ -27,8 +26,8 @@ namespace Quark.Spell
 
         ~CastData()
         {
-            this._spell = null;
-            this._caster = null;
+            _spell = null;
+            _caster = null;
             Logger.GC("CastData::dtor");
         }
 
@@ -44,14 +43,18 @@ namespace Quark.Spell
         /// <param name='spell'>
         /// The instance of the spell to be cast.
         /// </param>
-        public static CastData PrepareCast(Character caster, Quark.Spell.Spell spell)
+        public static CastData PrepareCast(Character caster, Spell spell)
         {
             CastData data = new CastData();
             data._step = LifeStep.Null;
             data._caster = caster;
             data._spell = spell;
-            spell.SetData(ref data);
+            Messenger<CastData>.Broadcast("Prepare", data);
+            Messenger<CastData>.Broadcast(data.Spell.Name + ".Prepare", data);
+            Messenger<CastData>.Broadcast(caster.Identifier() + "." + data.Spell.Name + ".Prepare", data);
+            data._spell.SetData(ref data);
             Logger.Debug("CastData::PrepareCast");
+            Debug.Log(data._spell.Name);
             data.Begin();
             return data;
         }
@@ -122,20 +125,26 @@ namespace Quark.Spell
             }
         }
 
-        public Quark.Spell.Spell Spell
+        public Spell Spell
         {
             get
             {
                 return _spell;
             }
+            set
+            {
+                if (_step != LifeStep.Null)
+                    return;
+                _spell = value;
+            }
         }
 
         public bool CanAddTarget()
         {
-            if (this._step != LifeStep.Targeting)
+            if (_step != LifeStep.Targeting)
                 throw new NotTargetingException();
 
-            if (this._spell.TargetForm == TargetForm.Singular && (this._targetChars.Count > 0 || this._targetPoints.Count > 0))
+            if (_spell.TargetForm == TargetForm.Singular && (_targetChars.Count > 0 || _targetPoints.Count > 0))
                 throw new SingularSpellException();
 
             return true;
@@ -144,13 +153,13 @@ namespace Quark.Spell
         public void AddTarget(Character character)
         {
             CanAddTarget();
-            this._targetChars.Add(character);
+            _targetChars.Add(character);
         }
 
         public void AddTarget(Vector3 point)
         {
             CanAddTarget();
-            this._targetPoints.Add(point);
+            _targetPoints.Add(point);
         }
 
         /// <summary>
@@ -158,7 +167,7 @@ namespace Quark.Spell
         /// </summary>
         void Begin()
         {
-            this._step = LifeStep.Begin;
+            _step = LifeStep.Begin;
             Logger.Debug("CastData.Begin");
             if (!_caster.CanCast)
             {

@@ -1,62 +1,40 @@
+using System.Globalization;
 using System.Text;
 
 namespace Quark.Attribute
 {
     public class AttributeModifier
     {
-        string sourceAttr;
-        double multiplier;
+        public double Multiplier { get; set; }
 
-        public double Multiplier
-        {
-            get
-            {
-                return this.multiplier;
-            }
-            set
-            {
-                multiplier = value;
-            }
-        }
+        public string AttrName { get; set; }
 
-        public string AttrName
+        public AttributeModifier(string sourceAttribute, double multiplier)
         {
-            get
-            {
-                return this.sourceAttr;
-            }
-            set
-            {
-                sourceAttr = value;
-            }
-        }
-
-        public AttributeModifier(string SourceAttribute, double Multiplier)
-        {
-            this.sourceAttr = SourceAttribute;
-            this.multiplier = Multiplier;
+            AttrName = sourceAttribute;
+            Multiplier = multiplier;
         }
 
         public double GetValue(Character character)
         {
-            return character.GetAttribute(this.AttrName).Value * this.Multiplier;
+            return character.GetAttribute(AttrName).Value * Multiplier;
         }
 
         public double GetValue(AttributeBag bag)
         {
-            return bag[this.AttrName] * this.Multiplier;
+            return bag[AttrName] * Multiplier;
         }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("[Modifier ");
-            if (!string.IsNullOrEmpty(sourceAttr))
+            if (!string.IsNullOrEmpty(AttrName))
             {
-                sb.Append(this.sourceAttr.ToString());
+                sb.Append(AttrName);
                 sb.Append(" * ");
             }
-            sb.Append(this.multiplier.ToString());
+            sb.Append(this.Multiplier.ToString(CultureInfo.InvariantCulture));
             sb.Append("]");
             return sb.ToString();
         }

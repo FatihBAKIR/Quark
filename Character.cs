@@ -35,14 +35,12 @@ namespace Quark
             Logger.Debug("Character::cctor");
         }
 
-        [SuppressMessage("ReSharper", "ParameterHidesMember")]
         public Attribute.Attribute GetAttribute(string tag)
         {
             if (tag == null) throw new ArgumentNullException("tag");
             return _attributes.GetAttribute(tag);
         }
 
-        [SuppressMessage("ReSharper", "ParameterHidesMember")]
         public Stat GetStat(string tag)
         {
             if (tag == null) throw new ArgumentNullException("tag");

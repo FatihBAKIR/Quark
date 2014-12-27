@@ -20,6 +20,9 @@ namespace Quark.Spell
             {
                 return 1;
             }
+            set
+            {
+            }
         }
 
         public virtual string Name

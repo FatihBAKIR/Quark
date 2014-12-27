@@ -30,6 +30,7 @@ namespace Quark.Attribute
             NewAttribute("sta", "Stamina");
             NewAttribute("armor", "Armor");
             NewAttribute("mres", "Magic Resist");
+            NewAttribute("crit", "Critical Strike Chance");
 
             Stat health = NewStat("hp", "Health");
             health.AddInteraction("str", 3);
