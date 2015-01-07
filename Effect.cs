@@ -29,7 +29,7 @@ namespace Quark
         protected virtual string Description
         {
             get{
-                return "Core Mutator";
+                return "Sımple Mutator";
             }
         }
 
@@ -78,5 +78,12 @@ namespace Quark
         {
         }
 
+        /// <summary>
+        /// Applies this effect on the specified non character targetable
+        /// </summary>
+        /// <param name="target">Targetable.</param>
+        public virtual void Apply(Targetable target)
+        {
+        }
     }
 }

@@ -67,7 +67,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>echo f | xcopy "$(TargetPath)" "..\..\..\..\QuarkDemo\Assets\$(TargetFileName)" /v/y</PostBuildEvent>
+    <!--<PostBuildEvent>echo f | xcopy "$(TargetPath)" "..\..\..\..\QuarkDemo\Assets\$(TargetFileName)" /v/y</PostBuildEvent>-->
   </PropertyGroup>
   <ProjectExtensions>
     <MonoDevelop>

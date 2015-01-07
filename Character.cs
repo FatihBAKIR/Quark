@@ -6,20 +6,30 @@ using Quark.Buff;
 using Quark.Spell;
 using Quark.Utilities;
 using UnityEngine;
+using System.ComponentModel;
 
 namespace Quark
 {
-    public class Character : MonoBehaviour, Identifiable
+    public class Targetable : MonoBehaviour, Identifiable
+    {
+        public bool IsTargetable { get; set; }
+
+        public string Identifier()
+        {
+            return GetHashCode().ToString();
+        }
+    }
+
+    public class Character : Targetable
     {
         AttributeBag _attributes;
         List<CastData> _casting;
         BuffContainer _buffs;
         //TODO: items
 
-        public bool IsTargetable { get; set; }
-
-        public void Start()
+        public virtual void Start()
         {
+            IsTargetable = true;
             _attributes = new AttributeBag(this);
             _buffs = new BuffContainer(this);
             _casting = new List<CastData>();
@@ -27,21 +37,26 @@ namespace Quark
 
         public Character()
         {
-            Logger.Debug("Character::ctor");
+            Logger.GC("Character::ctor");
         }
 
         public Character(Character obj)
         {
-            Logger.Debug("Character::cctor");
+            Logger.GC("Character::cctor");
         }
 
-        public Attribute.Attribute GetAttribute(string tag)
+        ~Character()
+        {
+            Logger.GC("Character::dtor");
+        }
+
+        public virtual Attribute.Attribute GetAttribute(string tag)
         {
             if (tag == null) throw new ArgumentNullException("tag");
             return _attributes.GetAttribute(tag);
         }
 
-        public Stat GetStat(string tag)
+        public virtual Stat GetStat(string tag)
         {
             if (tag == null) throw new ArgumentNullException("tag");
             return _attributes.GetStat(tag);
@@ -55,7 +70,7 @@ namespace Quark
             }
         }
 
-        public bool CanCast
+        public virtual bool CanCast
         {
             get
             {
@@ -90,41 +105,6 @@ namespace Quark
             {
                 return _attributes.GetAttributes();
             }
-        }
-
-        void Update()
-        {
-            foreach (CastData cast in _casting)
-            {
-                //Debug.Log(cast.CastPercentage);
-            }
-            //Run buffs, spell casts etc.
-        }
-
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        protected virtual void OnGUI()
-        {
-        }
-
-        public string Identifier()
-        {
-            return GetHashCode().ToString();
-            //return this.name + "(" + this.GetHashCode().ToString() + ")";
-        }
-
-        void OnMouseEnter()
-        {
-            //new MouseArgs(this, MouseEventType.Enter).Broadcast();
-        }
-
-        void OnMouseExit()
-        {
-            //new MouseArgs(this, MouseEventType.Exit).Broadcast();
-        }
-
-        void OnMouseUp()
-        {
-            //new MouseArgs(this, MouseEventType.Click).Broadcast();
         }
     }
 

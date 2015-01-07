@@ -5,8 +5,16 @@ using UnityEngine;
 
 namespace Quark.Missile
 {
+    /// <summary>
+    /// Missile class provides interface for MissileController objects to access to properties about the projectile
+    /// It also retrieves necessary movement vector or position vector and moves the carrier object appropriately
+    /// It is also responsible for handling the collisions and target checks
+    /// </summary>
     public class Missile : MonoBehaviour
     {
+        /// <summary>
+        /// The near enough distance constant which indicates that a missile will consider itself reached to a target point
+        /// </summary>
         const float NearEnough = 0.1F;
         float _initialTime;
         Vector3 _initialPosition;
@@ -126,7 +134,7 @@ namespace Quark.Missile
 
         protected virtual bool IsHitValid(Character hit)
         {
-            bool result = hit != null && !hit.Equals(_data.Caster);
+            bool result = hit != null && !hit.Equals(_data.Caster) && hit.IsTargetable;
             if (result)
                 HitCount++;
             return result;

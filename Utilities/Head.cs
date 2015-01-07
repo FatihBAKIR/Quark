@@ -10,7 +10,7 @@ namespace Quark.Utilities
             if (Head.head != null)
             {
                 DestroyImmediate(this);
-                Logger.Warn("Multiple Head Objects Are Forbidden");
+                    Logger.Warn("The Quark Head Must Be Unique!");
                 return;
             }
             Head.head = this;
