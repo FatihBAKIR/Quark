@@ -64,6 +64,7 @@
     <Compile Include="Utilities\EventDictionary.cs" />
     <Compile Include="Utilities\KeyBinding.cs" />
     <Compile Include="Utilities\KeyBindings.cs" />
+    <Compile Include="Condition.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

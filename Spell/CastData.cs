@@ -53,7 +53,7 @@ namespace Quark.Spell
             Messenger<CastData>.Broadcast("Prepare", data);
             Messenger<CastData>.Broadcast(data.Spell.Name + ".Prepare", data);
             Messenger<CastData>.Broadcast(caster.Identifier() + "." + data.Spell.Name + ".Prepare", data);
-            data._spell.SetData(ref data);
+            data._spell.Introduce(data);
             Logger.Debug("CastData::PrepareCast");
             data.Begin();
             return data;
