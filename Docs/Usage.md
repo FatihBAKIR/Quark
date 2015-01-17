@@ -53,6 +53,7 @@ public class BeginQuark : MonoBehaviour
 This is a distaste but I hope to fix it in a short time with a more 'convenient' way rather than tagging objects.
 
 Next, create an empty `GameObject` in your hierarchy (by pressing `Ctrl + Shift + N` and add a `BeginQuark` component to it.
+
 ![Example of a Quark.Head object](Images/Usage/head.png)
 
 > Note that the `Awake` event of an object is invoked before the `Start` event, therefore it should be enough to make sure it runs before everything else. To be sure, you can set the script priority of `BeginQuark` script to be of highest priority.
