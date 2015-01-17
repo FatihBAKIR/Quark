@@ -9,7 +9,7 @@ namespace Quark.Spell
     public class Spell : ITaggable
     {
         /// <summary>
-        /// Gets the duration of the cast.
+        /// Gets or Sets the duration of the cast.
         /// </summary>
         /// <value>
         /// The duration of the cast.
@@ -25,26 +25,33 @@ namespace Quark.Spell
             }
         }
 
+        /// <summary>
+        /// Name of the Spell
+        /// </summary>
+        /// <value>The name.</value>
         public virtual string Name
         {
             get
             {
-                return "Spell";
+                return this.GetType().Name;
             }
         }
 
         public virtual string[] Tags
         {
-            get{
+            get
+            {
                 return new string[] { "spell" };
             }
-            set{
+            set
+            {
             }
         }
 
         /// <summary>
         /// Gets the target form of this spell
         /// </summary>
+        /// <value>The target form.</value>
         public virtual TargetForm TargetForm
         {
             get
@@ -53,6 +60,10 @@ namespace Quark.Spell
             }
         }
 
+        /// <summary>
+        /// Gets the target macro of this Spell
+        /// </summary>
+        /// <value>The target macro.</value>
         public virtual TargetMacro TargetMacro
         {
             get
@@ -101,11 +112,15 @@ namespace Quark.Spell
             }
         }
 
-        protected CastData Data { get; set; }
+        protected CastData _data { get; set; }
 
-        public void SetData(ref CastData data)
+        /// <summary>
+        /// Introduce the CastData object which is invoking this Spell instance.
+        /// </summary>
+        /// <param name="data">Invoking CastData</param>
+        public void Introduce(CastData data)
         {
-            this.Data = data;
+            this._data = data;
         }
 
         #region Effect Holders
@@ -166,6 +181,45 @@ namespace Quark.Spell
 
         #endregion
 
+        private void RunEffects(Effect[] Effects)
+        {
+            foreach (Effect effect in Effects)
+            {
+                effect.Data = _data;
+                effect.Apply();
+            }
+        }
+
+        private void RunEffects(Targetable[] Targets, Effect[] Effects)
+        {
+            foreach (Targetable target in Targets)
+                foreach (Effect effect in Effects)
+                {
+                    effect.Data = _data;
+                    effect.Apply(target);
+                }
+        }
+
+        private void RunEffects(Character[] Targets, Effect[] Effects)
+        {
+            foreach (Character target in Targets)
+                foreach (Effect effect in Effects)
+                {
+                    effect.Data = _data;
+                    effect.Apply(target);
+                }
+        }
+
+        private void RunEffects(Vector3[] Targets, Effect[] Effects)
+        {
+            foreach (Vector3 target in Targets)
+                foreach (Effect effect in Effects)
+                {
+                    effect.Data = _data;
+                    effect.Apply(target);
+                }
+        }
+
         #region Effect Handlers
 
         /// <summary>
@@ -177,11 +231,7 @@ namespace Quark.Spell
          * The default behavior of spell lifecycle steps are only about running preset effects with appropriate targets.
          */
             Logger.Debug("Spell.OnBegin");
-            foreach (Effect effect in this.BeginEffects)
-            {
-                effect.Data = Data;
-                effect.Apply();
-            }
+            RunEffects(BeginEffects);
         }
 
         /// <summary>
@@ -193,23 +243,10 @@ namespace Quark.Spell
          * The default behavior of spell lifecycle steps are only about running preset effects with appropriate targets.
          */
             Logger.Debug("Spell.OnTargetingDone");
-            foreach (Vector3 targetp in Data.TargetPoints)
-                foreach (Effect effect in this.TargetingDoneEffects)
-                {
-                    effect.Data = Data;
-                    effect.Apply(targetp);
-                }
-            foreach (Character target in Data.TargetCharacters)
-                foreach (Effect effect in this.TargetingDoneEffects)
-                {
-                    effect.Data = Data;
-                    effect.Apply(target);
-                }
-            foreach (Effect effect in this.TargetingDoneEffects)
-            {  
-                effect.Data = Data;
-                effect.Apply();
-            }
+            RunEffects(_data.TargetPoints, TargetingDoneEffects);
+            RunEffects(_data.TargetCharacters, TargetingDoneEffects);
+            RunEffects(_data.Targetables, TargetingDoneEffects);
+            RunEffects(TargetingDoneEffects);
         }
 
         /// <summary>
@@ -218,11 +255,7 @@ namespace Quark.Spell
         public virtual void OnCastingBegan()
         {
             Logger.Debug("Spell.OnCastingBegan");
-            foreach (Effect effect in this.CastingEffects)
-            {
-                effect.Data = Data;
-                effect.Apply();
-            }
+            RunEffects(CastingEffects);
         }
 
         /// <summary>
@@ -231,27 +264,17 @@ namespace Quark.Spell
         public virtual void OnCastDone()
         {
             Logger.Debug("Spell.OnCastDone");
-            foreach (Effect effect in this.CastDoneEffects)
-            {
-                effect.Data = Data;
-                effect.Apply();
-            }
+
+            RunEffects(CastDoneEffects);
+
             if (this.IsProjectiled)
                 this.CreateProjectiles();
             else
             {
-                foreach (Vector3 targetp in Data.TargetPoints)
-                    foreach (Effect effect in this.CastDoneEffects)
-                    {
-                        effect.Data = Data;
-                        effect.Apply(targetp);
-                    }
-                foreach (Character target in Data.TargetCharacters)
-                    foreach (Effect effect in this.CastDoneEffects)
-                    {
-                        effect.Data = Data;
-                        effect.Apply(target);
-                    }
+                RunEffects(_data.TargetPoints, CastDoneEffects);
+                RunEffects(_data.TargetCharacters, CastDoneEffects);
+                RunEffects(_data.Targetables, CastDoneEffects);
+
                 OnFinal();
             }
         }
@@ -261,23 +284,15 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnTravel(Vector3 position)
         {
-            foreach (Effect effect in this.TravelEffects)
-            {
-                effect.Data = Data;
-                effect.Apply(position);
-            }
+            RunEffects(new Vector3[] { position }, TravelEffects);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public virtual void OnHit(Vector3 point)
+        public virtual void OnHit(Vector3 position)
         {
-            foreach (Effect effect in this.HitEffects)
-            {
-                effect.Data = Data;
-                effect.Apply(point);
-            }
+            RunEffects(new Vector3[] { position }, HitEffects);
         }
 
         /// <summary>
@@ -285,11 +300,15 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnHit(Character character)
         {
-            foreach (Effect effect in this.HitEffects)
-            {
-                effect.Data = Data;
-                effect.Apply(character);
-            }
+            RunEffects(new Character[] { character }, HitEffects);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual void OnHit(Targetable targetable)
+        {
+            RunEffects(new Targetable[] { targetable }, HitEffects);
         }
 
         /// <summary>
@@ -297,11 +316,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnMiss()
         {
-            foreach (Effect effect in this.MissEffects)
-            {
-                effect.Data = Data;
-                effect.Apply();
-            }
+            RunEffects(MissEffects);
         }
 
         /// <summary>
@@ -309,12 +324,9 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnFinal()
         {
-            foreach (Effect effect in this.ClearEffects)
-            {
-                effect.Data = Data;
-                effect.Apply();
-            }
-            this.Data = null;
+            RunEffects(ClearEffects);
+
+            this._data = null;
         }
 
         #endregion
@@ -338,18 +350,17 @@ namespace Quark.Spell
         /// </summary>
         protected virtual void CreateProjectiles()
         {
-            foreach (Vector3 point in Data.TargetPoints)
+            foreach (Vector3 point in _data.TargetPoints)
             {
                 Missile_Count++;
-                Missile.Missile.Make(this.MissileObject, this.Controller, this.Data).Set(point);
+                Missile.Missile.Make(this.MissileObject, this.Controller, this._data).Set(point);
             }
 
-            foreach (Character target in Data.TargetCharacters)
+            foreach (Character target in _data.TargetCharacters)
             {
                 Missile_Count++;
-                Missile.Missile.Make(this.MissileObject, this.Controller, this.Data).Set(target);
+                Missile.Missile.Make(this.MissileObject, this.Controller, this._data).Set(target);
             }
         }
     }
-
 }

@@ -11,6 +11,7 @@ namespace Quark.Spell
         Character _caster;
         Vector3 _beginPoint;
         float _beginningTime;
+        List<Targetable> _targetables;
         List<Character> _targetChars;
         List<Vector3> _targetPoints;
         Spell _spell;
@@ -21,14 +22,18 @@ namespace Quark.Spell
 
         public CastData()
         {
+#if DEBUG
             Logger.GC("CastData::ctor");
+#endif
         }
 
         ~CastData()
         {
             _spell = null;
             _caster = null;
+#if DEBUG
             Logger.GC("CastData::dtor");
+#endif
         }
 
         /// <summary>
@@ -52,9 +57,8 @@ namespace Quark.Spell
             Messenger<CastData>.Broadcast("Prepare", data);
             Messenger<CastData>.Broadcast(data.Spell.Name + ".Prepare", data);
             Messenger<CastData>.Broadcast(caster.Identifier() + "." + data.Spell.Name + ".Prepare", data);
-            data._spell.SetData(ref data);
+            data._spell.Introduce(data);
             Logger.Debug("CastData::PrepareCast");
-            Debug.Log(data._spell.Name);
             data.Begin();
             return data;
         }
@@ -98,6 +102,14 @@ namespace Quark.Spell
             get
             {
                 return (int)(CastTime * 100 / _spell.CastDuration);
+            }
+        }
+
+        public Targetable[] Targetables
+        {
+            get
+            {
+                return _targetables.ToArray();
             }
         }
 
@@ -150,6 +162,12 @@ namespace Quark.Spell
             return true;
         }
 
+        public void AddTarget(Targetable targetable)
+        {
+            CanAddTarget();
+            _targetables.Add(targetable);
+        }
+
         public void AddTarget(Character character)
         {
             CanAddTarget();
@@ -184,15 +202,16 @@ namespace Quark.Spell
         /// </summary>
         void BeginTargeting()
         {
-            this._step = LifeStep.Targeting;
-            this._targetChars = new List<Character>();
-            this._targetPoints = new List<Vector3>();
+            _step = LifeStep.Targeting;
+            _targetables = new List<Targetable>();
+            _targetChars = new List<Character>();
+            _targetPoints = new List<Vector3>();
             _macro = _spell.TargetMacro;
             _macro.SetData(this);
             _macro.Run();
         }
 
-        public void TargetingFail()
+        public void TargetingFail(TargetingError error)
         {
             _macro = null;
             Clear(LifeStep.Fail);

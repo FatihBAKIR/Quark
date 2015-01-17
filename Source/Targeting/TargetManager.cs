@@ -39,6 +39,8 @@ namespace Quark.Targeting
 
         private static void OnCharacterClick(Character character)
         {
+            if (character != null && !character.IsTargetable)
+                return;
             Messenger.Broadcast("SelectedCharacterChanged");
             SelectedCharacter = character;
         }
@@ -191,6 +193,7 @@ namespace Quark.Targeting
     public enum TargetType
     {
         Point,
+        Targetable,
         Character
     }
 

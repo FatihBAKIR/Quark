@@ -10,14 +10,14 @@ namespace Quark.Utilities
             if (Head.head != null)
             {
                 DestroyImmediate(this);
-                Logger.Warn("Multiple Head Objects Are Forbidden");
+                    Logger.Warn("The Head Object Must Be Unique!");
                 return;
             }
             Head.head = this;
             
             TargetManager.Register();
             KeyBindings.Register();
-            Logger.Info("Head Started");
+            Logger.Info("Head::Start");
         }
 
         void Update()
@@ -25,6 +25,10 @@ namespace Quark.Utilities
             Messenger.Broadcast("Update");
         }
 
+        /// <summary>
+        /// Gets or sets the active player Character.
+        /// </summary>
+        /// <value>The player.</value>
         public static Character Player
         {
             get
