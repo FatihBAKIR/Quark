@@ -49,10 +49,8 @@ namespace Quark.Buff
                 }
             }
             foreach (Buff buff in _toDispose)
-            {
                 _buffs.Remove(buff);
-                buff.Dispose();
-            }
+
             _toDispose.Clear();
             _toDispose = null;
         }

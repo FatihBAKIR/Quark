@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Quark.Buff
 {
-    public class Buff : IDisposable, ITaggable
+    public class Buff : ITaggable
     {
         protected float Interval;
         protected float Duration;
@@ -25,16 +25,18 @@ namespace Quark.Buff
             Logger.GC("Buff::dtor");
         }
 
-        public void Dispose()
-        {
-
-        }
-
+        /// <summary>
+        /// Sets the CastData context where this Buff will run in
+        /// </summary>
+        /// <param name="data">The CastData context</param>
         public void SetData(CastData data)
         {
             this.Data = data;
         }
 
+        /// <summary>
+        /// This ratio indicates the rate of its alive time to its total duration 
+        /// </summary>
         public float LifeRatio
         {
             get
@@ -43,22 +45,35 @@ namespace Quark.Buff
             }
         }
 
+        /// <summary>
+        /// The time span in seconds where this Buff was running 
+        /// </summary>
         protected float Alive
         {
             get
             {
-                return Time.timeSinceLevelLoad - this.posessionTime;
+                return Time.timeSinceLevelLoad - this._posessionTime;
             }
         }
 
-        private float posessionTime = 0;
-        private float lastTick = 0;
+        /// <summary>
+        /// This variable is stored for calculating the alive time of the Buff instances
+        /// </summary>
+        private float _posessionTime = 0;
 
+        /// <summary>
+        /// This variable is stored for checking whether the Tick method should be called or not in a given frame
+        /// </summary>
+        private float _lastTick = 0;
+
+        /// <summary>
+        /// This function controls the state of the buff for whether it should call the OnTick function in this frame or not and also it checks if it has completed its lifespan or not
+        /// </summary>
         private void Tick()
         {
-            if (Time.timeSinceLevelLoad - lastTick >= Interval)
+            if (Time.timeSinceLevelLoad - _lastTick >= Interval)
             {
-                lastTick = Time.timeSinceLevelLoad;
+                _lastTick = Time.timeSinceLevelLoad;
                 this.OnTick();
             }
 
@@ -102,8 +117,8 @@ namespace Quark.Buff
         public virtual void OnPossess(Character possessor)
         {
             this.Possessor = possessor;
-            this.posessionTime = Time.timeSinceLevelLoad;
-            this.lastTick = Time.timeSinceLevelLoad;
+            this._posessionTime = Time.timeSinceLevelLoad;
+            this._lastTick = Time.timeSinceLevelLoad;
             this.Register();
         }
 
@@ -112,7 +127,6 @@ namespace Quark.Buff
         /// </summary>
         protected virtual void OnTick()
         {
-        
         }
 
         /// <summary>

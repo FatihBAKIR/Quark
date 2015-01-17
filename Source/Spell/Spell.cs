@@ -129,55 +129,55 @@ namespace Quark.Spell
         /// The begin effects.
         /// Effects within this list are applied with the caster Character object argument when the castdata is initialized
         /// </summary>
-        protected virtual Effect[] BeginEffects { get { return new Effect[] { }; } }
+        protected virtual EffectCollection BeginEffects { get { return new EffectCollection { }; } }
 
         /// <summary>
         /// The targeting done effects.
         /// Effects within this list are applied with each of the target Character objects and Vector objects, depending on the type of the spell
         /// </summary>
-        protected virtual Effect[] TargetingDoneEffects { get { return new Effect[] { }; } }
+        protected virtual EffectCollection TargetingDoneEffects { get { return new EffectCollection { }; } }
 
         /// <summary>
         /// The casting began effects
         /// Effects within this list are applied after targeting done and casting began, these effects are not executed for instant spells
         /// </summary>
-        protected virtual Effect[] CastingEffects { get { return new Effect[] { }; } }
+        protected virtual EffectCollection CastingEffects { get { return new EffectCollection { }; } }
 
         /// <summary>
         /// The interruption effects
         /// Effects within this list are applied if the spell gets interrupted either by the caster or other Characters
         /// </summary>
-        protected virtual Effect[] InterruptEffects { get { return new Effect[] { }; } }
+        protected virtual EffectCollection InterruptEffects { get { return new EffectCollection { }; } }
 
         /// <summary>
         /// The casting done effects
         /// Effects within this list are applied when the casting successfully finishes
         /// </summary>
-        protected virtual Effect[] CastDoneEffects { get { return new Effect[] { }; } }
+        protected virtual EffectCollection CastDoneEffects { get { return new EffectCollection { }; } }
 
         /// <summary>
         /// The travelling effects
         /// Effects within this list are applied while the projectiles of this missile are travelling
         /// </summary>
-        protected virtual Effect[] TravelEffects { get { return new Effect[] { }; } }
+        protected virtual EffectCollection TravelEffects { get { return new EffectCollection { }; } }
 
         /// <summary>
         /// The on-hit effects
         /// Effects within this list are applied when a successful hit occurs
         /// </summary>
-        protected virtual Effect[] HitEffects { get { return new Effect[] { }; } }
+        protected virtual EffectCollection HitEffects { get { return new EffectCollection { }; } }
 
         /// <summary>
         /// The spell miss effects
         /// Effects within this list are applied when a projectile gets destroyed without hitting any characters
         /// </summary>
-        protected virtual Effect[] MissEffects { get { return new Effect[] { }; } }
+        protected virtual EffectCollection MissEffects { get { return new EffectCollection { }; } }
 
         /// <summary>
         /// The finalizing effects
         /// Effects within this list are applied just before the spell gets collected by the GC
         /// </summary>
-        protected virtual Effect[] ClearEffects { get { return new Effect[] { }; } }
+        protected virtual EffectCollection ClearEffects { get { return new EffectCollection { }; } }
 
         #endregion
 
@@ -231,7 +231,7 @@ namespace Quark.Spell
          * The default behavior of spell lifecycle steps are only about running preset effects with appropriate targets.
          */
             Logger.Debug("Spell.OnBegin");
-            RunEffects(BeginEffects);
+            BeginEffects.Run(_data);
         }
 
         /// <summary>
@@ -243,10 +243,11 @@ namespace Quark.Spell
          * The default behavior of spell lifecycle steps are only about running preset effects with appropriate targets.
          */
             Logger.Debug("Spell.OnTargetingDone");
-            RunEffects(_data.TargetPoints, TargetingDoneEffects);
-            RunEffects(_data.TargetCharacters, TargetingDoneEffects);
-            RunEffects(_data.Targetables, TargetingDoneEffects);
-            RunEffects(TargetingDoneEffects);
+            TargetingDoneEffects
+                .Run(_data.TargetPoints, _data)
+                .Run(_data.TargetCharacters, _data)
+                .Run(_data.Targetables, _data)
+                .Run(_data);
         }
 
         /// <summary>
@@ -255,7 +256,7 @@ namespace Quark.Spell
         public virtual void OnCastingBegan()
         {
             Logger.Debug("Spell.OnCastingBegan");
-            RunEffects(CastingEffects);
+            CastingEffects.Run(_data);
         }
 
         /// <summary>
@@ -265,15 +266,16 @@ namespace Quark.Spell
         {
             Logger.Debug("Spell.OnCastDone");
 
-            RunEffects(CastDoneEffects);
+            CastDoneEffects.Run();
 
             if (this.IsProjectiled)
                 this.CreateProjectiles();
             else
             {
-                RunEffects(_data.TargetPoints, CastDoneEffects);
-                RunEffects(_data.TargetCharacters, CastDoneEffects);
-                RunEffects(_data.Targetables, CastDoneEffects);
+                CastDoneEffects
+                    .Run(_data.TargetPoints, _data)
+                    .Run(_data.TargetCharacters, _data)
+                    .Run(_data.Targetables, _data);
 
                 OnFinal();
             }
@@ -284,7 +286,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnTravel(Vector3 position)
         {
-            RunEffects(new Vector3[] { position }, TravelEffects);
+            TravelEffects.Run(position, _data);
         }
 
         /// <summary>
@@ -292,7 +294,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnHit(Vector3 position)
         {
-            RunEffects(new Vector3[] { position }, HitEffects);
+            HitEffects.Run(position, _data);
         }
 
         /// <summary>
@@ -300,7 +302,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnHit(Character character)
         {
-            RunEffects(new Character[] { character }, HitEffects);
+            HitEffects.Run(character, _data);
         }
 
         /// <summary>
@@ -308,7 +310,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnHit(Targetable targetable)
         {
-            RunEffects(new Targetable[] { targetable }, HitEffects);
+            HitEffects.Run(targetable, _data);
         }
 
         /// <summary>
@@ -316,7 +318,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnMiss()
         {
-            RunEffects(MissEffects);
+            MissEffects.Run(_data);
         }
 
         /// <summary>
@@ -324,7 +326,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnFinal()
         {
-            RunEffects(ClearEffects);
+            ClearEffects.Run(_data);
 
             this._data = null;
         }
