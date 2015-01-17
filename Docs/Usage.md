@@ -25,6 +25,7 @@ This requirements can be easily solved by using a `Targetable` or `Character` co
 But for some reason, if you just drag-drop the Components provided from `Quark.dll`, they will work right away as you expect, but after restarting Unity, they will break. I am not sure why this behavior occurs, but I found a simple solution: tag objects you want Quark to handle with something, and let an additional script add the components before everything. Also it should add the `Head` component to itself.
 
 First create a new Tag, I use `Character` as a tag too.
+
 ![Create the Character tag](Images/Usage/tag.png)
 
 So, just create a new script, say `BeginQuark.cs` with the following content:
@@ -52,6 +53,7 @@ public class BeginQuark : MonoBehaviour
 This is a distaste but I hope to fix it in a short time with a more 'convenient' way rather than tagging objects.
 
 Next, create an empty `GameObject` in your hierarchy (by pressing `Ctrl + Shift + N` and add a`BeginQuark` component to it.
+
 ![Example of a Quark.Head object](Images/Usage/head.png)
 
 That's it, now you are ready to use Quark with your projects.
