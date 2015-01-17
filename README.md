@@ -44,6 +44,11 @@ For usage part, if you used the Unity Asset way, it is easy. Simply drag the `Qu
 
 If you included the dll, you should create a `Quark.Head` object. For details, please refer to [this article][1]
 
+Note
+----
+Quark is not production ready yet, so I haven't even finished implementing all of my ideas and some of the ones I've implemented are still bulky.
+If you see any bug/defect or you feel like you can improve it, I am open for all the issues and pull requests.
+
 Contribute
 ----
 Source and issues of Quark are held in [this GitHub repository][2].
