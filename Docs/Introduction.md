@@ -42,9 +42,9 @@ public class BoomSpell : Spell
 		}
 	}
 
-	protected override Effect[] TargetingDoneEffects {
+	protected override EffectCollection TargetingDoneEffects {
 		get {
-			return new Effect[] {
+			return new EffectCollection {
 				new DamageEffect (100)
 			};
 		}
