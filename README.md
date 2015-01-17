@@ -56,7 +56,7 @@ License
 ----
 Quark is licensed under [Apache V2][4] License.
 
-[1]: Usage.md
+[1]: Docs/Usage.md
 [2]: https://github.com/FatihBAKIR/Quark
 [3]: mailto:fatih@linux.com
 [4]: http://www.apache.org/licenses/LICENSE-2.0
