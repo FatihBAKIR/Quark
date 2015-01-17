@@ -37,17 +37,23 @@ namespace Quark
 
         public Character()
         {
+#if DEBUG
             Logger.GC("Character::ctor");
+#endif
         }
 
         public Character(Character obj)
         {
+#if DEBUG
             Logger.GC("Character::cctor");
+#endif
         }
 
         ~Character()
         {
+#if DEBUG
             Logger.GC("Character::dtor");
+#endif
         }
 
         public virtual Attribute.Attribute GetAttribute(string tag)
@@ -115,7 +121,8 @@ namespace Quark
         public MouseEventType Type { get; private set; }
         public bool IsCharacter { get; private set; }
 
-        public MouseArgs(Character character, MouseEventType type) : this()
+        public MouseArgs(Character character, MouseEventType type)
+            : this()
         {
             this.Character = character;
             this.Type = type;
@@ -123,7 +130,8 @@ namespace Quark
             this.IsCharacter = true;
         }
 
-        public MouseArgs(Vector3 point) : this()
+        public MouseArgs(Vector3 point)
+            : this()
         {
             this.Character = null;
             this.Point = point;

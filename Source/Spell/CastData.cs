@@ -22,14 +22,18 @@ namespace Quark.Spell
 
         public CastData()
         {
+#if DEBUG
             Logger.GC("CastData::ctor");
+#endif
         }
 
         ~CastData()
         {
             _spell = null;
             _caster = null;
+#if DEBUG
             Logger.GC("CastData::dtor");
+#endif
         }
 
         /// <summary>
@@ -207,7 +211,7 @@ namespace Quark.Spell
             _macro.Run();
         }
 
-        public void TargetingFail()
+        public void TargetingFail(TargetingError error)
         {
             _macro = null;
             Clear(LifeStep.Fail);

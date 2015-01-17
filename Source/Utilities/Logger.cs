@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Reflection;
 namespace Quark.Utilities
 {
     public static class Logger
@@ -32,7 +34,9 @@ namespace Quark.Utilities
 
         public static void Debug(string message)
         {
+#if DEBUG
             Logger.Add(message, LogLevel.Debug);
+#endif
         }
 
         public static void Warn(string message)
@@ -47,7 +51,18 @@ namespace Quark.Utilities
 
         public static void GC(string message)
         {
-            Logger.Add(message, LogLevel.GC);
+#if DEBUG
+            Logger.Add("GC: " + message, LogLevel.GC);
+#endif
+        }
+
+        public static void GC()
+        {
+#if DEBUG
+            StackTrace stackTrace = new StackTrace();
+            StackFrame callingFrame = stackTrace.GetFrame(1);
+            GC(callingFrame.GetMethod().DeclaringType.Name + "::" + callingFrame.GetMethod().Name);
+#endif
         }
     }
 
