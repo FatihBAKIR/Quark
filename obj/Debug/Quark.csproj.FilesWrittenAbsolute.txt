@@ -1,0 +1,5 @@
+/home/fatih/Projects/Quark/bin/Debug/UnityEngine.dll
+/home/fatih/Projects/Quark/bin/Debug/Quark.dll.mdb
+/home/fatih/Projects/Quark/bin/Debug/Quark.dll
+/home/fatih/Projects/Quark/obj/Debug/Quark.dll
+/home/fatih/Projects/Quark/obj/Debug/Quark.dll.mdb
