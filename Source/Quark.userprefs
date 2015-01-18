@@ -1,12 +1,8 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Utilities/KeyBindings.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Condition.cs">
     <Files>
-      <File FileName="Utilities/Events.cs" Line="29" Column="6" />
-      <File FileName="Spell/Spell.cs" Line="1" Column="1" />
-      <File FileName="Utilities/KeyBinding.cs" Line="1" Column="1" />
-      <File FileName="Utilities/KeyBindings.cs" Line="11" Column="10" />
-      <File FileName="Utilities/Head.cs" Line="1" Column="1" />
+      <File FileName="Condition.cs" Line="27" Column="22" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

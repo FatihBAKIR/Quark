@@ -1,5 +1,6 @@
 ﻿using System;
 using Quark.Spell;
+using UnityEngine;
 
 namespace Quark
 {
@@ -10,11 +11,44 @@ namespace Quark
         {
         }
 
-        public void Introduce(CastData data)
+        public virtual void Introduce(CastData data)
         {
             _data = data;
         }
 
+        /// <summary>
+        /// Checks whether a condition is met under the context
+        /// </summary>
+        public virtual bool Check()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Check whether a condition is met under the context with the specified point.
+        /// </summary>
+        /// <param name="point">The Point.</param>
+        public virtual bool Check(Vector3 point)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Check whether a condition is met under the context with the specified character.
+        /// </summary>
+        /// <param name="character">The Character.</param>
+        public virtual bool Check(Character character)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Check whether a condition is met under the context with the specified target.
+        /// </summary>
+        /// <param name="target">The Targetable.</param>
+        public virtual bool Check(Targetable target)
+        {
+            return true;
+        }
     }
 }
-

@@ -10,3 +10,4 @@
 
 + Character attributes are not modular, fix it (AttributeBag::ctor)
 + Implement a dynamic tagging system
++ Maybe a GUI for creating Spells
