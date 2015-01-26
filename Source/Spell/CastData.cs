@@ -238,8 +238,9 @@ namespace Quark.Spell
 
         void Cast()
         {
+            Logger.Debug("CastData::Cast");
             this._step = LifeStep.Casting;
-            Messenger.AddListener("Update", this.Update);
+            Messenger.AddListener("Update", Update);
             _spell.OnCastingBegan();
         }
 
@@ -252,6 +253,7 @@ namespace Quark.Spell
 
         void CastDone()
         {
+            Logger.Debug("CastData::CastDone");
             Clear(LifeStep.Done);
             _spell.OnCastDone();
         }
@@ -266,7 +268,7 @@ namespace Quark.Spell
             this._step = step;
             this._caster.ClearCast(this);
             if (!_spell.IsInstant)
-                Messenger.RemoveListener("Update", this.Update);
+                Messenger.RemoveListener("Update", Update);
         }
     }
 

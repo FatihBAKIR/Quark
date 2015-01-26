@@ -29,6 +29,7 @@
         {
             //OnChange(this, Difference);
             this.LostValue += Difference;
+            this.LostValue = System.Math.Max(0, this.LostValue);
             this.LostValue = System.Math.Min(this.Maximum, this.LostValue);
         }
 
@@ -37,6 +38,7 @@
             //OnChange(this, Difference);
             this.LostValue -= Difference;
             this.LostValue = System.Math.Max(0, this.LostValue);
+            this.LostValue = System.Math.Min(this.Maximum, this.LostValue);
         }
 
         public override string ToString()

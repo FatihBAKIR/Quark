@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace Quark.Spell
 {
-
     public class Spell : ITaggable
     {
         /// <summary>
@@ -258,6 +257,7 @@ namespace Quark.Spell
             Logger.Debug("Spell.OnCastingBegan");
             CastingEffects.Run(_data);
         }
+       
 
         /// <summary>
         /// 

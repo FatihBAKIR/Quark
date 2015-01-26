@@ -24,8 +24,12 @@ namespace Quark.Utilities
             Vector3 temp = new Vector3();
             temp.x = vector.x * cos - vector.z * sin;
             temp.z = vector.x * sin + vector.z * cos;
-            
-            return temp * isNegative;
+
+            temp = temp * isNegative;
+
+            temp.y = vector.y;
+
+            return temp;
         }
     }
 }

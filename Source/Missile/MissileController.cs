@@ -27,6 +27,7 @@ namespace Quark.Missile
                     obj.transform.position = Utils.RotateVector(Position, obj.CastRotation) + InitialPosition;
                     break;
             }
+            obj.transform.LookAt(Target);
         }
 
         public void Set(Missile obj)

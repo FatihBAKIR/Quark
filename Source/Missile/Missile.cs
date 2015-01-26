@@ -15,7 +15,7 @@ namespace Quark.Missile
         /// <summary>
         /// The near enough distance constant which indicates that a missile will consider itself reached to a target point
         /// </summary>
-        const float NearEnough = 0.1F;
+        public static float NearEnough = 0.1F;
         float _initialTime;
         Vector3 _initialPosition;
         Vector3 _targetPosition;
@@ -150,6 +150,7 @@ namespace Quark.Missile
 
             if (ToPos && HasReached)
             {
+                _data.Spell.OnHit(_targetPosition);
                 _data.Spell.CollectProjectile(this);
                 Destroy(gameObject);
             }

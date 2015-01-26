@@ -8,7 +8,7 @@ namespace Quark.Buff
     public class Buff : ITaggable
     {
         protected float Interval;
-        protected float Duration;
+        protected float Duration { get; set; }
         protected Character Possessor;
         bool isDataSet = false;
         private CastData data;
@@ -37,7 +37,7 @@ namespace Quark.Buff
         /// <summary>
         /// This ratio indicates the rate of its alive time to its total duration 
         /// </summary>
-        public float LifeRatio
+        public virtual float LifeRatio
         {
             get
             {
