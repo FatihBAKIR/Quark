@@ -223,7 +223,7 @@ namespace Quark.Spell
         public void TargetingDone()
         {
             /*
-             * Copy the time and the point at the instant the targeting was done and check for the spell type, if it is an instant spell, immediately cast it
+             * Store the time and the point at the instant the targeting was done and check for the spell type, if it is an instant spell, immediately cast it
              * otherwise, begin the casting logic
              */
             _macro = null;

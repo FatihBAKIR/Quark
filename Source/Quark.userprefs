@@ -1,17 +1,10 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Condition.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Utilities/Head.cs">
     <Files>
-      <File FileName="Condition.cs" Line="10" Column="10" />
-      <File FileName="Character.cs" Line="1" Column="1" />
-      <File FileName="Attribute/Stat.cs" Line="1" Column="1" />
-      <File FileName="Attribute/AttributeBag.cs" Line="1" Column="1" />
-      <File FileName="Buff/Buff.cs" Line="1" Column="1" />
-      <File FileName="Missile/MissileController.cs" Line="1" Column="1" />
-      <File FileName="Utilities/Utils.cs" Line="1" Column="1" />
-      <File FileName="Spell/Spell.cs" Line="1" Column="1" />
-      <File FileName="Spell/CastData.cs" Line="1" Column="1" />
-      <File FileName="Buff/BuffContainer.cs" Line="1" Column="1" />
+      <File FileName="Spell/CastData.cs" Line="9" Column="9" />
+      <File FileName="Utilities/Head.cs" Line="13" Column="13" />
+      <File FileName="Utilities/EventDictionary.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
