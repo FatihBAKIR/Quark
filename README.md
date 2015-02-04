@@ -1,7 +1,8 @@
 Quark Framework
 ====
+![](http://quarkup.io/res/quark.png)
 
-Quark is a framework focused on building role playing games using modular structures.
+Quark is a game development framework which utilizes high level modularity for building mainly role playing games using the base components it provides.
 
 For example, a `Spell` that deals 100 damage to nearest player is defined like this:
 ```csharp
@@ -13,9 +14,9 @@ public class BoomSpell : Spell
 		}
 	}
 
-	protected override EffectCollection TargetingDoneEffects {
+	protected override Effect[] TargetingDoneEffects {
 		get {
-			return new EffectCollection {
+			return new Effect[] {
 				new DamageEffect (100)
 			};
 		}
@@ -27,14 +28,15 @@ Features
 ----
 Currently, the following list is implemented and running in Quark:
 
-+ Casted Activities (`Spells`)
-+ Time or Event Driven Activities (`Buffs`)
-+ Targeting (`TargetMacros`)
-+ Casting (`CastData`)
-+ Object Mutation (`Effects`)
 + Quark Controlled Objects (`Characters` and `Targetables`)
++ Object Manipulation (`Effects`)
++ Targeting (`TargetMacros`)
++ Time or Event Driven Activities (`Buffs`)
++ Projectiles (`MissileControllers`)
++ Casted Activities (`Spells`)
++ Casting (`Cast`)
 
-But there are more features coming.
+Also there are more features on the way.
 
 Installation / Using
 ----
@@ -43,11 +45,6 @@ There is no actual installation, you can simply build the project and include `Q
 For usage part, if you used the Unity Asset way, it is easy. Simply drag the `Quark.Head` prefab to your hierarchy and your scene is ready to use Quark. 
 
 If you included the dll, you should create a `Quark.Head` object. For details, please refer to [this article][1]
-
-Note
-----
-Quark is not production ready yet, so I haven't even finished implementing all of my ideas and some of the ones I've implemented are still bulky.
-If you see any bug/defect or you feel like you can improve it, I am open for all the issues and pull requests.
 
 Contribute
 ----
