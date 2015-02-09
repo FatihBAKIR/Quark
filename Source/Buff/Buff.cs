@@ -10,9 +10,8 @@ namespace Quark.Buff
         protected float Interval;
         protected float Duration { get; set; }
         protected Character Possessor;
-        bool isDataSet = false;
-        private CastData data;
-        protected CastData Data { get { return data; } set { if (isDataSet) return; data = value; } }
+        private Cast _context = null;
+        protected Cast Context { get { return _context; } set { if (_context != null) return; _context = value; } }
         public bool CleanedUp = false;
 
         public Buff()
@@ -29,9 +28,9 @@ namespace Quark.Buff
         /// Sets the CastData context where this Buff will run in
         /// </summary>
         /// <param name="data">The CastData context</param>
-        public void SetData(CastData data)
+        public void SetData(Cast data)
         {
-            this.Data = data;
+            this.Context = data;
         }
 
         /// <summary>

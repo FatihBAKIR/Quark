@@ -44,11 +44,11 @@ namespace Quark
             }
         }
 
-        public CastData Data { get; set; }
+        public Cast _context { get; private set; }
 
-        public Effect(CastData Data = null)
+        public void SetContext(Cast context)
         {
-            this.Data = Data;
+            _context = context;
         }
 
         /// <summary>

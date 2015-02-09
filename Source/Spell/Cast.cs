@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Quark.Spell
 {
-    public class CastData
+    public class Cast
     {
         Character _caster;
         Vector3 _beginPoint;
@@ -20,14 +20,14 @@ namespace Quark.Spell
 
         public uint HitCount = 0;
 
-        public CastData()
+        public Cast()
         {
 #if DEBUG
             Logger.GC("CastData::ctor");
 #endif
         }
 
-        ~CastData()
+        ~Cast()
         {
             _spell = null;
             _caster = null;
@@ -48,17 +48,17 @@ namespace Quark.Spell
         /// <param name='spell'>
         /// The instance of the spell to be cast.
         /// </param>
-        public static CastData PrepareCast(Character caster, Spell spell)
+        public static Cast PrepareCast(Character caster, Spell spell)
         {
-            CastData data = new CastData();
+            Cast data = new Cast();
             data._step = LifeStep.Null;
             data._caster = caster;
             data._spell = spell;
-            Messenger<CastData>.Broadcast("Prepare", data);
-            Messenger<CastData>.Broadcast(data.Spell.Name + ".Prepare", data);
-            Messenger<CastData>.Broadcast(caster.Identifier() + "." + data.Spell.Name + ".Prepare", data);
+            Messenger<Cast>.Broadcast("Prepare", data);
+            Messenger<Cast>.Broadcast(data.Spell.Name + ".Prepare", data);
+            Messenger<Cast>.Broadcast(caster.Identifier() + "." + data.Spell.Name + ".Prepare", data);
             data._spell.Introduce(data);
-            Logger.Debug("CastData::PrepareCast");
+            Logger.Debug("Cast::PrepareCast");
             data.Begin();
             return data;
         }
@@ -186,7 +186,7 @@ namespace Quark.Spell
         void Begin()
         {
             _step = LifeStep.Begin;
-            Logger.Debug("CastData.Begin");
+            Logger.Debug("Cast::Begin");
             if (!_caster.CanCast)
             {
                 Messenger<CastError>.Broadcast("CastError", new BusyError());
@@ -233,12 +233,12 @@ namespace Quark.Spell
             if (_spell.IsInstant)
                 this.CastDone();
             else
-                this.Cast();
+                this.StartCast();
         }
 
-        void Cast()
+        void StartCast()
         {
-            Logger.Debug("CastData::Cast");
+            Logger.Debug("Cast::StartCast");
             this._step = LifeStep.Casting;
             Messenger.AddListener("Update", Update);
             _spell.OnCastingBegan();
@@ -253,7 +253,7 @@ namespace Quark.Spell
 
         void CastDone()
         {
-            Logger.Debug("CastData::CastDone");
+            Logger.Debug("Cast::CastDone");
             Clear(LifeStep.Done);
             _spell.OnCastDone();
         }

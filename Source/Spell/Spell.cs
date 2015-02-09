@@ -111,15 +111,15 @@ namespace Quark.Spell
             }
         }
 
-        protected CastData _data { get; set; }
+        protected Cast _context { get; set; }
 
         /// <summary>
         /// Introduce the CastData object which is invoking this Spell instance.
         /// </summary>
         /// <param name="data">Invoking CastData</param>
-        public void Introduce(CastData data)
+        public void Introduce(Cast data)
         {
-            this._data = data;
+            this._context = data;
         }
 
         #region Effect Holders
@@ -180,45 +180,6 @@ namespace Quark.Spell
 
         #endregion
 
-        private void RunEffects(Effect[] Effects)
-        {
-            foreach (Effect effect in Effects)
-            {
-                effect.Data = _data;
-                effect.Apply();
-            }
-        }
-
-        private void RunEffects(Targetable[] Targets, Effect[] Effects)
-        {
-            foreach (Targetable target in Targets)
-                foreach (Effect effect in Effects)
-                {
-                    effect.Data = _data;
-                    effect.Apply(target);
-                }
-        }
-
-        private void RunEffects(Character[] Targets, Effect[] Effects)
-        {
-            foreach (Character target in Targets)
-                foreach (Effect effect in Effects)
-                {
-                    effect.Data = _data;
-                    effect.Apply(target);
-                }
-        }
-
-        private void RunEffects(Vector3[] Targets, Effect[] Effects)
-        {
-            foreach (Vector3 target in Targets)
-                foreach (Effect effect in Effects)
-                {
-                    effect.Data = _data;
-                    effect.Apply(target);
-                }
-        }
-
         #region Effect Handlers
 
         /// <summary>
@@ -230,7 +191,7 @@ namespace Quark.Spell
          * The default behavior of spell lifecycle steps are only about running preset effects with appropriate targets.
          */
             Logger.Debug("Spell.OnBegin");
-            BeginEffects.Run(_data);
+            BeginEffects.Run(_context);
         }
 
         /// <summary>
@@ -243,10 +204,10 @@ namespace Quark.Spell
          */
             Logger.Debug("Spell.OnTargetingDone");
             TargetingDoneEffects
-                .Run(_data.TargetPoints, _data)
-                .Run(_data.TargetCharacters, _data)
-                .Run(_data.Targetables, _data)
-                .Run(_data);
+                .Run(_context.TargetPoints, _context)
+                .Run(_context.TargetCharacters, _context)
+                .Run(_context.Targetables, _context)
+                .Run(_context);
         }
 
         /// <summary>
@@ -255,7 +216,7 @@ namespace Quark.Spell
         public virtual void OnCastingBegan()
         {
             Logger.Debug("Spell.OnCastingBegan");
-            CastingEffects.Run(_data);
+            CastingEffects.Run(_context);
         }
        
 
@@ -273,9 +234,9 @@ namespace Quark.Spell
             else
             {
                 CastDoneEffects
-                    .Run(_data.TargetPoints, _data)
-                    .Run(_data.TargetCharacters, _data)
-                    .Run(_data.Targetables, _data);
+                    .Run(_context.TargetPoints, _context)
+                    .Run(_context.TargetCharacters, _context)
+                    .Run(_context.Targetables, _context);
 
                 OnFinal();
             }
@@ -286,7 +247,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnTravel(Vector3 position)
         {
-            TravelEffects.Run(position, _data);
+            TravelEffects.Run(position, _context);
         }
 
         /// <summary>
@@ -294,7 +255,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnHit(Vector3 position)
         {
-            HitEffects.Run(position, _data);
+            HitEffects.Run(position, _context);
         }
 
         /// <summary>
@@ -302,7 +263,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnHit(Character character)
         {
-            HitEffects.Run(character, _data);
+            HitEffects.Run(character, _context);
         }
 
         /// <summary>
@@ -310,7 +271,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnHit(Targetable targetable)
         {
-            HitEffects.Run(targetable, _data);
+            HitEffects.Run(targetable, _context);
         }
 
         /// <summary>
@@ -318,7 +279,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnMiss()
         {
-            MissEffects.Run(_data);
+            MissEffects.Run(_context);
         }
 
         /// <summary>
@@ -326,9 +287,9 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnFinal()
         {
-            ClearEffects.Run(_data);
+            ClearEffects.Run(_context);
 
-            this._data = null;
+            this._context = null;
         }
 
         #endregion
@@ -352,16 +313,16 @@ namespace Quark.Spell
         /// </summary>
         protected virtual void CreateProjectiles()
         {
-            foreach (Vector3 point in _data.TargetPoints)
+            foreach (Vector3 point in _context.TargetPoints)
             {
                 Missile_Count++;
-                Missile.Missile.Make(this.MissileObject, this.Controller, this._data).Set(point);
+                Missile.Missile.Make(this.MissileObject, this.Controller, this._context).Set(point);
             }
 
-            foreach (Character target in _data.TargetCharacters)
+            foreach (Character target in _context.TargetCharacters)
             {
                 Missile_Count++;
-                Missile.Missile.Make(this.MissileObject, this.Controller, this._data).Set(target);
+                Missile.Missile.Make(this.MissileObject, this.Controller, this._context).Set(target);
             }
         }
     }

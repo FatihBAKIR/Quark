@@ -23,7 +23,7 @@ namespace Quark
     public class Character : Targetable
     {
         AttributeBag _attributes;
-        List<CastData> _casting;
+        List<Cast> _casting;
         BuffContainer _buffs;
         //TODO: items
 
@@ -32,7 +32,7 @@ namespace Quark
             IsTargetable = true;
             _attributes = new AttributeBag(this);
             _buffs = new BuffContainer(this);
-            _casting = new List<CastData>();
+            _casting = new List<Cast>();
         }
 
         public Character()
@@ -68,7 +68,7 @@ namespace Quark
             return _attributes.GetStat(tag);
         }
 
-        public CastData[] GetCasts
+        public Cast[] GetCasts
         {
             get
             {
@@ -84,13 +84,13 @@ namespace Quark
             }
         }
 
-        public void AddCast(CastData cd)
+        public void AddCast(Cast cd)
         {
             if (CanCast)
                 _casting.Add(cd);
         }
 
-        public void ClearCast(CastData cd)
+        public void ClearCast(Cast cd)
         {
             _casting.Remove(cd);
         }

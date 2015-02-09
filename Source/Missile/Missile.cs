@@ -20,7 +20,7 @@ namespace Quark.Missile
         Vector3 _initialPosition;
         Vector3 _targetPosition;
         Character _targetCharacter;
-        CastData _data;
+        Cast _context;
 
         MissileController _controller;
 
@@ -28,11 +28,11 @@ namespace Quark.Missile
         {
             get
             {
-                return _data.HitCount;
+                return _context.HitCount;
             }
             set
             {
-                _data.HitCount = value;
+                _context.HitCount = value;
             }
         }
 
@@ -83,11 +83,11 @@ namespace Quark.Missile
 
         #region Initialization
 
-        public static Missile Make(GameObject prefab, MissileController controller, CastData data)
+        public static Missile Make(GameObject prefab, MissileController controller, Cast context)
         {
-            GameObject obj = (GameObject)MonoBehaviour.Instantiate(prefab, data.CastBeginPoint, Quaternion.identity);
+            GameObject obj = (GameObject)MonoBehaviour.Instantiate(prefab, context.CastBeginPoint, Quaternion.identity);
             Missile m = obj.AddComponent<Missile>();
-            m._data = data;
+            m._context = context;
             m._controller = controller;
             m._controller.Set(m);
             return m;
@@ -97,14 +97,14 @@ namespace Quark.Missile
 
         public void Set(Vector3 target)
         {
-            this.CastRotation = target - _data.CastBeginPoint;
+            this.CastRotation = target - _context.CastBeginPoint;
             this.ToPos = true;
             this._targetPosition = target;
         }
 
         public void Set(Character target)
         {
-            this.CastRotation = target.transform.position - _data.CastBeginPoint;
+            this.CastRotation = target.transform.position - _context.CastBeginPoint;
             this._targetCharacter = target;
         }
 
@@ -121,11 +121,11 @@ namespace Quark.Missile
             Character hit = c.gameObject.GetComponent<Character>();
             if (IsHitValid(hit))
             {
-                _data.Spell.OnHit(hit);
+                _context.Spell.OnHit(hit);
 
-                if ((!ToPos && hit.Equals(this._targetCharacter)) || (this._data.Spell.TargetForm == TargetForm.Singular))
+                if ((!ToPos && hit.Equals(this._targetCharacter)) || (this._context.Spell.TargetForm == TargetForm.Singular))
                 {
-                    _data.Spell.CollectProjectile(this);
+                    _context.Spell.CollectProjectile(this);
                     Destroy(this.gameObject);
                 }
             }
@@ -134,7 +134,7 @@ namespace Quark.Missile
 
         protected virtual bool IsHitValid(Character hit)
         {
-            bool result = hit != null && !hit.Equals(_data.Caster) && hit.IsTargetable;
+            bool result = hit != null && !hit.Equals(_context.Caster) && hit.IsTargetable;
             if (result)
                 HitCount++;
             return result;
@@ -146,12 +146,12 @@ namespace Quark.Missile
                 _targetPosition = _targetCharacter.transform.position;
         
             _controller.Control();
-            _data.Spell.OnTravel(transform.position);
+            _context.Spell.OnTravel(transform.position);
 
             if (ToPos && HasReached)
             {
-                _data.Spell.OnHit(_targetPosition);
-                _data.Spell.CollectProjectile(this);
+                _context.Spell.OnHit(_targetPosition);
+                _context.Spell.CollectProjectile(this);
                 Destroy(gameObject);
             }
         }

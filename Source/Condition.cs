@@ -6,14 +6,14 @@ namespace Quark
 {
     public class Condition
     {
-        protected CastData _data;
+        protected Cast _context;
         public Condition()
         {
         }
 
-        public virtual void Introduce(CastData data)
+        public virtual void Introduce(Cast context)
         {
-            _data = data;
+            _context = context;
         }
 
         /// <summary>

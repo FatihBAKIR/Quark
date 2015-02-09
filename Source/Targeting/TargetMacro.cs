@@ -44,7 +44,7 @@ namespace Quark.Targeting
         /// </summary>
         public event PointHandler PointSelected = delegate { };
         
-        protected CastData Data { get; private set; }
+        protected Cast Data { get; private set; }
         public TargetMacro()
         {
             Logger.GC(this.GetType().Name + "::ctor");
@@ -83,14 +83,14 @@ namespace Quark.Targeting
             PointSelected = null;
         }
 
-        public virtual void SetData(CastData data)
+        public virtual void SetData(Cast context)
         {
-            TargetingSuccess += data.TargetingDone;
-            TargetingFailed += data.TargetingFail;
-            TargetSelected += data.AddTarget;
-            CharacterSelected += data.AddTarget;
-            PointSelected += data.AddTarget;
-            Data = data;
+            TargetingSuccess += context.TargetingDone;
+            TargetingFailed += context.TargetingFail;
+            TargetSelected += context.AddTarget;
+            CharacterSelected += context.AddTarget;
+            PointSelected += context.AddTarget;
+            Data = context;
         }
 
         public Character Caster
