@@ -28,7 +28,7 @@ namespace Quark.Buff
         /// Sets the CastData context where this Buff will run in
         /// </summary>
         /// <param name="data">The CastData context</param>
-        public void SetData(Cast data)
+        public void SetContext(Cast data)
         {
             this.Context = data;
         }
