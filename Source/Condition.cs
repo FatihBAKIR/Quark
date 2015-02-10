@@ -11,7 +11,7 @@ namespace Quark
         {
         }
 
-        public virtual void Introduce(Cast context)
+        public virtual void SetContext(Cast context)
         {
             _context = context;
         }

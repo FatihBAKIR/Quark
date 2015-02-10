@@ -128,7 +128,7 @@ namespace Quark.Spell
         /// The begin effects.
         /// Effects within this list are applied with the caster Character object argument when the castdata is initialized
         /// </summary>
-        protected virtual EffectCollection BeginEffects { get { return new EffectCollection { }; } }
+        protected virtual EffectCollection InvokeEffects { get { return new EffectCollection { }; } }
 
         /// <summary>
         /// The targeting done effects.
@@ -185,13 +185,13 @@ namespace Quark.Spell
         /// <summary>
         /// Executes the spell cast beginning logic.
         /// </summary>
-        public virtual void OnBegin()
+        public virtual void OnInvoke()
         {
             /*
          * The default behavior of spell lifecycle steps are only about running preset effects with appropriate targets.
          */
-            Logger.Debug("Spell.OnBegin");
-            BeginEffects.Run(_context);
+            Logger.Debug("Spell.OnInvoke");
+            InvokeEffects.Run(_context);
         }
 
         /// <summary>
@@ -204,9 +204,9 @@ namespace Quark.Spell
          */
             Logger.Debug("Spell.OnTargetingDone");
             TargetingDoneEffects
-                .Run(_context.TargetPoints, _context)
-                .Run(_context.TargetCharacters, _context)
-                .Run(_context.Targetables, _context)
+                .Run(_context.Targets.Points, _context)
+                .Run(_context.Targets.Characters, _context)
+                .Run(_context.Targets.Targetables, _context)
                 .Run(_context);
         }
 
@@ -230,13 +230,13 @@ namespace Quark.Spell
             CastDoneEffects.Run();
 
             if (this.IsProjectiled)
-                this.CreateProjectiles();
+                CreateProjectiles();
             else
             {
                 CastDoneEffects
-                    .Run(_context.TargetPoints, _context)
-                    .Run(_context.TargetCharacters, _context)
-                    .Run(_context.Targetables, _context);
+                    .Run(_context.Targets.Points, _context)
+                    .Run(_context.Targets.Characters, _context)
+                    .Run(_context.Targets.Targetables, _context);
 
                 OnFinal();
             }
@@ -313,13 +313,19 @@ namespace Quark.Spell
         /// </summary>
         protected virtual void CreateProjectiles()
         {
-            foreach (Vector3 point in _context.TargetPoints)
+            foreach (Vector3 point in _context.Targets.Points)
             {
                 Missile_Count++;
                 Missile.Missile.Make(this.MissileObject, this.Controller, this._context).Set(point);
             }
 
-            foreach (Character target in _context.TargetCharacters)
+            foreach (Character target in _context.Targets.Characters)
+            {
+                Missile_Count++;
+                Missile.Missile.Make(this.MissileObject, this.Controller, this._context).Set(target);
+            }
+
+            foreach (Targetable target in _context.Targets.Targetables)
             {
                 Missile_Count++;
                 Missile.Missile.Make(this.MissileObject, this.Controller, this._context).Set(target);

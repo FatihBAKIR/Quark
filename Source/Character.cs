@@ -100,7 +100,7 @@ namespace Quark
             _buffs.AttachBuff(buff);
         }
 
-        public void ApplyBases(Dictionary<string, double> bases)
+        public void ApplyBases(Dictionary<string, float> bases)
         {
             _attributes.ApplyBases(bases);
         }

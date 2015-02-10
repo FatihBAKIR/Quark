@@ -11,9 +11,8 @@ namespace Quark.Spell
         Character _caster;
         Vector3 _beginPoint;
         float _beginningTime;
-        List<Targetable> _targetables;
-        List<Character> _targetChars;
-        List<Vector3> _targetPoints;
+
+        TargetCollection _targets;
         Spell _spell;
         TargetMacro _macro;
         LifeStep _step = LifeStep.Null;
@@ -59,7 +58,7 @@ namespace Quark.Spell
             Messenger<Cast>.Broadcast(caster.Identifier() + "." + data.Spell.Name + ".Prepare", data);
             data._spell.Introduce(data);
             Logger.Debug("Cast::PrepareCast");
-            data.Begin();
+            data.Invoke();
             return data;
         }
 
@@ -105,11 +104,19 @@ namespace Quark.Spell
             }
         }
 
+        public TargetCollection Targets
+        {
+            get
+            {
+                return _targets;
+            }
+        }
+
         public Targetable[] Targetables
         {
             get
             {
-                return _targetables.ToArray();
+                return _targets.Targetables;
             }
         }
 
@@ -117,7 +124,7 @@ namespace Quark.Spell
         {
             get
             {
-                return _targetChars.ToArray();
+                return _targets.Characters;
             }
         }
 
@@ -125,7 +132,7 @@ namespace Quark.Spell
         {
             get
             {
-                return _targetPoints.ToArray();
+                return _targets.Points;
             }
         }
 
@@ -156,7 +163,7 @@ namespace Quark.Spell
             if (_step != LifeStep.Targeting)
                 throw new NotTargetingException();
 
-            if (_spell.TargetForm == TargetForm.Singular && (_targetChars.Count > 0 || _targetPoints.Count > 0))
+            if (_spell.TargetForm == TargetForm.Singular && (_targets.Count > 0))
                 throw new SingularSpellException();
 
             return true;
@@ -165,35 +172,35 @@ namespace Quark.Spell
         public void AddTarget(Targetable targetable)
         {
             CanAddTarget();
-            _targetables.Add(targetable);
+            _targets.Add(targetable);
         }
 
         public void AddTarget(Character character)
         {
             CanAddTarget();
-            _targetChars.Add(character);
+            _targets.Add(character);
         }
 
         public void AddTarget(Vector3 point)
         {
             CanAddTarget();
-            _targetPoints.Add(point);
+            _targets.Add(point);
         }
 
         /// <summary>
         /// Begin the casting logic.
         /// </summary>
-        void Begin()
+        void Invoke()
         {
             _step = LifeStep.Begin;
-            Logger.Debug("Cast::Begin");
+            Logger.Debug("Cast::Invoke");
             if (!_caster.CanCast)
             {
                 Messenger<CastError>.Broadcast("CastError", new BusyError());
                 return;
             }
             _caster.AddCast(this);
-            _spell.OnBegin();
+            _spell.OnInvoke();
             BeginTargeting();
         }
 
@@ -203,9 +210,7 @@ namespace Quark.Spell
         void BeginTargeting()
         {
             _step = LifeStep.Targeting;
-            _targetables = new List<Targetable>();
-            _targetChars = new List<Character>();
-            _targetPoints = new List<Vector3>();
+            _targets = new TargetCollection();
             _macro = _spell.TargetMacro;
             _macro.SetData(this);
             _macro.Run();
@@ -220,33 +225,33 @@ namespace Quark.Spell
         /// <summary>
         /// BeginTargeting done logic.
         /// </summary>
-        public void TargetingDone()
+        public void TargetingDone(TargetCollection targets)
         {
             /*
              * Store the time and the point at the instant the targeting was done and check for the spell type, if it is an instant spell, immediately cast it
              * otherwise, begin the casting logic
              */
             _macro = null;
-            this._beginningTime = Time.timeSinceLevelLoad;
-            this._beginPoint = _caster.transform.position;
+            _beginningTime = Time.timeSinceLevelLoad;
+            _beginPoint = _caster.transform.position;
             _spell.OnTargetingDone();
             if (_spell.IsInstant)
-                this.CastDone();
+                CastDone();
             else
-                this.StartCast();
+                StartCast();
         }
 
         void StartCast()
         {
             Logger.Debug("Cast::StartCast");
-            this._step = LifeStep.Casting;
+            _step = LifeStep.Casting;
             Messenger.AddListener("Update", Update);
             _spell.OnCastingBegan();
         }
 
         void controlCast()
         {
-            this._step = LifeStep.Casting;
+            _step = LifeStep.Casting;
             if (CastPercentage >= 100)
                 this.CastDone();
         }
@@ -265,8 +270,8 @@ namespace Quark.Spell
 
         void Clear(LifeStep step)
         {
-            this._step = step;
-            this._caster.ClearCast(this);
+            _step = step;
+            _caster.ClearCast(this);
             if (!_spell.IsInstant)
                 Messenger.RemoveListener("Update", Update);
         }

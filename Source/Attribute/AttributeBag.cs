@@ -41,9 +41,9 @@ namespace Quark.Attribute
             mana.AddInteraction("will", 20);
         }
 
-        public void ApplyBases(Dictionary<string, double> Bases)
+        public void ApplyBases(Dictionary<string, float> Bases)
         {
-            foreach (KeyValuePair<string, double> b in Bases)
+            foreach (KeyValuePair<string, float> b in Bases)
             {
                 this.GetAttribute(b.Key).SetBase(b.Value);
             }
@@ -68,14 +68,14 @@ namespace Quark.Attribute
             return (Stat)GetAttribute(Tag);
         }
 
-        public double GetValue(string Tag)
+        public float GetValue(string Tag)
         {
             if (Tag == "constant" || string.IsNullOrEmpty(Tag))
                 return 1;
             return GetAttribute(Tag).Value;
         }
 
-        public double this [string key]
+        public float this [string key]
         {
             get
             {

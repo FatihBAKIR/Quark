@@ -54,7 +54,7 @@ namespace Quark.Attribute
         /// <param name='Base'>
         /// Base value.
         /// </param>
-        public void SetBase(double Base)
+        public void SetBase(float Base)
         {
             foreach (AttributeModifier modifier in interactions)
                 if (string.IsNullOrEmpty(modifier.AttrName))
@@ -113,7 +113,7 @@ namespace Quark.Attribute
         /// <value>
         /// The value this attribute has.
         /// </value>
-        public virtual double Value
+        public virtual float Value
         {
             get
             {
@@ -130,14 +130,14 @@ namespace Quark.Attribute
         /// <param name='Multiplier'>
         /// The amoubt that will be multiplied with the value of the related attribute on calculation.
         /// </param>
-        public void AddInteraction(string Tag, double Multiplier)
+        public void AddInteraction(string Tag, float Multiplier)
         {
             this.interactions.Add(new AttributeModifier(Tag, Multiplier));
         }
 
-        protected double CalculateInteractions()
+        protected float CalculateInteractions()
         {
-            double val = 0;
+            float val = 0;
             foreach (AttributeModifier interaction in interactions)
             {
                 val += interaction.GetValue(bag);

@@ -19,7 +19,7 @@ namespace Quark.Missile
         float _initialTime;
         Vector3 _initialPosition;
         Vector3 _targetPosition;
-        Character _targetCharacter;
+        Targetable _target;
         Cast _context;
 
         MissileController _controller;
@@ -52,7 +52,7 @@ namespace Quark.Missile
         {
             get
             {
-                return ToPos ? this._targetPosition : this._targetCharacter.transform.position;
+                return ToPos ? this._targetPosition : this._target.transform.position;
             }
         }
 
@@ -105,7 +105,13 @@ namespace Quark.Missile
         public void Set(Character target)
         {
             this.CastRotation = target.transform.position - _context.CastBeginPoint;
-            this._targetCharacter = target;
+            this._target = target;
+        }
+
+        public void Set(Targetable target)
+        {
+            this.CastRotation = target.transform.position - _context.CastBeginPoint;
+            this._target = target;
         }
 
         #endregion
@@ -123,7 +129,7 @@ namespace Quark.Missile
             {
                 _context.Spell.OnHit(hit);
 
-                if ((!ToPos && hit.Equals(this._targetCharacter)) || (this._context.Spell.TargetForm == TargetForm.Singular))
+                if ((!ToPos && hit.Equals(this._target)) || (this._context.Spell.TargetForm == TargetForm.Singular))
                 {
                     _context.Spell.CollectProjectile(this);
                     Destroy(this.gameObject);
@@ -143,7 +149,7 @@ namespace Quark.Missile
         void Update()
         {
             if (!ToPos)
-                _targetPosition = _targetCharacter.transform.position;
+                _targetPosition = _target.transform.position;
         
             _controller.Control();
             _context.Spell.OnTravel(transform.position);

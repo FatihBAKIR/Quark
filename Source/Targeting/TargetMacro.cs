@@ -17,7 +17,9 @@ namespace Quark.Targeting
 
     public class TargetMacro
     {
-        public delegate void MacroHandler();
+        //Should we add a `TargetMacro sender` argument to handlers?
+        //Should we add the final selected targets to the success handler?
+        public delegate void MacroSuccess(TargetCollection targets);
         public delegate void MacroError(TargetingError error);
         public delegate void TargetableHandler(Targetable target);
         public delegate void CharacterHandler(Character target);
@@ -26,7 +28,7 @@ namespace Quark.Targeting
         /// <summary>
         /// On targeting succession
         /// </summary>
-        public event MacroHandler TargetingSuccess = delegate { };
+        public event MacroSuccess TargetingSuccess = delegate { };
         /// <summary>
         /// On targeting failure
         /// </summary>
@@ -107,28 +109,33 @@ namespace Quark.Targeting
         /// <param name="target">Selected target</param>
         protected void OnTargetSelected(Character target)
         {
+            _targets.Add(target);
             CharacterSelected(target);
         }
 
         protected void OnTargetSelected(Vector3 target)
         {
+            _targets.Add(target);
             PointSelected(target);
         }
 
         protected void OnTargetSelected(Targetable target)
         {
+            _targets.Add(target);
             TargetSelected(target);
         }
 
         protected void OnTargetingSuccess()
         {
-            TargetingSuccess();
+            TargetingSuccess(_targets);
         }
 
         protected void OnTargetingFail(TargetingError error)
         {
             TargetingFailed(error);
         }
+
+        TargetCollection _targets = new TargetCollection();
     }
     
     public enum TargetingError

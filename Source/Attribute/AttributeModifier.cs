@@ -5,22 +5,22 @@ namespace Quark.Attribute
 {
     public class AttributeModifier
     {
-        public double Multiplier { get; set; }
+        public float Multiplier { get; set; }
 
         public string AttrName { get; set; }
 
-        public AttributeModifier(string sourceAttribute, double multiplier)
+        public AttributeModifier(string sourceAttribute, float multiplier)
         {
             AttrName = sourceAttribute;
             Multiplier = multiplier;
         }
 
-        public double GetValue(Character character)
+        public float GetValue(Character character)
         {
             return character.GetAttribute(AttrName).Value * Multiplier;
         }
 
-        public double GetValue(AttributeBag bag)
+        public float GetValue(AttributeBag bag)
         {
             return bag[AttrName] * Multiplier;
         }

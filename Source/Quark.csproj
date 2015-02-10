@@ -67,6 +67,8 @@
     <Compile Include="Utilities\KeyBindings.cs" />
     <Compile Include="Condition.cs" />
     <Compile Include="Spell\Cast.cs" />
+    <Compile Include="Interaction.cs" />
+    <Compile Include="TargetCollection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -7,7 +7,7 @@
         {
         }
 
-        public double Maximum
+        public float Maximum
         {
             get
             {
@@ -15,9 +15,9 @@
             }
         }
 
-        double LostValue = 0;
+        float LostValue = 0;
 
-        public override double Value
+        public override float Value
         {
             get
             {
@@ -25,18 +25,9 @@
             }
         }
 
-        public void Decrease(double Difference)
+        public void Manipulate(float Amount)
         {
-            //OnChange(this, Difference);
-            this.LostValue += Difference;
-            this.LostValue = System.Math.Max(0, this.LostValue);
-            this.LostValue = System.Math.Min(this.Maximum, this.LostValue);
-        }
-
-        public void Increase(double Difference)
-        {
-            //OnChange(this, Difference);
-            this.LostValue -= Difference;
+            this.LostValue += Amount;
             this.LostValue = System.Math.Max(0, this.LostValue);
             this.LostValue = System.Math.Min(this.Maximum, this.LostValue);
         }
