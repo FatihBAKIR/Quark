@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Quark.Utilities;
+﻿using Quark.Utilities;
 
 namespace Quark.Attribute
 {
@@ -8,13 +7,13 @@ namespace Quark.Attribute
         /// <summary>
         /// The attribute bag which this attribute is hold in.
         /// </summary>
-        AttributeBag bag;
-        string tag;
-        string name;
+        AttributeBag _bag;
+        string _tag;
+        string _name;
         /// <summary>
         /// Other attribute interactions are held in this list.
         /// </summary>
-        List<AttributeModifier> interactions;
+        Interaction _interactions;
 
         /// <summary>
         /// Gets the owner of this attribute.
@@ -24,7 +23,7 @@ namespace Quark.Attribute
         {
             get
             {
-                return bag.Carrier;
+                return _bag.Carrier;
             }
         }
 
@@ -42,10 +41,10 @@ namespace Quark.Attribute
         /// </param>
         public Attribute(string Tag, string Name, AttributeBag Bag)
         {
-            this.bag = Bag;
-            this.tag = Tag;
-            this.name = Name;
-            this.interactions = new List<AttributeModifier>();
+            _bag = Bag;
+            _tag = Tag;
+            _name = Name;
+            _interactions = new Interaction();
         }
 
         /// <summary>
@@ -56,7 +55,7 @@ namespace Quark.Attribute
         /// </param>
         public void SetBase(float Base)
         {
-            foreach (AttributeModifier modifier in interactions)
+            foreach (AttributeModifier modifier in _interactions)
                 if (string.IsNullOrEmpty(modifier.AttrName))
                 {
                     modifier.Multiplier = Base;
@@ -66,16 +65,16 @@ namespace Quark.Attribute
         }
 
         /// <summary>
-        /// Gets or sets the interactions.
+        /// Gets the interactions.
         /// </summary>
         /// <value>
         /// The interactions.
         /// </value>
-        public List<AttributeModifier> Interactions
+        public Interaction Interactions
         {
             get
             {
-                return this.interactions;
+                return _interactions;
             }
         }
 
@@ -89,7 +88,7 @@ namespace Quark.Attribute
         {
             get
             {
-                return this.name;
+                return _name;
             }
         }
 
@@ -103,7 +102,7 @@ namespace Quark.Attribute
         {
             get
             {
-                return this.tag;
+                return _tag;
             }
         }
 
@@ -117,32 +116,22 @@ namespace Quark.Attribute
         {
             get
             {
-                return CalculateInteractions();
+                return _interactions.Calculate(Owner);
             }
         }
 
         /// <summary>
         /// Adds an attribute interaction to this attribute.
         /// </summary>
-        /// <param name='Tag'>
+        /// <param name='tag'>
         /// Tag of the other related attribute.
         /// </param>
-        /// <param name='Multiplier'>
+        /// <param name='multiplier'>
         /// The amoubt that will be multiplied with the value of the related attribute on calculation.
         /// </param>
-        public void AddInteraction(string Tag, float Multiplier)
+        public void AddInteraction(string tag, float multiplier)
         {
-            this.interactions.Add(new AttributeModifier(Tag, Multiplier));
-        }
-
-        protected float CalculateInteractions()
-        {
-            float val = 0;
-            foreach (AttributeModifier interaction in interactions)
-            {
-                val += interaction.GetValue(bag);
-            }
-            return val;
+            _interactions.Add(tag, multiplier);
         }
 
         public override string ToString()
@@ -152,7 +141,7 @@ namespace Quark.Attribute
 
         public string Identifier()
         {
-            return this.Tag;
+            return Tag;
         }
     }
 }
