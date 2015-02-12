@@ -14,9 +14,12 @@ namespace Quark
     {
         public bool IsTargetable { get; set; }
 
-        public string Identifier()
+        public string Identifier
         {
-            return GetHashCode().ToString();
+            get
+            {
+                return GetHashCode().ToString();
+            }
         }
     }
 
@@ -27,12 +30,16 @@ namespace Quark
         BuffContainer _buffs;
         //TODO: items
 
-        public virtual void Start()
+        void Awake()
         {
-            IsTargetable = true;
             _attributes = new AttributeBag(this);
             _buffs = new BuffContainer(this);
             _casting = new List<Cast>();
+        }
+
+        public virtual void Start()
+        {
+            IsTargetable = true;
         }
 
         public Character()
@@ -58,13 +65,15 @@ namespace Quark
 
         public virtual Attribute.Attribute GetAttribute(string tag)
         {
-            if (tag == null) throw new ArgumentNullException("tag");
+            if (tag == null)
+                throw new ArgumentNullException("tag");
             return _attributes.GetAttribute(tag);
         }
 
         public virtual Stat GetStat(string tag)
         {
-            if (tag == null) throw new ArgumentNullException("tag");
+            if (tag == null)
+                throw new ArgumentNullException("tag");
             return _attributes.GetStat(tag);
         }
 
@@ -100,6 +109,14 @@ namespace Quark
             _buffs.AttachBuff(buff);
         }
 
+        public List<Buff.Buff> Buffs
+        {
+            get
+            {
+                return _buffs.Buffs;
+            }
+        }
+
         public void ApplyBases(Dictionary<string, float> bases)
         {
             _attributes.ApplyBases(bases);
@@ -117,8 +134,11 @@ namespace Quark
     struct MouseArgs : IMessage
     {
         public Character Character { get; private set; }
+
         public Vector3 Point { get; private set; }
+
         public MouseEventType Type { get; private set; }
+
         public bool IsCharacter { get; private set; }
 
         public MouseArgs(Character character, MouseEventType type)
@@ -144,7 +164,7 @@ namespace Quark
             Messenger<MouseArgs>.Broadcast("Mouse", this);
             Messenger<MouseArgs>.Broadcast(this.Type + ".Mouse", this);
             if (this.IsCharacter)
-                Messenger<MouseArgs>.Broadcast(this.Character.Identifier() + "." + this.Type + ".Mouse", this);
+                Messenger<MouseArgs>.Broadcast(this.Character.Identifier + "." + this.Type + ".Mouse", this);
         }
     }
 

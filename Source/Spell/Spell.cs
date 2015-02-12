@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Quark.Spell
 {
-    public class Spell : ITaggable
+    public class Spell : ITaggable, Identifiable
     {
         /// <summary>
         /// Gets or Sets the duration of the cast.
@@ -36,6 +36,13 @@ namespace Quark.Spell
             }
         }
 
+        public string Identifier
+        {
+            get
+            {
+                return Name + "@" + _context.Caster.Identifier;
+            }
+        }
         public virtual string[] Tags
         {
             get

@@ -17,11 +17,15 @@ namespace Quark.Attribute
 
         public float GetValue(Character character)
         {
+            if (AttrName == null)
+                return Multiplier;
             return character.GetAttribute(AttrName).Value * Multiplier;
         }
 
         public float GetValue(AttributeBag bag)
         {
+            if (AttrName == null)
+                return Multiplier;
             return bag[AttrName] * Multiplier;
         }
 

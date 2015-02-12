@@ -40,14 +40,12 @@ namespace Quark
         {
             return _modifiers.GetEnumerator();
         }
-
+ 
         public float Calculate(Character of)
         {
             float val = 0;
             foreach (AttributeModifier interaction in _modifiers)
-            {
                 val += interaction.GetValue(of);
-            }
             return val;
         }
     }

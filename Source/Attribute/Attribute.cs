@@ -139,9 +139,12 @@ namespace Quark.Attribute
             return string.Format("[Attribute {0}: {1}]", Name, Value);
         }
 
-        public string Identifier()
+        public string Identifier
         {
-            return Tag;
+            get
+            {
+                return Tag;
+            }
         }
     }
 }

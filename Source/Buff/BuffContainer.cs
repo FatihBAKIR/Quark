@@ -16,6 +16,14 @@ namespace Quark.Buff
             Messenger.AddListener("Update", this.Update);
         }
 
+        public List<Buff> Buffs
+        {
+            get
+            {
+                return _buffs;
+            }
+        }
+
         public void Dispose()
         {
             _owner = null;
@@ -26,8 +34,30 @@ namespace Quark.Buff
 
         public void AttachBuff(Buff buff)
         {
+            Buff existing;
+            if ((existing = GetBuff(buff)) != null)
+            {
+                Logger.Error("ALREADY HAS");
+                StackBuff(existing);
+                return;
+            }
             _buffs.Add(buff);
             buff.OnPossess(_owner);
+        }
+
+        void StackBuff(Buff buff)
+        {
+            if (buff.Behaviour == StackBehavior.Nothing)
+                return;
+            if (Utils.Checkflag(buff.Behaviour, StackBehavior.IncreaseStacks))
+            {
+                if (buff.CurrentStacks < buff.MaxStacks)
+                    buff.CurrentStacks++;
+            }
+            if (Utils.Checkflag(buff.Behaviour, StackBehavior.ResetBeginning))
+            {
+                buff.ResetBeginning();
+            }
         }
 
         bool CheckBuff(Buff buff)
@@ -37,7 +67,25 @@ namespace Quark.Buff
             return false;
         }
 
+        T HasBuff<T>() where T : Buff
+        {
+            foreach (Buff buff in _buffs)
+                if (buff is T)
+                    return (T)buff;
+            return null;
+        }
+
+        Buff GetBuff(Buff buff)
+        {
+            string id = buff.Identifier;
+            foreach (Buff existing in _buffs)
+                if (existing.Identifier == id)
+                    return existing;
+            return null;
+        }
+
         List<Buff> _toDispose;
+
         void Update()
         {
             _toDispose = new List<Buff>();

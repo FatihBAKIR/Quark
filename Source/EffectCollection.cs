@@ -164,5 +164,14 @@ namespace Quark
 
             return this;
         }
+
+        public EffectCollection Run(TargetCollection targets, Cast context = null)
+        {
+            return this
+                .Run(context)
+                .Run(targets.Points, context)
+                .Run(targets.Targetables, context)
+                .Run(targets.Characters, context);
+        }
     }
 }

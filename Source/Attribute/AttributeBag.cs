@@ -6,22 +6,22 @@ namespace Quark.Attribute
 {
     public class AttributeBag : IDisposable
     {
-        Dictionary<string, Attribute> Attributes;
-        Character carrier;
+        Dictionary<string, Attribute> _Attributes;
+        Character _carrier;
 
         public void Dispose()
         {
-            this.carrier = null;
-            this.Attributes.Clear();
-            this.Attributes = null;
+            _carrier = null;
+            _Attributes.Clear();
+            _Attributes = null;
         }
 
         public AttributeBag(Character carrier)
         {
             Logger.Debug("AttributeBag::ctor");
-            this.carrier = carrier;
+            _carrier = carrier;
 
-            this.Attributes = new Dictionary<string, Attribute>();
+            _Attributes = new Dictionary<string, Attribute>();
             NewAttribute("str", "Strength");
             NewAttribute("int", "Intellect");
             NewAttribute("agi", "Agility");
@@ -51,16 +51,16 @@ namespace Quark.Attribute
 
         public Attribute[] GetAttributes()
         {
-            Attribute[] attributes = new Attribute[Attributes.Count];
-            Attributes.Values.CopyTo(attributes, 0);
+            Attribute[] attributes = new Attribute[_Attributes.Count];
+            _Attributes.Values.CopyTo(attributes, 0);
             return attributes;
         }
 
         public Attribute GetAttribute(string Tag)
         {
-            if (!this.Attributes.ContainsKey(Tag))
+            if (!this._Attributes.ContainsKey(Tag))
                 throw new Exception("No Such Attribute!");
-            return Attributes[Tag];
+            return _Attributes[Tag];
         }
 
         public Stat GetStat(string Tag)
@@ -85,21 +85,21 @@ namespace Quark.Attribute
 
         Attribute NewAttribute(string tag, string name)
         {
-            Attributes.Add(tag, new Attribute(tag, name, this));
-            return Attributes[tag];
+            _Attributes.Add(tag, new Attribute(tag, name, this));
+            return _Attributes[tag];
         }
 
         Stat NewStat(string tag, string name)
         {
-            Attributes.Add(tag, (Attribute)new Stat(tag, name, this));
-            return (Stat)Attributes[tag];
+            _Attributes.Add(tag, (Attribute)new Stat(tag, name, this));
+            return (Stat)_Attributes[tag];
         }
 
         public Character Carrier
         {
             get
             {
-                return this.carrier;
+                return this._carrier;
             }
         }
 

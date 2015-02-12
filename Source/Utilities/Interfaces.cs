@@ -2,7 +2,10 @@
 {
     public interface Identifiable
     {
-        string Identifier();
+        string Identifier
+        {
+            get;
+        }
     }
 
     public interface IMessage

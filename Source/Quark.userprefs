@@ -1,10 +1,17 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Utilities/Head.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Targeting/TargetMacro.cs">
     <Files>
-      <File FileName="Spell/CastData.cs" Line="9" Column="9" />
-      <File FileName="Utilities/Head.cs" Line="13" Column="13" />
-      <File FileName="Utilities/EventDictionary.cs" Line="1" Column="1" />
+      <File FileName="Spell/Cast.cs" Line="42" Column="42" />
+      <File FileName="Spell/Spell.cs" Line="57" Column="57" />
+      <File FileName="Missile/Missile.cs" Line="9" Column="9" />
+      <File FileName="TargetCollection.cs" Line="9" Column="9" />
+      <File FileName="Targeting/TargetMacro.cs" Line="10" Column="10" />
+      <File FileName="Buff/Buff.cs" Line="40" Column="40" />
+      <File FileName="Interaction.cs" Line="9" Column="9" />
+      <File FileName="Effect.cs" Line="32" Column="32" />
+      <File FileName="Character.cs" Line="39" Column="39" />
+      <File FileName="Buff/BuffContainer.cs" Line="10" Column="10" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

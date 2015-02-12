@@ -153,7 +153,7 @@ namespace Quark.Utilities
             Broadcast(eventType, arg1, MessengerInternal.DEFAULT_MODE);
             if (arg1 is Identifiable)
             {
-                Messenger.Broadcast(((Identifiable)arg1).Identifier() + "." + eventType);
+                Messenger.Broadcast(((Identifiable)arg1).Identifier + "." + eventType);
             }
         }
 
@@ -196,7 +196,7 @@ namespace Quark.Utilities
             Broadcast(eventType, arg1, arg2, MessengerInternal.DEFAULT_MODE);
             if (arg1 is Identifiable)
             {
-                Messenger<U>.Broadcast(((Identifiable)arg1).Identifier() + "." + eventType, arg2);
+                Messenger<U>.Broadcast(((Identifiable)arg1).Identifier + "." + eventType, arg2);
             }
         }
 
@@ -240,7 +240,7 @@ namespace Quark.Utilities
             Broadcast(eventType, arg1, arg2, arg3, MessengerInternal.DEFAULT_MODE);
             if (arg1 is Identifiable)
             {
-                Messenger<U, V>.Broadcast(((Identifiable)arg1).Identifier() + "." + eventType, arg2, arg3);
+                Messenger<U, V>.Broadcast(((Identifiable)arg1).Identifier + "." + eventType, arg2, arg3);
             }
         }
 

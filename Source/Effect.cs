@@ -44,7 +44,7 @@ namespace Quark
             }
         }
 
-        public Cast _context { get; private set; }
+        protected Cast _context { get; private set; }
 
         public void SetContext(Cast context)
         {
