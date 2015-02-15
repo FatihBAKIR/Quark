@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Quark.Spell;
 using UnityEngine;
 using Quark.Utilities;
+using Quark.Targeting;
 
 namespace Quark
 {
@@ -44,11 +45,11 @@ namespace Quark
             }
         }
 
-        protected Cast _context { get; private set; }
+        public Cast Context { get; private set; }
 
         public void SetContext(Cast context)
         {
-            _context = context;
+            Context = context;
         }
 
         /// <summary>
@@ -84,6 +85,62 @@ namespace Quark
         /// <param name="target">Targetable.</param>
         public virtual void Apply(Targetable target)
         {
+        }
+    }
+
+    public enum EffectSource
+    {
+        Spell,
+        Buff,
+        Custom
+    }
+
+    public class EffectArgs
+    {
+        public Effect Effect
+        {
+            get;
+            protected set;
+        }
+
+        public TargetUnion Target
+        {
+            get;
+            protected set;
+        }
+
+        public EffectSource Source {get; protected set;}
+
+        public Cast Context
+        {
+            get
+            {
+                return Effect.Context;
+            }
+        }
+
+        public Character Caster
+        {
+            get
+            {
+                return Context.Caster;
+            }
+        }
+
+        public Spell.Spell SourceSpell 
+        {
+            get
+            {
+                return Context.Spell;
+            }
+        }
+
+        public Buff.Buff SourceBuff
+        {
+            get
+            {
+                return null;
+            }
         }
     }
 }
