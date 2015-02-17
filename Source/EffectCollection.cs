@@ -61,7 +61,7 @@ namespace Quark
         }
 
         /// <summary>
-        /// Run the effects contained in this collection with a single Point target
+        /// Apply the effects contained in this collection with a single Point target
         /// </summary>
         /// <param name="target">The target vector</param>
         /// <param name="data">The CastData context for the Effects to run</param>
@@ -78,7 +78,7 @@ namespace Quark
         }
 
         /// <summary>
-        /// Run the effects contained in this collection with a single Character target
+        /// Apply the effects contained in this collection with a single Character target
         /// </summary>
         /// <param name="target">The target character</param>
         /// <param name="data">The CastData context for the Effects to run</param>
@@ -95,7 +95,7 @@ namespace Quark
         }
         
         /// <summary>
-        /// Run the effects contained in this collection with a single Targetable target
+        /// Apply the effects contained in this collection with a single Targetable target
         /// </summary>
         /// <param name="target">The target targetable</param>
         /// <param name="data">The CastData context for the Effects to run</param>
@@ -112,25 +112,21 @@ namespace Quark
         }
 
         /// <summary>
-        /// Run the effects contained in this collection with a collection of Point targets
+        /// Apply the effects contained in this collection with a collection of Point targets
         /// </summary>
         /// <param name="target">The target vectors</param>
         /// <param name="data">The CastData context for the Effects to run</param>
         /// <returns>This collection itself</returns>
-        public EffectCollection Run(Vector3[] targets, Cast data = null)
+        public EffectCollection Run(Vector3[] targets, Cast context = null)
         {
             foreach (Vector3 target in targets)
-                foreach (Effect effect in _effects)
-                {
-                    effect.SetContext(data);
-                    effect.Apply(target);
-                }
+                Run(target, context);
 
             return this;
         }
 
         /// <summary>
-        /// Run the effects contained in this collection with a collection of Character targets
+        /// Apply the effects contained in this collection with a collection of Character targets
         /// </summary>
         /// <param name="target">The target characters</param>
         /// <param name="data">The CastData context for the Effects to run</param>
@@ -138,17 +134,13 @@ namespace Quark
         public EffectCollection Run(Character[] targets, Cast context = null)
         {
             foreach (Character target in targets)
-                foreach (Effect effect in _effects)
-                {
-                    effect.SetContext(context);
-                    effect.Apply(target);
-                }
+                Run(target, context);
 
             return this;
         }
 
         /// <summary>
-        /// Run the effects contained in this collection with a collection of Targetable targets
+        /// Apply the effects contained in this collection with a collection of Targetable targets
         /// </summary>
         /// <param name="target">The target targetables</param>
         /// <param name="data">The CastData context for the Effects to run</param>
@@ -156,11 +148,7 @@ namespace Quark
         public EffectCollection Run(Targetable[] targets, Cast context = null)
         {
             foreach (Targetable target in targets)
-                foreach (Effect effect in _effects)
-                {
-                    effect.SetContext(context);
-                    effect.Apply(target);
-                }
+                Run(target, context);
 
             return this;
         }

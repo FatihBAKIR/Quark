@@ -15,7 +15,7 @@ namespace Quark.Buff
 
         protected Character Possessor { get; private set; }
 
-        protected Cast _context { get; private set; }
+        public Cast Context { get; private set; }
 
         public bool CleanedUp { get; protected set; }
 
@@ -37,7 +37,7 @@ namespace Quark.Buff
         {
             get
             {
-                return Name + "@" + _context.Spell.Identifier;
+                return Name + "@" + Context.Spell.Identifier;
             }
         }
 
@@ -47,7 +47,7 @@ namespace Quark.Buff
         /// <param name="context">The Cast context</param>
         public void SetContext(Cast context)
         {
-            _context = context;
+            Context = context;
         }
 
         /// <summary>
@@ -154,15 +154,15 @@ namespace Quark.Buff
             _posessionTime = Time.timeSinceLevelLoad;
             _lastTick = Time.timeSinceLevelLoad;
             Register();
-            PossessEffects.Run(Possessor, _context);
+            PossessEffects.Run(Possessor, Context);
         }
 
         /// <summary>
-        /// This event handler is called when the same Buff is attached again
+        /// This event is raised when an existing Buff is attached again
         /// </summary>
         protected virtual void OnStack()
         {
-            StackEffects.Run(Possessor, _context);
+            StackEffects.Run(Possessor, Context);
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace Quark.Buff
         /// </summary>
         protected virtual void OnTick()
         {
-            TickEffects.Run(Possessor, _context);
+            TickEffects.Run(Possessor, Context);
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace Quark.Buff
         /// </summary>
         protected virtual void OnDone()
         {
-            DoneEffects.Run(Possessor, _context);
+            DoneEffects.Run(Possessor, Context);
             this.CleanedUp = true;
         }
 

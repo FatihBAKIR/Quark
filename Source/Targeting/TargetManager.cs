@@ -192,6 +192,7 @@ namespace Quark.Targeting
 
     public enum TargetType
     {
+        None,
         Point,
         Targetable,
         Character

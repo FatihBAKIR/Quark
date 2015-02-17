@@ -15,21 +15,24 @@ namespace Quark
         /// <value>
         /// The name of this effect.
         /// </value>
-        protected virtual string Name
+        public virtual string Name
         {
-            get{
-                return "Effect";
+            get
+            {
+                return this.GetType().Name;
             }
         }
+
         /// <summary>
         /// Gets the description.
         /// </summary>
         /// <value>
         /// The description of this effect.
         /// </value>
-        protected virtual string Description
+        public virtual string Description
         {
-            get{
+            get
+            {
                 return "Sımple Mutator";
             }
         }
@@ -91,11 +94,10 @@ namespace Quark
     public enum EffectSource
     {
         Spell,
-        Buff,
         Custom
     }
 
-    public class EffectArgs
+    public class EffectArgs : IMessage
     {
         public Effect Effect
         {
@@ -109,7 +111,15 @@ namespace Quark
             protected set;
         }
 
-        public EffectSource Source {get; protected set;}
+        public EffectSource Source
+        { 
+            get
+            {
+                if (Effect.Context != null)
+                    return EffectSource.Spell;
+                return EffectSource.Custom;
+            }
+        }
 
         public Cast Context
         {
@@ -127,7 +137,7 @@ namespace Quark
             }
         }
 
-        public Spell.Spell SourceSpell 
+        public Spell.Spell Spell
         {
             get
             {
@@ -135,12 +145,33 @@ namespace Quark
             }
         }
 
-        public Buff.Buff SourceBuff
+        public EffectArgs(Effect effect)
         {
-            get
-            {
-                return null;
-            }
+            Effect = effect;
+            Target = new TargetUnion();
+        }
+
+        public EffectArgs(Effect effect, Vector3 target)
+        {
+            Effect = effect;
+            Target = new TargetUnion(target);
+        }
+
+        public EffectArgs(Effect effect, Targetable target)
+        {
+            Effect = effect;
+            Target = new TargetUnion(target);
+        }
+
+        public EffectArgs(Effect effect, Character target)
+        {
+            Effect = effect;
+            Target = new TargetUnion(target);
+        }
+
+        public virtual void Broadcast()
+        {
+            Messenger<EffectArgs>.Broadcast("EffectApplied", this);
         }
     }
 }

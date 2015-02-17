@@ -13,11 +13,6 @@
         void Broadcast();
     }
 
-    public interface IRegisterer
-    {
-        void Register();
-    }
-
     public interface ITaggable
     {
         string[] Tags
