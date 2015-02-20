@@ -13,6 +13,8 @@ namespace Quark.Buff
 
         protected float Duration;
 
+        protected bool Continuous;
+
         protected Character Possessor { get; private set; }
 
         public Cast Context { get; private set; }
@@ -21,7 +23,7 @@ namespace Quark.Buff
 
         public int MaxStacks = 1;
         public int CurrentStacks = 1;
-        public StackBehavior Behaviour = StackBehavior.Nothing;
+        public StackBehavior StackBehaviour = StackBehavior.Nothing;
 
         public Buff()
         {
@@ -103,16 +105,26 @@ namespace Quark.Buff
         /// </summary>
         private void Tick()
         {
-            if (Time.timeSinceLevelLoad - _lastTick >= Interval)
+            if (Continuous)
+            {
+                OnTick();
+            }
+            else if (Time.timeSinceLevelLoad - _lastTick >= Interval)
             {
                 _lastTick = Time.timeSinceLevelLoad;
-                this.OnTick();
+                OnTick();
             }
 
-            if (LifeRatio >= 1 || _terminated)
+            if (LifeRatio >= 1 && !_terminated)
             {
-                this.Deregister();
-                this.OnDone();
+                Deregister();
+                OnDone();
+            }
+
+            if (_terminated)
+            {
+                Deregister();
+                OnTerminate();
             }
         }
 
@@ -179,13 +191,20 @@ namespace Quark.Buff
         protected virtual void OnDone()
         {
             DoneEffects.Run(Possessor, Context);
-            this.CleanedUp = true;
+            CleanedUp = true;
+        }
+
+        protected virtual void OnTerminate()
+        {
+            TerminateEffects.Run(Possessor, Context);
+            CleanedUp = true;
         }
 
         protected virtual EffectCollection PossessEffects { get { return new EffectCollection { }; } }
         protected virtual EffectCollection StackEffects { get { return new EffectCollection { }; } }
         protected virtual EffectCollection TickEffects { get { return new EffectCollection { }; } }
         protected virtual EffectCollection DoneEffects { get { return new EffectCollection { }; } }
+        protected virtual EffectCollection TerminateEffects { get { return new EffectCollection { }; } }
     }
 
     public enum StackBehavior

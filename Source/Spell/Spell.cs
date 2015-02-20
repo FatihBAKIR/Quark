@@ -32,7 +32,7 @@ namespace Quark.Spell
         {
             get
             {
-                return this.GetType().Name;
+                return GetType().Name;
             }
         }
 
@@ -40,7 +40,7 @@ namespace Quark.Spell
         {
             get
             {
-                return Name + "@" + _context.Caster.Identifier;
+                return Name + "@" + Context.Caster.Identifier;
             }
         }
         public virtual string[] Tags
@@ -114,19 +114,27 @@ namespace Quark.Spell
         {
             get
             {
-                return this.MissileObject != null;
+                return MissileObject != null;
             }
         }
 
-        protected Cast _context { get; set; }
+        protected Cast Context { get; private set; }
 
         /// <summary>
-        /// Introduce the CastData object which is invoking this Spell instance.
+        /// Introduce the Cast context which is invoking this Spell instance.
         /// </summary>
-        /// <param name="data">Invoking CastData</param>
-        public void Introduce(Cast data)
+        /// <param name="data">The Cast</param>
+        public void SetContext(Cast context)
         {
-            this._context = data;
+            Context = context;
+        }
+
+        protected virtual Condition InvokeCondition { get { return new Condition(); } }
+
+        public bool CanInvoke()
+        {
+            InvokeCondition.SetContext(Context);
+            return InvokeCondition.Check();
         }
 
         #region Effect Holders
@@ -198,7 +206,7 @@ namespace Quark.Spell
          * The default behavior of spell lifecycle steps are only about running preset effects with appropriate targets.
          */
             Logger.Debug("Spell.OnInvoke");
-            InvokeEffects.Run(_context);
+            InvokeEffects.Run(Context);
         }
 
         /// <summary>
@@ -211,10 +219,10 @@ namespace Quark.Spell
          */
             Logger.Debug("Spell.OnTargetingDone");
             TargetingDoneEffects
-                .Run(_context.Targets.Points, _context)
-                .Run(_context.Targets.Characters, _context)
-                .Run(_context.Targets.Targetables, _context)
-                .Run(_context);
+                .Run(Context.Targets.Points, Context)
+                .Run(Context.Targets.Characters, Context)
+                .Run(Context.Targets.Targetables, Context)
+                .Run(Context);
         }
 
         /// <summary>
@@ -223,7 +231,7 @@ namespace Quark.Spell
         public virtual void OnCastingBegan()
         {
             Logger.Debug("Spell.OnCastingBegan");
-            CastingEffects.Run(_context);
+            CastingEffects.Run(Context);
         }
        
 
@@ -241,9 +249,9 @@ namespace Quark.Spell
             else
             {
                 CastDoneEffects
-                    .Run(_context.Targets.Points, _context)
-                    .Run(_context.Targets.Characters, _context)
-                    .Run(_context.Targets.Targetables, _context);
+                    .Run(Context.Targets.Points, Context)
+                    .Run(Context.Targets.Characters, Context)
+                    .Run(Context.Targets.Targetables, Context);
 
                 OnFinal();
             }
@@ -254,7 +262,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnTravel(Vector3 position)
         {
-            TravelEffects.Run(position, _context);
+            TravelEffects.Run(position, Context);
         }
 
         /// <summary>
@@ -262,7 +270,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnHit(Vector3 position)
         {
-            HitEffects.Run(position, _context);
+            HitEffects.Run(position, Context);
         }
 
         /// <summary>
@@ -270,7 +278,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnHit(Character character)
         {
-            HitEffects.Run(character, _context);
+            HitEffects.Run(character, Context);
         }
 
         /// <summary>
@@ -278,7 +286,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnHit(Targetable targetable)
         {
-            HitEffects.Run(targetable, _context);
+            HitEffects.Run(targetable, Context);
         }
 
         /// <summary>
@@ -286,7 +294,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnMiss()
         {
-            MissEffects.Run(_context);
+            MissEffects.Run(Context);
         }
 
         /// <summary>
@@ -294,9 +302,9 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnFinal()
         {
-            ClearEffects.Run(_context);
+            ClearEffects.Run(Context);
 
-            this._context = null;
+            this.Context = null;
         }
 
         #endregion
@@ -320,22 +328,22 @@ namespace Quark.Spell
         /// </summary>
         protected virtual void CreateProjectiles()
         {
-            foreach (Vector3 point in _context.Targets.Points)
+            foreach (Vector3 point in Context.Targets.Points)
             {
                 Missile_Count++;
-                Missile.Missile.Make(this.MissileObject, this.Controller, this._context).Set(point);
+                Missile.Missile.Make(this.MissileObject, this.Controller, this.Context).Set(point);
             }
 
-            foreach (Character target in _context.Targets.Characters)
+            foreach (Character target in Context.Targets.Characters)
             {
                 Missile_Count++;
-                Missile.Missile.Make(this.MissileObject, this.Controller, this._context).Set(target);
+                Missile.Missile.Make(this.MissileObject, this.Controller, this.Context).Set(target);
             }
 
-            foreach (Targetable target in _context.Targets.Targetables)
+            foreach (Targetable target in Context.Targets.Targetables)
             {
                 Missile_Count++;
-                Missile.Missile.Make(this.MissileObject, this.Controller, this._context).Set(target);
+                Missile.Missile.Make(this.MissileObject, this.Controller, this.Context).Set(target);
             }
         }
     }

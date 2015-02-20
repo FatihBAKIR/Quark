@@ -190,6 +190,52 @@ namespace Quark.Targeting
         }
     }
 
+
+    struct MouseArgs : IMessage
+    {
+        public Character Character { get; private set; }
+
+        public Vector3 Point { get; private set; }
+
+        public MouseEventType Type { get; private set; }
+
+        public bool IsCharacter { get; private set; }
+
+        public MouseArgs(Character character, MouseEventType type)
+            : this()
+        {
+            this.Character = character;
+            this.Type = type;
+            this.Point = Vector3.zero;
+            this.IsCharacter = true;
+        }
+
+        public MouseArgs(Vector3 point)
+            : this()
+        {
+            this.Character = null;
+            this.Point = point;
+            this.IsCharacter = false;
+            this.Type = MouseEventType.Click;
+        }
+
+        public void Broadcast()
+        {
+            Messenger<MouseArgs>.Broadcast("Mouse", this);
+            Messenger<MouseArgs>.Broadcast(this.Type + ".Mouse", this);
+            if (this.IsCharacter)
+                Messenger<MouseArgs>.Broadcast(this.Character.Identifier + "." + this.Type + ".Mouse", this);
+        }
+    }
+
+    enum MouseEventType
+    {
+        Enter,
+        Exit,
+        Click,
+        Hover
+    }
+
     public enum TargetType
     {
         None,

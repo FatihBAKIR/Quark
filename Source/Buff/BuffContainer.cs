@@ -16,11 +16,11 @@ namespace Quark.Buff
             Messenger.AddListener("Update", this.Update);
         }
 
-        public List<Buff> Buffs
+        public IList<Buff> Buffs
         {
             get
             {
-                return _buffs;
+                return _buffs.AsReadOnly();
             }
         }
 
@@ -37,7 +37,6 @@ namespace Quark.Buff
             Buff existing;
             if ((existing = GetBuff(buff)) != null)
             {
-                Logger.Error("ALREADY HAS");
                 StackBuff(existing);
                 return;
             }
@@ -47,14 +46,14 @@ namespace Quark.Buff
 
         void StackBuff(Buff buff)
         {
-            if (buff.Behaviour == StackBehavior.Nothing)
+            if (buff.StackBehaviour == StackBehavior.Nothing)
                 return;
-            if (Utils.Checkflag(buff.Behaviour, StackBehavior.IncreaseStacks))
+            if (Utils.Checkflag(buff.StackBehaviour, StackBehavior.IncreaseStacks))
             {
                 if (buff.CurrentStacks < buff.MaxStacks)
                     buff.CurrentStacks++;
             }
-            if (Utils.Checkflag(buff.Behaviour, StackBehavior.ResetBeginning))
+            if (Utils.Checkflag(buff.StackBehaviour, StackBehavior.ResetBeginning))
             {
                 buff.ResetBeginning();
             }
@@ -67,7 +66,7 @@ namespace Quark.Buff
             return false;
         }
 
-        T HasBuff<T>() where T : Buff
+        public T HasBuff<T>() where T : Buff
         {
             foreach (Buff buff in _buffs)
                 if (buff is T)
@@ -75,7 +74,7 @@ namespace Quark.Buff
             return null;
         }
 
-        Buff GetBuff(Buff buff)
+        public Buff GetBuff(Buff buff)
         {
             string id = buff.Identifier;
             foreach (Buff existing in _buffs)

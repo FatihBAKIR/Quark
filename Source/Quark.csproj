@@ -69,6 +69,8 @@
     <Compile Include="Spell\Cast.cs" />
     <Compile Include="Interaction.cs" />
     <Compile Include="TargetCollection.cs" />
+    <Compile Include="ConditionCollection.cs" />
+    <Compile Include="Utilities\MetaData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
