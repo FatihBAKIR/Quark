@@ -7,6 +7,7 @@ using Quark.Spell;
 using Quark.Utilities;
 using UnityEngine;
 using System.ComponentModel;
+using AttributeCollection = Quark.Attribute.AttributeCollection;
 
 namespace Quark
 {
@@ -25,16 +26,24 @@ namespace Quark
 
     public class Character : Targetable
     {
-        AttributeBag _attributes;
+        AttributeCollection _attributes;
         List<Cast> _casting;
-        BuffContainer _buffs;
+        BuffContainer _regularBuffs;
+        BuffContainer _hiddenBuffs;
         //TODO: items
 
         void Awake()
         {
-            _attributes = new AttributeBag(this);
-            _buffs = new BuffContainer(this);
+            _attributes = QuarkMain.GetInstance().Config.DefaultAttributes.DeepCopy();
+            _attributes.SetCarrier(this);
+            _regularBuffs = new BuffContainer(this);
+            _hiddenBuffs = new BuffContainer(this);
             _casting = new List<Cast>();
+            Configure();
+        }
+
+        protected virtual void Configure()
+        {
         }
 
         public virtual void Start()
@@ -73,36 +82,36 @@ namespace Quark
             return _attributes.GetStat(tag);
         }
 
-        public Cast[] GetCasts
+        public IList<Cast> Casts
         {
             get
             {
-                return _casting.ToArray();
+                return _casting.AsReadOnly();
             }
         }
 
-        public virtual bool CanCast
+        public virtual bool CanCast(Spell.Spell spell)
         {
-            get
-            {
-                return _casting.Count == 0;
-            }
+            return _casting.Count == 0;
         }
 
-        public void AddCast(Cast cd)
+        public void AddCast(Cast cast)
         {
-            if (CanCast)
-                _casting.Add(cd);
+            if (CanCast(cast.Spell))
+                _casting.Add(cast);
         }
 
-        public void ClearCast(Cast cd)
+        public void ClearCast(Cast cast)
         {
-            _casting.Remove(cd);
+            _casting.Remove(cast);
         }
 
         public void AttachBuff(Buff.Buff buff)
         {
-            _buffs.AttachBuff(buff);
+            if (buff.Hidden)
+                _hiddenBuffs.AttachBuff(buff);
+            else
+                _regularBuffs.AttachBuff(buff);
         }
 
         /// <summary>
@@ -113,7 +122,7 @@ namespace Quark
         {
             get
             {
-                return _buffs.Buffs;
+                return _regularBuffs.Buffs;
             }
         }
 
@@ -124,7 +133,12 @@ namespace Quark
         /// <param name="buff">Example of the Buff to find. Only types should match.</param>
         public Buff.Buff GetBuff(Buff.Buff buff)
         {
-            return _buffs.GetBuff(buff);
+            return _regularBuffs.GetBuff(buff);
+        }
+
+        public Buff.Buff GetHidden(Buff.Buff hidden)
+        {
+            return _hiddenBuffs.GetBuff(hidden);
         }
 
         public void ApplyBases(Dictionary<string, float> bases)

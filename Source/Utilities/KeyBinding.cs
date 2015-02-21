@@ -26,7 +26,7 @@ namespace Quark.Utilities
         public void Check()
         {
             if (Input.GetKeyUp(key))
-                Cast.PrepareCast(Head.Player, new T());
+                Cast.PrepareCast(QuarkMain.GetInstance().Player, new T());
         }
     }
 }

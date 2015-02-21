@@ -22,11 +22,11 @@ namespace Quark.Attribute
             return character.GetAttribute(AttrName).Value * Multiplier;
         }
 
-        public float GetValue(AttributeBag bag)
+        public float GetValue(AttributeCollection collection)
         {
             if (AttrName == null)
                 return Multiplier;
-            return bag[AttrName] * Multiplier;
+            return collection[AttrName] * Multiplier;
         }
 
         public override string ToString()

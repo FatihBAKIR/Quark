@@ -196,7 +196,7 @@ namespace Quark.Spell
         {
             _step = LifeStep.Begin;
             Logger.Debug("Cast::Invoke");
-            if (!_caster.CanCast)
+            if (!_caster.CanCast(Spell))
             {
                 Messenger<CastError>.Broadcast("CastError", new BusyError());
                 return;

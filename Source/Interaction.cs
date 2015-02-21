@@ -7,7 +7,7 @@ namespace Quark
 {
     public class Interaction : IEnumerable<AttributeModifier>
     {
-        List<AttributeModifier> _modifiers;
+        readonly List<AttributeModifier> _modifiers;
 
         /// <summary>
         /// Initialize a new effect collection
@@ -20,7 +20,7 @@ namespace Quark
         /// <summary>
         /// Add a new interaction to this collection
         /// </summary>
-        /// <param name="effect">The interaction to be added</param>
+        /// <param name="modifier">The interaction to be added</param>
         public void Add(AttributeModifier modifier)
         {
             _modifiers.Add(modifier);

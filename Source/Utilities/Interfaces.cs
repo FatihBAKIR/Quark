@@ -21,4 +21,14 @@
             set;
         }
     }
+
+    public interface IDeepCopiable
+    {
+        object DeepCopy();
+    }
+
+    public interface IDeepCopiable<out T> : IDeepCopiable
+    {
+        new T DeepCopy();
+    }
 }

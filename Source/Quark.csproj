@@ -44,6 +44,7 @@
     <Compile Include="Character.cs" />
     <Compile Include="EffectCollection.cs" />
     <Compile Include="Exceptions\Targeting.cs" />
+    <Compile Include="QuarkConfig.cs" />
     <Compile Include="Spell\CastError.cs" />
     <Compile Include="Targeting\TargetMacro.cs" />
     <Compile Include="Utilities\AssemblyInfo.cs" />
@@ -51,10 +52,10 @@
     <Compile Include="Utilities\Messenger.cs" />
     <Compile Include="Utilities\Utils.cs" />
     <Compile Include="Attribute\Attribute.cs" />
-    <Compile Include="Attribute\AttributeBag.cs" />
+    <Compile Include="Attribute\AttributeCollection.cs" />
     <Compile Include="Attribute\AttributeModifier.cs" />
     <Compile Include="Attribute\Stat.cs" />
-    <Compile Include="Utilities\Head.cs" />
+    <Compile Include="QuarkMain.cs" />
     <Compile Include="Missile\Missile.cs" />
     <Compile Include="Missile\MissileController.cs" />
     <Compile Include="Buff\Buff.cs" />

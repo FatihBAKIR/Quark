@@ -207,7 +207,6 @@ namespace Quark.Utilities
             foreach (Delegate d in handlers)
             {
                 Callback<T, U> callback = d as Callback<T, U>;
-                UnityEngine.Debug.Log(callback == null);
                 if (callback != null)
                     callback(arg1, arg2);
             }

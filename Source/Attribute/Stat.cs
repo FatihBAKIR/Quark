@@ -2,8 +2,8 @@
 {
     public class Stat : Attribute
     {
-        public Stat(string Tag, string Name, AttributeBag Bag)
-            : base(Tag, Name, Bag)
+        public Stat(string tag, string name, AttributeCollection collection)
+            : base(tag, name, collection)
         {
         }
 
@@ -15,21 +15,21 @@
             }
         }
 
-        float LostValue = 0;
+        float _lostValue;
 
         public override float Value
         {
             get
             {
-                return base.Value - this.LostValue;
+                return base.Value - _lostValue;
             }
         }
 
-        public void Manipulate(float Amount)
+        public void Manipulate(float amount)
         {
-            this.LostValue += Amount;
-            this.LostValue = System.Math.Max(0, this.LostValue);
-            this.LostValue = System.Math.Min(this.Maximum, this.LostValue);
+            _lostValue += amount;
+            _lostValue = System.Math.Max(0, _lostValue);
+            _lostValue = System.Math.Min(Maximum, _lostValue);
         }
 
         public override string ToString()

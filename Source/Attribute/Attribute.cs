@@ -5,11 +5,12 @@ namespace Quark.Attribute
     public class Attribute : Identifiable
     {
         /// <summary>
-        /// The attribute bag which this attribute is hold in.
+        /// The attribute collection which this attribute is hold in.
         /// </summary>
-        AttributeBag _bag;
-        string _tag;
-        string _name;
+        AttributeCollection _collection;
+
+        readonly string _tag;
+        readonly string _name;
         /// <summary>
         /// Other attribute interactions are held in this list.
         /// </summary>
@@ -23,27 +24,27 @@ namespace Quark.Attribute
         {
             get
             {
-                return _bag.Carrier;
+                return _collection.Carrier;
             }
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Attribute"/> class.
         /// </summary>
-        /// <param name='Tag'>
+        /// <param name='tag'>
         /// Tag.
         /// </param>
-        /// <param name='Name'>
+        /// <param name='name'>
         /// Name.
         /// </param>
-        /// <param name='Bag'>
-        /// The attribute bag which this attribute should be held in.
+        /// <param name='collection'>
+        /// The attribute collection which this attribute should be held in.
         /// </param>
-        public Attribute(string Tag, string Name, AttributeBag Bag)
+        public Attribute(string tag, string name, AttributeCollection collection)
         {
-            _bag = Bag;
-            _tag = Tag;
-            _name = Name;
+            _collection = collection;
+            _tag = tag;
+            _name = name;
             _interactions = new Interaction();
         }
 
@@ -62,6 +63,11 @@ namespace Quark.Attribute
                     return;
                 }
             AddInteraction(null, Base);
+        }
+
+        public void SetCollection(AttributeCollection collection)
+        {
+            _collection = collection;
         }
 
         /// <summary>
@@ -132,6 +138,11 @@ namespace Quark.Attribute
         public void AddInteraction(string tag, float multiplier)
         {
             _interactions.Add(tag, multiplier);
+        }
+
+        public void SetInteractions(Interaction interaction)
+        {
+            _interactions = interaction;
         }
 
         public override string ToString()

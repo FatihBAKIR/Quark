@@ -8,18 +8,14 @@ namespace Quark.Buff
     public class Buff : ITaggable, Identifiable
     {
         public string Name { get; set; }
-
         protected float Interval;
-
         protected float Duration;
-
         protected bool Continuous;
 
+        public bool Hidden { get; protected set; }
+
         protected Character Possessor { get; private set; }
-
         public Cast Context { get; private set; }
-
-        public bool CleanedUp { get; protected set; }
 
         public int MaxStacks = 1;
         public int CurrentStacks = 1;
@@ -84,6 +80,7 @@ namespace Quark.Buff
         /// </summary>
         private float _lastTick = 0;
 
+        public bool CleanedUp { get; protected set; }
         bool _terminated = false;
 
         /// <summary>
