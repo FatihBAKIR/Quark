@@ -20,7 +20,10 @@ namespace Quark.Attribute
 
         public void Add(string tag, string name, bool isStat = false)
         {
-            Attribute a = (isStat ? AddStat(tag, name) : AddAttribute(tag, name));
+            if (isStat)
+                AddStat(tag, name); 
+            else 
+                AddAttribute(tag, name);
         }
 
         public void Add(string tag, string name, Interaction interaction, bool isStat = false)

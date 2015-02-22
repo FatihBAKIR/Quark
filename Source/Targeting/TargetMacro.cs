@@ -46,7 +46,7 @@ namespace Quark.Targeting
         /// </summary>
         public event PointHandler PointSelected = delegate { };
         
-        protected Cast _context { get; private set; }
+        protected Cast Context { get; private set; }
         public TargetMacro()
         {
             Logger.GC(this.GetType().Name + "::ctor");
@@ -77,7 +77,7 @@ namespace Quark.Targeting
 
         protected void Clear()
         {
-            _context = null;
+            Context = null;
             TargetingSuccess = null;
             TargetingFailed = null;
             TargetSelected = null;
@@ -92,14 +92,14 @@ namespace Quark.Targeting
             TargetSelected += context.AddTarget;
             CharacterSelected += context.AddTarget;
             PointSelected += context.AddTarget;
-            _context = context;
+            Context = context;
         }
 
         public Character Caster
         {
             get
             {
-                return _context.Caster;
+                return Context.Caster;
             }
         }
 

@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using Quark.Utilities;
 
 namespace Quark
 {
-    public class ConditionCollection: Condition, IEnumerable<Condition>
+    public class ConditionCollection: Condition, IEnumerable<Condition>, IDeepCopiable<ConditionCollection>, IDisposable
     {
         private List<Condition> _conditions;
 
@@ -15,6 +16,31 @@ namespace Quark
         public ConditionCollection()
         {
             _conditions = new List<Condition>();
+        }
+
+        ~ConditionCollection()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            foreach (Condition condition in _conditions)
+                condition.SetContext(null);
+            _conditions.Clear();
+            _conditions = null;
+        }
+
+        public ConditionCollection DeepCopy()
+        {
+            ConditionCollection newCollection = new ConditionCollection();
+            newCollection._conditions = new List<Condition>(_conditions);
+            return newCollection;
+        }
+
+        object IDeepCopiable.DeepCopy()
+        {
+            return DeepCopy();
         }
 
         /// <summary>

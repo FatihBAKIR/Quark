@@ -48,7 +48,7 @@ namespace Quark
                 return _characters[0];
             }
         }
-            
+
         public Vector3[] Points
         {
             get

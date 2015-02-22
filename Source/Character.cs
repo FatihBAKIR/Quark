@@ -30,6 +30,9 @@ namespace Quark
         List<Cast> _casting;
         BuffContainer _regularBuffs;
         BuffContainer _hiddenBuffs;
+
+        ConditionCollection _interruptConditions;
+
         //TODO: items
 
         void Awake()
@@ -39,6 +42,7 @@ namespace Quark
             _regularBuffs = new BuffContainer(this);
             _hiddenBuffs = new BuffContainer(this);
             _casting = new List<Cast>();
+            _interruptConditions = QuarkMain.GetInstance().Config.DefaultInterruption.DeepCopy();
             Configure();
         }
 
@@ -151,6 +155,14 @@ namespace Quark
             get
             {
                 return _attributes.GetAttributes();
+            }
+        }
+
+        public ConditionCollection InterruptConditions
+        {
+            get
+            {
+                return _interruptConditions;
             }
         }
     }

@@ -13,9 +13,9 @@ namespace Quark
     /// The family of Run functions return the instance itself so the running of the effects on multiple target types can be serialized like:
     /// Container.Run().Run(character).Run(point)... etc.
     /// </summary>
-    public class EffectCollection : Effect, IEnumerable<Effect>
+    public class EffectCollection : Effect, IEnumerable<Effect>, IDisposable
     {
-        private readonly List<Effect> _effects;
+        private List<Effect> _effects;
 
         /// <summary>
         /// Initialize a new effect collection
@@ -23,6 +23,19 @@ namespace Quark
         public EffectCollection()
         {
             _effects = new List<Effect>();
+        }
+
+        ~EffectCollection()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            foreach (Effect effect in _effects)
+                effect.SetContext(null);
+            _effects.Clear();
+            _effects = null;
         }
 
         /// <summary>

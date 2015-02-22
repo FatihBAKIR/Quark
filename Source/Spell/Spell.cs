@@ -7,6 +7,13 @@ namespace Quark.Spell
 {
     public class Spell : ITaggable, Identifiable
     {
+        ~Spell()
+        {
+            #if DEBUG
+            Logger.GC("Spell::dtor");
+            #endif
+        }
+
         /// <summary>
         /// Gets or Sets the duration of the cast.
         /// </summary>
@@ -242,7 +249,7 @@ namespace Quark.Spell
         {
             Logger.Debug("Spell.OnCastDone");
 
-            CastDoneEffects.Run();
+            CastDoneEffects.Run(Context);
 
             if (this.IsProjectiled)
                 CreateProjectiles();
@@ -257,11 +264,19 @@ namespace Quark.Spell
             }
         }
 
+        public virtual void OnInterrupt()
+        {
+            Logger.Debug("Spell.OnCastDone");
+
+            InterruptEffects.Run(Context);
+        }
+
         /// <summary>
         /// 
         /// </summary>
         public virtual void OnTravel(Vector3 position)
         {
+            Logger.Debug("Spell.OnTravel");
             TravelEffects.Run(position, Context);
         }
 
@@ -270,6 +285,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnHit(Vector3 position)
         {
+            Logger.Debug("Spell.OnHit");
             HitEffects.Run(position, Context);
         }
 
@@ -278,6 +294,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnHit(Character character)
         {
+            Logger.Debug("Spell.OnHit");
             HitEffects.Run(character, Context);
         }
 
@@ -286,6 +303,7 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnHit(Targetable targetable)
         {
+            Logger.Debug("Spell.OnHit");
             HitEffects.Run(targetable, Context);
         }
 
@@ -294,17 +312,20 @@ namespace Quark.Spell
         /// </summary>
         public virtual void OnMiss()
         {
+            Logger.Debug("Spell.OnMiss");
             MissEffects.Run(Context);
         }
 
         /// <summary>
-        /// Executes the ClearEffects then purges itself from the CastData it is associated with
+        /// Executes the ClearEffects then purges itself from the Cast context it is associated with
         /// </summary>
         public virtual void OnFinal()
         {
+            Logger.Debug("Spell.OnFinal");
             ClearEffects.Run(Context);
 
-            this.Context = null;
+            Context.Clear(LifeStep.Done);
+            Context = null;
         }
 
         #endregion

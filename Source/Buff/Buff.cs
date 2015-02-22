@@ -15,7 +15,7 @@ namespace Quark.Buff
         public bool Hidden { get; protected set; }
 
         protected Character Possessor { get; private set; }
-        public Cast Context { get; private set; }
+        public Cast Context { get; private set; } = null;
 
         public int MaxStacks = 1;
         public int CurrentStacks = 1;
@@ -35,7 +35,7 @@ namespace Quark.Buff
         {
             get
             {
-                return Name + "@" + Context.Spell.Identifier;
+                return Name + "@" + (Context == null ? "NullSpell" : Context.Spell.Identifier);
             }
         }
 

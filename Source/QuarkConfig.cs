@@ -8,5 +8,10 @@ namespace Quark
         {
             get { return new AttributeCollection(); }
         }
+
+        public virtual ConditionCollection DefaultInterruption
+        {
+            get { return new ConditionCollection(); }
+        }
     }
 }

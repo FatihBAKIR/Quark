@@ -22,7 +22,7 @@ namespace Quark.Spell
         public Cast()
         {
 #if DEBUG
-            Logger.GC("CastData::ctor");
+            Logger.GC("Cast::ctor");
 #endif
         }
 
@@ -31,7 +31,7 @@ namespace Quark.Spell
             _spell = null;
             _caster = null;
 #if DEBUG
-            Logger.GC("CastData::dtor");
+            Logger.GC("Cast::dtor");
 #endif
         }
 
@@ -233,7 +233,7 @@ namespace Quark.Spell
              * Store the time and the point at the instant the targeting was done and check for the spell type, if it is an instant spell, immediately cast it
              * otherwise, begin the casting logic
              */
-            _macro = null;
+            _macro = null; // Let GC collect the target macro we used
             _beginningTime = Time.timeSinceLevelLoad;
             _beginPoint = _caster.transform.position;
             _spell.OnTargetingDone();
@@ -243,19 +243,29 @@ namespace Quark.Spell
                 StartCast();
         }
 
+        ConditionCollection _interruptConditions;
         void StartCast()
         {
             Logger.Debug("Cast::StartCast");
             _step = LifeStep.Casting;
-            Messenger.AddListener("Update", Update);
+            _interruptConditions = Caster.InterruptConditions.DeepCopy();
+            Messenger.AddListener("Update", controlCast);
             _spell.OnCastingBegan();
         }
+
+        /// <summary>
+        /// This flag determines whether the current Cast instance has been interrupted or not
+        /// </summary>
+        bool _interrupted = false;
 
         void controlCast()
         {
             _step = LifeStep.Casting;
+            checkInterrupt();
+            if (_interrupted)
+                CastFail();
             if (CastPercentage >= 100)
-                this.CastDone();
+                CastDone();
         }
 
         void CastDone()
@@ -265,17 +275,36 @@ namespace Quark.Spell
             _spell.OnCastDone();
         }
 
-        void Update()
+        void CastFail()
         {
-            controlCast();
+            Logger.Debug("Cast::CastFail");
+            Clear(LifeStep.Fail);
         }
 
-        void Clear(LifeStep step)
+        void checkInterrupt()
         {
+            _interruptConditions.SetContext(this);
+            if (_interruptConditions.Check())
+                Interrupt();
+        }
+
+        /// <summary>
+        /// Interrupt this Cast instance.
+        /// </summary>
+        public void Interrupt()
+        {
+            _interrupted = true;
+            _spell.OnInterrupt();
+        }
+
+        public void Clear(LifeStep step)
+        {
+            Logger.Debug("Cast::Clear");
+            _interruptConditions = null;
             _step = step;
             _caster.ClearCast(this);
             if (!_spell.IsInstant)
-                Messenger.RemoveListener("Update", Update);
+                Messenger.RemoveListener("Update", controlCast);
         }
     }
 
