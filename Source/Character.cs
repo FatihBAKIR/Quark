@@ -1,13 +1,9 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using Quark.Attribute;
-using Quark.Buff;
-using Quark.Spell;
+using Quark.Attributes;
+using Quark.Buffs;
+using Quark.Spells;
 using Quark.Utilities;
 using UnityEngine;
-using System.ComponentModel;
-using AttributeCollection = Quark.Attribute.AttributeCollection;
 
 namespace Quark
 {
@@ -76,7 +72,7 @@ namespace Quark
 #endif
         }
 
-        public virtual Attribute.Attribute GetAttribute(string tag)
+        public virtual Attributes.Attribute GetAttribute(string tag)
         {
             return _attributes.GetAttribute(tag);
         }
@@ -94,7 +90,7 @@ namespace Quark
             }
         }
 
-        public virtual bool CanCast(Spell.Spell spell)
+        public virtual bool CanCast(Spells.Spell spell)
         {
             return _casting.Count == 0;
         }
@@ -110,7 +106,7 @@ namespace Quark
             _casting.Remove(cast);
         }
 
-        public void AttachBuff(Buff.Buff buff)
+        public void AttachBuff(Buffs.Buff buff)
         {
             if (buff.Hidden)
                 _hiddenBuffs.AttachBuff(buff);
@@ -122,7 +118,7 @@ namespace Quark
         /// Returns a readonly collection of the Buffs being carried by this Character
         /// </summary>
         /// <value>The buffs.</value>
-        public IList<Buff.Buff> Buffs
+        public IList<Buffs.Buff> Buffs
         {
             get
             {
@@ -135,12 +131,12 @@ namespace Quark
         /// </summary>
         /// <returns>The buff instance being carried by this Character.</returns>
         /// <param name="buff">Example of the Buff to find. Only types should match.</param>
-        public Buff.Buff GetBuff(Buff.Buff buff)
+        public Buffs.Buff GetBuff(Buffs.Buff buff)
         {
             return _regularBuffs.GetBuff(buff);
         }
 
-        public Buff.Buff GetHidden(Buff.Buff hidden)
+        public Buffs.Buff GetHidden(Buffs.Buff hidden)
         {
             return _hiddenBuffs.GetBuff(hidden);
         }
@@ -150,7 +146,7 @@ namespace Quark
             _attributes.ApplyBases(bases);
         }
 
-        public Attribute.Attribute[] GetAttributes
+        public Attributes.Attribute[] GetAttributes
         {
             get
             {

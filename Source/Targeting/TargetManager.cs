@@ -1,5 +1,5 @@
 ﻿using System;
-using Quark.Spell;
+using Quark.Spells;
 using Quark.Utilities;
 using UnityEngine;
 using Debug = System.Diagnostics.Debug;

@@ -1,4 +1,4 @@
-﻿using Quark.Spell;
+﻿using Quark.Spells;
 using UnityEngine;
 
 namespace Quark.Utilities
@@ -9,7 +9,7 @@ namespace Quark.Utilities
         void Check();
     }
 
-    public class KeyBinding<T> : IBinding where T : Spell.Spell, new()
+    public class KeyBinding<T> : IBinding where T : Spells.Spell, new()
     {
         KeyCode key;
 

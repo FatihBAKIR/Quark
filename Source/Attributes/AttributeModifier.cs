@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace Quark.Attribute
+namespace Quark.Attributes
 {
     public class AttributeModifier
     {

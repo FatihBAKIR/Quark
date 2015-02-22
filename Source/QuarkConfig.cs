@@ -1,4 +1,4 @@
-﻿using Quark.Attribute;
+﻿using Quark.Attributes;
 
 namespace Quark
 {

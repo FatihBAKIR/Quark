@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using Quark.Exceptions;
+﻿using Quark.Exceptions;
 using Quark.Targeting;
 using Quark.Utilities;
 using UnityEngine;
 
-namespace Quark.Spell
+namespace Quark.Spells
 {
     public class Cast
     {
@@ -36,7 +35,7 @@ namespace Quark.Spell
         }
 
         /// <summary>
-        /// Prepares a new instance of <see cref="CastData"/> with the specified caster and spell.
+        /// Prepares a new instance of <see cref="Cast"/> with the specified caster and spell.
         /// </summary>
         /// <returns>
         /// A began CastData object.
@@ -249,7 +248,7 @@ namespace Quark.Spell
             Logger.Debug("Cast::StartCast");
             _step = LifeStep.Casting;
             _interruptConditions = Caster.InterruptConditions.DeepCopy();
-            Messenger.AddListener("Update", controlCast);
+            Messenger.AddListener("Update", ControlCast);
             _spell.OnCastingBegan();
         }
 
@@ -258,10 +257,10 @@ namespace Quark.Spell
         /// </summary>
         bool _interrupted = false;
 
-        void controlCast()
+        void ControlCast()
         {
             _step = LifeStep.Casting;
-            checkInterrupt();
+            CheckInterrupt();
             if (_interrupted)
                 CastFail();
             if (CastPercentage >= 100)
@@ -281,7 +280,7 @@ namespace Quark.Spell
             Clear(LifeStep.Fail);
         }
 
-        void checkInterrupt()
+        void CheckInterrupt()
         {
             _interruptConditions.SetContext(this);
             if (_interruptConditions.Check())
@@ -304,7 +303,7 @@ namespace Quark.Spell
             _step = step;
             _caster.ClearCast(this);
             if (!_spell.IsInstant)
-                Messenger.RemoveListener("Update", controlCast);
+                Messenger.RemoveListener("Update", ControlCast);
         }
     }
 

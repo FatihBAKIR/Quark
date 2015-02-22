@@ -1,4 +1,4 @@
-﻿namespace Quark.Attribute
+﻿namespace Quark.Attributes
 {
     public class Stat : Attribute
     {

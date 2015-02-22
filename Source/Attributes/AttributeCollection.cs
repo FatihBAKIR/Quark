@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Quark.Utilities;
 using UnityEngine;
 
-namespace Quark.Attribute
+namespace Quark.Attributes
 {
     public class AttributeCollection : IDisposable, IEnumerable<Attribute>, IDeepCopiable<AttributeCollection>
     {
