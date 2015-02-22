@@ -13,9 +13,9 @@ namespace Quark
     /// The family of Run functions return the instance itself so the running of the effects on multiple target types can be serialized like:
     /// Container.Run().Run(character).Run(point)... etc.
     /// </summary>
-    public class EffectCollection : IEnumerable<Effect>
+    public class EffectCollection : Effect, IEnumerable<Effect>
     {
-        private List<Effect> _effects;
+        private readonly List<Effect> _effects;
 
         /// <summary>
         /// Initialize a new effect collection
@@ -47,7 +47,7 @@ namespace Quark
         /// <summary>
         /// Run the effects contained in this collection with no target
         /// </summary>
-        /// <param name="data">The CastData context for the Effects to run</param>
+        /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
         public EffectCollection Run(Cast context = null)
         {
@@ -64,7 +64,7 @@ namespace Quark
         /// Apply the effects contained in this collection with a single Point target
         /// </summary>
         /// <param name="target">The target vector</param>
-        /// <param name="data">The CastData context for the Effects to run</param>
+        /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
         public EffectCollection Run(Vector3 target, Cast context = null)
         {
@@ -81,7 +81,7 @@ namespace Quark
         /// Apply the effects contained in this collection with a single Character target
         /// </summary>
         /// <param name="target">The target character</param>
-        /// <param name="data">The CastData context for the Effects to run</param>
+        /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
         public EffectCollection Run(Character target, Cast context = null)
         {
@@ -98,7 +98,7 @@ namespace Quark
         /// Apply the effects contained in this collection with a single Targetable target
         /// </summary>
         /// <param name="target">The target targetable</param>
-        /// <param name="data">The CastData context for the Effects to run</param>
+        /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
         public EffectCollection Run(Targetable target, Cast context = null)
         {
@@ -114,8 +114,8 @@ namespace Quark
         /// <summary>
         /// Apply the effects contained in this collection with a collection of Point targets
         /// </summary>
-        /// <param name="target">The target vectors</param>
-        /// <param name="data">The CastData context for the Effects to run</param>
+        /// <param name="targets">The target vectors</param>
+        /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
         public EffectCollection Run(Vector3[] targets, Cast context = null)
         {
@@ -128,8 +128,8 @@ namespace Quark
         /// <summary>
         /// Apply the effects contained in this collection with a collection of Character targets
         /// </summary>
-        /// <param name="target">The target characters</param>
-        /// <param name="data">The CastData context for the Effects to run</param>
+        /// <param name="targets">The target characters</param>
+        /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
         public EffectCollection Run(Character[] targets, Cast context = null)
         {
@@ -142,8 +142,8 @@ namespace Quark
         /// <summary>
         /// Apply the effects contained in this collection with a collection of Targetable targets
         /// </summary>
-        /// <param name="target">The target targetables</param>
-        /// <param name="data">The CastData context for the Effects to run</param>
+        /// <param name="targets">The target targetables</param>
+        /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
         public EffectCollection Run(Targetable[] targets, Cast context = null)
         {
@@ -160,6 +160,30 @@ namespace Quark
                 .Run(targets.Points, context)
                 .Run(targets.Targetables, context)
                 .Run(targets.Characters, context);
+        }
+
+        public override void Apply()
+        {
+            Run(Context);
+            base.Apply();
+        }
+
+        public override void Apply(Character target)
+        {
+            Run(target, Context);
+            base.Apply(target);
+        }
+
+        public override void Apply(Targetable target)
+        {
+            Run(target, Context);
+            base.Apply(target);
+        }
+
+        public override void Apply(Vector3 point)
+        {
+            Run(point, Context);
+            base.Apply(point);
         }
     }
 }
