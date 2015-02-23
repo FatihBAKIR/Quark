@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Quark.Spell;
+using Quark.Spells;
 using UnityEngine;
 using Quark.Utilities;
 using Quark.Targeting;
@@ -137,7 +137,7 @@ namespace Quark
             }
         }
 
-        public Spell.Spell Spell
+        public Spells.Spell Spell
         {
             get
             {

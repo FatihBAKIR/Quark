@@ -1,9 +1,9 @@
-using Quark.Spell;
+using Quark.Spells;
 using Quark.Targeting;
 using Quark.Utilities;
 using UnityEngine;
 
-namespace Quark.Missile
+namespace Quark.Missiles
 {
     /// <summary>
     /// Missile class provides interface for MissileController objects to access to properties about the projectile

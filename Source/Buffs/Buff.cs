@@ -1,9 +1,9 @@
 ﻿using System;
-using Quark.Spell;
+using Quark.Spells;
 using Quark.Utilities;
 using UnityEngine;
 
-namespace Quark.Buff
+namespace Quark.Buffs
 {
     public class Buff : ITaggable, Identifiable
     {
@@ -15,7 +15,7 @@ namespace Quark.Buff
         public bool Hidden { get; protected set; }
 
         protected Character Possessor { get; private set; }
-        public Cast Context { get; private set; } = null;
+        public Cast Context { get; private set; }
 
         public int MaxStacks = 1;
         public int CurrentStacks = 1;
@@ -31,7 +31,7 @@ namespace Quark.Buff
             Logger.GC("Buff::dtor");
         }
 
-        public string Identifier
+        public virtual string Identifier
         {
             get
             {
@@ -55,7 +55,7 @@ namespace Quark.Buff
         {
             get
             {
-                return this.Duration > 0 ? this.Alive / this.Duration : 0;
+                return Duration > 0 ? Alive / Duration : 0;
             }
         }
 
@@ -66,22 +66,22 @@ namespace Quark.Buff
         {
             get
             {
-                return Time.timeSinceLevelLoad - this._posessionTime;
+                return Time.timeSinceLevelLoad - _posessionTime;
             }
         }
 
         /// <summary>
         /// This variable is stored for calculating the alive time of the Buff instances
         /// </summary>
-        private float _posessionTime = 0;
+        private float _posessionTime;
 
         /// <summary>
         /// This variable is stored for checking whether the Tick method should be called or not in a given frame
         /// </summary>
-        private float _lastTick = 0;
+        private float _lastTick;
 
         public bool CleanedUp { get; protected set; }
-        bool _terminated = false;
+        bool _terminated;
 
         /// <summary>
         /// Immediately finalize this Buff
@@ -129,7 +129,7 @@ namespace Quark.Buff
         {
             get
             {
-                return new string[] { "buff" };
+                return new[] { "buff" };
             }
             set
             {
@@ -143,7 +143,7 @@ namespace Quark.Buff
         /// </summary>
         protected virtual void Register()
         {
-            Messenger.AddListener("Update", this.Tick);
+            Messenger.AddListener("Update", Tick);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Quark.Buff
         /// </summary>
         protected virtual void Deregister()
         {
-            Messenger.RemoveListener("Update", this.Tick);
+            Messenger.RemoveListener("Update", Tick);
         }
 
         /// <summary>

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
-namespace Quark.Spell
+﻿namespace Quark.Spells
 {
     public class CastError
     {

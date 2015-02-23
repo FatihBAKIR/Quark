@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Quark.Attribute;
+using Quark.Attributes;
 using System.Collections;
 
 namespace Quark

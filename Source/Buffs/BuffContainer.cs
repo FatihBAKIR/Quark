@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Quark.Utilities;
 
-namespace Quark.Buff
+namespace Quark.Buffs
 {
     public class BuffContainer : IDisposable
     {

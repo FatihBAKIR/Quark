@@ -1,17 +1,17 @@
-using Quark.Missile;
+using Quark.Missiles;
 using Quark.Targeting;
 using Quark.Utilities;
 using UnityEngine;
 
-namespace Quark.Spell
+namespace Quark.Spells
 {
     public class Spell : ITaggable, Identifiable
     {
         ~Spell()
         {
-            #if DEBUG
+#if DEBUG
             Logger.GC("Spell::dtor");
-            #endif
+#endif
         }
 
         /// <summary>
@@ -22,13 +22,8 @@ namespace Quark.Spell
         /// </value>
         public virtual float CastDuration
         {
-            get
-            {
-                return 1;
-            }
-            set
-            {
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -54,7 +49,7 @@ namespace Quark.Spell
         {
             get
             {
-                return new string[] { "spell" };
+                return new [] { "spell" };
             }
             set
             {
@@ -130,7 +125,7 @@ namespace Quark.Spell
         /// <summary>
         /// Introduce the Cast context which is invoking this Spell instance.
         /// </summary>
-        /// <param name="data">The Cast</param>
+        /// <param name="context">The Cast</param>
         public void SetContext(Cast context)
         {
             Context = context;
@@ -240,7 +235,7 @@ namespace Quark.Spell
             Logger.Debug("Spell.OnCastingBegan");
             CastingEffects.Run(Context);
         }
-       
+
 
         /// <summary>
         /// 
@@ -333,16 +328,16 @@ namespace Quark.Spell
         /// <summary>
         /// Collects a projectile which were created by this spell
         /// </summary>
-        /// <param name="m">Missile to collect.</param>
-        public void CollectProjectile(Missile.Missile m)
+        /// <param name="missile">Missile to collect.</param>
+        public void CollectProjectile(Missile missile)
         {
             Logger.Debug("Collecting Projectile");
-            Missile_Count--;
-            if (Missile_Count == 0)
+            _onAirMissileCount--;
+            if (_onAirMissileCount == 0)
                 OnFinal();
         }
 
-        uint Missile_Count = 0;
+        uint _onAirMissileCount = 0;
 
         /// <summary>
         /// Invokes necessary projectiles for this spell
@@ -351,20 +346,20 @@ namespace Quark.Spell
         {
             foreach (Vector3 point in Context.Targets.Points)
             {
-                Missile_Count++;
-                Missile.Missile.Make(this.MissileObject, this.Controller, this.Context).Set(point);
+                _onAirMissileCount++;
+                Missile.Make(MissileObject, Controller, Context).Set(point);
             }
 
             foreach (Character target in Context.Targets.Characters)
             {
-                Missile_Count++;
-                Missile.Missile.Make(this.MissileObject, this.Controller, this.Context).Set(target);
+                _onAirMissileCount++;
+                Missile.Make(MissileObject, Controller, Context).Set(target);
             }
 
             foreach (Targetable target in Context.Targets.Targetables)
             {
-                Missile_Count++;
-                Missile.Missile.Make(this.MissileObject, this.Controller, this.Context).Set(target);
+                _onAirMissileCount++;
+                Missile.Make(MissileObject, Controller, Context).Set(target);
             }
         }
     }

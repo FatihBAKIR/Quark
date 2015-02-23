@@ -1,6 +1,6 @@
 ﻿using Quark.Utilities;
 
-namespace Quark.Attribute
+namespace Quark.Attributes
 {
     public class Attribute : Identifiable
     {
