@@ -2,11 +2,10 @@
 using Quark.Spells;
 using Quark.Utilities;
 using UnityEngine;
-using Debug = System.Diagnostics.Debug;
 
 namespace Quark.Targeting
 {
-    public static class TargetManager
+    public class TargetManager : Daemon<TargetManager>
     {
         public static LayerMask TerrainLayer = LayerMask.NameToLayer("Terrain");
 
@@ -26,11 +25,6 @@ namespace Quark.Targeting
         }
 
         public static Character SelectedCharacter { get; private set; }
-
-        public static void Register()
-        {
-            Messenger.AddListener("Update", CheckTargeting);
-        }
 
         private static void OnCharacterClick(MouseArgs mouseArgs)
         {
@@ -60,7 +54,7 @@ namespace Quark.Targeting
                 _pointCallback(point);
         }
 
-        static void CheckTargeting()
+        public override void Update()
         {
             RunRaycast();
             if (Input.GetMouseButtonUp(0))
@@ -204,27 +198,27 @@ namespace Quark.Targeting
         public MouseArgs(Character character, MouseEventType type)
             : this()
         {
-            this.Character = character;
-            this.Type = type;
-            this.Point = Vector3.zero;
-            this.IsCharacter = true;
+            Character = character;
+            Type = type;
+            Point = Vector3.zero;
+            IsCharacter = true;
         }
 
         public MouseArgs(Vector3 point)
             : this()
         {
-            this.Character = null;
-            this.Point = point;
-            this.IsCharacter = false;
-            this.Type = MouseEventType.Click;
+            Character = null;
+            Point = point;
+            IsCharacter = false;
+            Type = MouseEventType.Click;
         }
 
         public void Broadcast()
         {
             Messenger<MouseArgs>.Broadcast("Mouse", this);
-            Messenger<MouseArgs>.Broadcast(this.Type + ".Mouse", this);
-            if (this.IsCharacter)
-                Messenger<MouseArgs>.Broadcast(this.Character.Identifier + "." + this.Type + ".Mouse", this);
+            Messenger<MouseArgs>.Broadcast(Type + ".Mouse", this);
+            if (IsCharacter)
+                Messenger<MouseArgs>.Broadcast(Character.Identifier + "." + Type + ".Mouse", this);
         }
     }
 

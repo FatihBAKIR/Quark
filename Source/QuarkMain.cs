@@ -1,6 +1,7 @@
 using Quark.Targeting;
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using Quark.Utilities;
 
 namespace Quark
@@ -20,14 +21,45 @@ namespace Quark
             }
             _headRef = new WeakReference(this);
 
-            TargetManager.Register();
-            KeyBindings.Register();
+            _daemons = new List<Daemon>
+            {
+                new KeyBindings(),
+                new TargetManager()
+            };
+
+            foreach (Daemon daemon in _daemons)
+                daemon.Register();
+
             Logger.Debug("QuarkMain::Start");
         }
 
         void Update()
         {
             Messenger.Broadcast("Update");
+        }
+
+        private List<Daemon> _daemons = new List<Daemon>();
+
+        public T GetDaemon<T>() where T : Daemon
+        {
+            foreach (Daemon daemon in _daemons)
+            {
+                if (daemon is T)
+                    return (T)daemon;
+            }
+            return null;
+        }
+
+        public void AddDaemon(Daemon daemon)
+        {
+            _daemons.Add(daemon);
+            daemon.Register();
+        }
+
+        public void TerminateDaemon(Daemon daemon)
+        {
+            daemon.Terminate();
+            _daemons.Remove(daemon);
         }
 
         /// <summary>

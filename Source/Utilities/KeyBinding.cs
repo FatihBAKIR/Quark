@@ -1,4 +1,5 @@
 ﻿using Quark.Spells;
+using Quark.Targeting;
 using UnityEngine;
 
 namespace Quark.Utilities
@@ -9,23 +10,23 @@ namespace Quark.Utilities
         void Check();
     }
 
-    public class KeyBinding<T> : IBinding where T : Spells.Spell, new()
+    public class KeyBinding<T> : IBinding where T : Spell, new()
     {
-        KeyCode key;
+        readonly KeyCode _key;
 
-        public KeyBinding(KeyCode Key)
+        public KeyBinding(KeyCode key)
         {
-            this.key = Key;
+            _key = key;
         }
 
         public void Register()
         {
-            KeyBindings.AddBinding(this);
+            KeyBindings.GetInstance().AddBinding(this);
         }
 
         public void Check()
         {
-            if (Input.GetKeyUp(key))
+            if (Input.GetKeyUp(_key))
                 Cast.PrepareCast(QuarkMain.GetInstance().Player, new T());
         }
     }

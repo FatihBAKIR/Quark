@@ -72,7 +72,7 @@ namespace Quark
 #endif
         }
 
-        public virtual Attributes.Attribute GetAttribute(string tag)
+        public virtual Attribute GetAttribute(string tag)
         {
             return _attributes.GetAttribute(tag);
         }
@@ -90,7 +90,7 @@ namespace Quark
             }
         }
 
-        public virtual bool CanCast(Spells.Spell spell)
+        public virtual bool CanCast(Spell spell)
         {
             return _casting.Count == 0;
         }
@@ -106,7 +106,7 @@ namespace Quark
             _casting.Remove(cast);
         }
 
-        public void AttachBuff(Buffs.Buff buff)
+        public void AttachBuff(Buff buff)
         {
             if (buff.Hidden)
                 _hiddenBuffs.AttachBuff(buff);
@@ -118,7 +118,7 @@ namespace Quark
         /// Returns a readonly collection of the Buffs being carried by this Character
         /// </summary>
         /// <value>The buffs.</value>
-        public IList<Buffs.Buff> Buffs
+        public IList<Buff> Buffs
         {
             get
             {
@@ -131,12 +131,12 @@ namespace Quark
         /// </summary>
         /// <returns>The buff instance being carried by this Character.</returns>
         /// <param name="buff">Example of the Buff to find. Only types should match.</param>
-        public Buffs.Buff GetBuff(Buffs.Buff buff)
+        public Buff GetBuff(Buff buff)
         {
             return _regularBuffs.GetBuff(buff);
         }
 
-        public Buffs.Buff GetHidden(Buffs.Buff hidden)
+        public Buff GetHidden(Buff hidden)
         {
             return _hiddenBuffs.GetBuff(hidden);
         }
@@ -146,7 +146,7 @@ namespace Quark
             _attributes.ApplyBases(bases);
         }
 
-        public Attributes.Attribute[] GetAttributes
+        public Attribute[] GetAttributes
         {
             get
             {

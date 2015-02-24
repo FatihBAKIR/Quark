@@ -2,23 +2,18 @@
 
 namespace Quark.Utilities
 {
-    class KeyBindings
+    class KeyBindings : Daemon<KeyBindings>
     {
-        static List<IBinding> bindings = new List<IBinding>();
+        readonly List<IBinding> _bindings = new List<IBinding>();
 
-        public static void AddBinding(IBinding binding)
+        public void AddBinding(IBinding binding)
         {
-            bindings.Add(binding);
+            _bindings.Add(binding);
         }
 
-        public static void Register()
+        public override void Update()
         {
-            Messenger.AddListener("Update", Update);
-        }
-
-        static void Update()
-        {
-            foreach (IBinding binding in bindings)
+            foreach (IBinding binding in _bindings)
                 binding.Check();
         }
     }
