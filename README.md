@@ -1,23 +1,26 @@
 Quark Framework
 ====
 ![](http://quarkup.io/res/quark.png)
+[http://quarkup.io][6]
+
+>This page contains a summary of the project, an extended version of this can be found [here][5]
 
 Quark is a game development framework which utilizes high level modularity for building mainly role playing games using the base components it provides.
 
-For example, a `Spell` that deals 100 damage to nearest player is defined like this:
+For example, a `Spell` that deals 10 damage to nearest character is defined like this:
 ```csharp
 public class BoomSpell : Spell
 {
 	public override TargetMacro TargetMacro {
 		get {
-			return new NearestCharacter();
+			return new NearestCharacter(5);
 		}
 	}
 
-	protected override Effect[] TargetingDoneEffects {
+	protected override EffectCollection TargetingDoneEffects {
 		get {
-			return new Effect[] {
-				new DamageEffect (100)
+			return new EffectCollection {
+				new DamageEffect (10)
 			};
 		}
 	}
@@ -58,7 +61,9 @@ License
 ----
 Quark is licensed under [Apache V2][4] License.
 
-[1]: Docs/Usage.md
+[1]: http://quarkup.io/Docs/Usage.md
 [2]: https://github.com/FatihBAKIR/Quark
 [3]: mailto:fatih@linux.com
 [4]: http://www.apache.org/licenses/LICENSE-2.0
+[5]: http://quarkup.io/Docs/Introduction.md
+[6]: http://quarkup.io/
