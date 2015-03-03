@@ -11,28 +11,28 @@ namespace Quark.Missiles
         /// <value>Update type.</value>
         public virtual MovementType Type { get { return MovementType.ReturnsMovement; } }
 
-        protected Missile obj { get; set; }
+        protected Missile Obj { get; set; }
 
         /// <summary>
         /// Controls the missile object's position
         /// </summary>
         public virtual void Control()
         {
-            switch (this.Type)
+            switch (Type)
             {
                 case MovementType.ReturnsMovement:
-                    obj.transform.Translate(Movement);
+                    Obj.transform.Translate(Movement);
                     break;
                 case MovementType.ReturnsPosition:
-                    obj.transform.position = Utils.RotateVector(Position, obj.CastRotation) + InitialPosition;
+                    Obj.transform.position = Utils.RotateVector(Position, Obj.CastRotation) + InitialPosition;
                     break;
             }
-            obj.transform.LookAt(Target);
+            Obj.transform.LookAt(Target);
         }
 
         public void Set(Missile obj)
         {
-            this.obj = obj;
+            Obj = obj;
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Quark.Missiles
         {
             get
             {
-                return this.obj.transform.position;
+                return Obj.transform.position;
             }
         }
 
@@ -79,7 +79,7 @@ namespace Quark.Missiles
         {
             get
             {
-                return this.obj.Target;
+                return Obj.Target;
             }
         }
 
@@ -91,7 +91,7 @@ namespace Quark.Missiles
         {
             get
             {
-                return this.obj.InitPosition;
+                return Obj.InitPosition;
             }
         }
 
@@ -103,7 +103,7 @@ namespace Quark.Missiles
         {
             get
             {
-                return Time.timeSinceLevelLoad - this.obj.InitTime;
+                return Time.timeSinceLevelLoad - Obj.InitTime;
             }
         }
 
@@ -115,7 +115,7 @@ namespace Quark.Missiles
         {
             get
             {
-                return Vector3.Distance(this.obj.transform.position, this.obj.InitPosition);
+                return Vector3.Distance(Obj.transform.position, Obj.InitPosition);
             }
         }
     }

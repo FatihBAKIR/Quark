@@ -7,10 +7,9 @@ using UnityEngine;
 
 namespace Quark
 {
-    public class Targetable : MonoBehaviour, Identifiable
+    public class Targetable : MonoBehaviour, Identifiable, ITaggable
     {
         public bool IsTargetable { get; set; }
-
         public string Identifier
         {
             get
@@ -18,6 +17,33 @@ namespace Quark
                 return GetHashCode().ToString();
             }
         }
+        public TagCollection Tags { get; protected set; }
+
+        public void Tag(string tag)
+        {
+            Tags.Add(tag);
+        }
+
+        public void Tag(string tag, object value)
+        {
+            Tags.Add(tag, value);
+        }
+
+        public void Untag(string tag)
+        {
+            Tags.Delete(tag);
+        }
+
+        public bool IsTagged(string tag)
+        {
+            return Tags.Has(tag);
+        }
+
+        public object GetTag(string tag)
+        {
+            return Tags.Get(tag);
+        }
+
     }
 
     public class Character : Targetable
@@ -33,6 +59,7 @@ namespace Quark
 
         void Awake()
         {
+            Tags = new TagCollection();
             _attributes = QuarkMain.GetInstance().Config.DefaultAttributes.DeepCopy();
             _attributes.SetCarrier(this);
             _regularBuffs = new BuffContainer(this);
@@ -51,26 +78,19 @@ namespace Quark
             IsTargetable = true;
         }
 
+#if DEBUG
         public Character()
         {
-#if DEBUG
             Logger.GC("Character::ctor");
-#endif
         }
+#endif
 
-        public Character(Character obj)
-        {
 #if DEBUG
-            Logger.GC("Character::cctor");
-#endif
-        }
-
         ~Character()
         {
-#if DEBUG
             Logger.GC("Character::dtor");
-#endif
         }
+#endif
 
         public virtual Attribute GetAttribute(string tag)
         {
@@ -160,6 +180,12 @@ namespace Quark
             {
                 return _interruptConditions;
             }
+        }
+
+        public static Character operator +(Character character, Buff buff)
+        {
+            character.AttachBuff(buff);
+            return character;
         }
     }
 }

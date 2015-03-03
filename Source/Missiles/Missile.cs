@@ -44,7 +44,7 @@ namespace Quark.Missiles
         {
             get
             {
-                return this._initialPosition;
+                return _initialPosition;
             }
         }
 
@@ -52,7 +52,7 @@ namespace Quark.Missiles
         {
             get
             {
-                return ToPos ? this._targetPosition : this._target.transform.position;
+                return ToPos ? _targetPosition : _target.transform.position;
             }
         }
 
@@ -66,7 +66,7 @@ namespace Quark.Missiles
         {
             get
             {
-                return this._initialTime;
+                return _initialTime;
             }
         }
 
@@ -118,7 +118,7 @@ namespace Quark.Missiles
 
         void Start()
         {
-            _initialPosition = this.transform.position;
+            _initialPosition = transform.position;
             _initialTime = Time.timeSinceLevelLoad;
         }
 

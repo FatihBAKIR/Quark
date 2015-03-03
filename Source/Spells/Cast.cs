@@ -17,13 +17,13 @@ namespace Quark.Spells
         LifeStep _step = LifeStep.Null;
 
         public uint HitCount = 0;
-
+        
+#if DEBUG
         public Cast()
         {
-#if DEBUG
             Logger.GC("Cast::ctor");
-#endif
         }
+#endif
 
         ~Cast()
         {

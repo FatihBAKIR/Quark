@@ -20,16 +20,20 @@ namespace Quark.Buffs
         public int MaxStacks = 1;
         public int CurrentStacks = 1;
         public StackBehavior StackBehaviour = StackBehavior.Nothing;
-
+        
+#if DEBUG
         public Buff()
         {
             Logger.GC("Buff::ctor");
         }
+#endif
 
+#if DEBUG
         ~Buff()
         {
             Logger.GC("Buff::dtor");
         }
+#endif
 
         public virtual string Identifier
         {
@@ -125,17 +129,6 @@ namespace Quark.Buffs
             }
         }
 
-        public virtual string[] Tags
-        {
-            get
-            {
-                return new[] { "buff" };
-            }
-            set
-            {
-            }
-        }
-
         /// <summary>
         /// Register proper events to the Messenger.
         /// This method should <b>not</b> contain any gameplay related logic
@@ -154,18 +147,23 @@ namespace Quark.Buffs
             Messenger.RemoveListener("Update", Tick);
         }
 
-        /// <summary>
-        /// This event handler is called right after the owning <c>BuffContainer</c> possesses this buff
-        /// </summary>
-        public virtual void OnPossess(Character possessor)
+        public void Possess(Character possessor)
         {
             Possessor = possessor;
             _posessionTime = Time.timeSinceLevelLoad;
             _lastTick = Time.timeSinceLevelLoad;
             Register();
-            PossessEffects.Run(Possessor, Context);
+            OnPossess();
         }
 
+        /// <summary>
+        /// This event handler is called right after the owning <c>BuffContainer</c> possesses this buff
+        /// </summary>
+        public virtual void OnPossess()
+        {
+            PossessEffects.Run(Possessor, Context);
+        }
+        
         /// <summary>
         /// This event is raised when an existing Buff is attached again
         /// </summary>
@@ -202,6 +200,35 @@ namespace Quark.Buffs
         protected virtual EffectCollection TickEffects { get { return new EffectCollection { }; } }
         protected virtual EffectCollection DoneEffects { get { return new EffectCollection { }; } }
         protected virtual EffectCollection TerminateEffects { get { return new EffectCollection { }; } }
+
+        #region Tagging
+        public TagCollection Tags { get; protected set; }
+
+        public void Tag(string tag)
+        {
+            Tags.Add(tag);
+        }
+
+        public void Tag(string tag, object value)
+        {
+            Tags.Add(tag, value);
+        }
+
+        public void Untag(string tag)
+        {
+            Tags.Delete(tag);
+        }
+
+        public bool IsTagged(string tag)
+        {
+            return Tags.Has(tag);
+        }
+
+        public object GetTag(string tag)
+        {
+            return Tags.Get(tag);
+        }
+        #endregion
     }
 
     public enum StackBehavior

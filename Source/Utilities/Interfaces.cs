@@ -13,15 +13,6 @@
         void Broadcast();
     }
 
-    public interface ITaggable
-    {
-        string[] Tags
-        {
-            get;
-            set;
-        }
-    }
-
     public interface IDeepCopiable
     {
         object DeepCopy();

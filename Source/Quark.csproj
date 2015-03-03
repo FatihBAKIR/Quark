@@ -46,6 +46,7 @@
     <Compile Include="Exceptions\Targeting.cs" />
     <Compile Include="QuarkConfig.cs" />
     <Compile Include="Spells\CastError.cs" />
+    <Compile Include="TagCollection.cs" />
     <Compile Include="Targeting\TargetMacro.cs" />
     <Compile Include="Utilities\AssemblyInfo.cs" />
     <Compile Include="Utilities\Daemon.cs" />

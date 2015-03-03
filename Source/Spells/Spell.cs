@@ -7,12 +7,12 @@ namespace Quark.Spells
 {
     public class Spell : ITaggable, Identifiable
     {
+#if DEBUG
         ~Spell()
         {
-#if DEBUG
             Logger.GC("Spell::dtor");
-#endif
         }
+#endif
 
         /// <summary>
         /// Gets or Sets the duration of the cast.
@@ -43,16 +43,6 @@ namespace Quark.Spells
             get
             {
                 return Name + "@" + Context.Caster.Identifier;
-            }
-        }
-        public virtual string[] Tags
-        {
-            get
-            {
-                return new [] { "spell" };
-            }
-            set
-            {
             }
         }
 
@@ -244,19 +234,16 @@ namespace Quark.Spells
         {
             Logger.Debug("Spell.OnCastDone");
 
-            CastDoneEffects.Run(Context);
+            CastDoneEffects
+                .Run(Context)
+                .Run(Context.Targets.Points, Context)
+                .Run(Context.Targets.Characters, Context)
+                .Run(Context.Targets.Targetables, Context);
 
-            if (this.IsProjectiled)
+            if (IsProjectiled)
                 CreateProjectiles();
             else
-            {
-                CastDoneEffects
-                    .Run(Context.Targets.Points, Context)
-                    .Run(Context.Targets.Characters, Context)
-                    .Run(Context.Targets.Targetables, Context);
-
                 OnFinal();
-            }
         }
 
         public virtual void OnInterrupt()
@@ -362,5 +349,34 @@ namespace Quark.Spells
                 Missile.Make(MissileObject, Controller, Context).Set(target);
             }
         }
+
+        #region Tagging
+        public TagCollection Tags { get; protected set; }
+
+        public void Tag(string tag)
+        {
+            Tags.Add(tag);
+        }
+
+        public void Tag(string tag, object value)
+        {
+            Tags.Add(tag, value);
+        }
+
+        public void Untag(string tag)
+        {
+            Tags.Delete(tag);
+        }
+
+        public bool IsTagged(string tag)
+        {
+            return Tags.Has(tag);
+        }
+
+        public object GetTag(string tag)
+        {
+            return Tags.Get(tag);
+        }
+        #endregion
     }
 }

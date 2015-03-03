@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Quark.Spells;
-using UnityEngine;
+﻿using Quark.Spells;
 using Quark.Utilities;
-using Quark.Targeting;
+using UnityEngine;
 
 namespace Quark
 {
@@ -19,32 +16,7 @@ namespace Quark
         {
             get
             {
-                return this.GetType().Name;
-            }
-        }
-
-        /// <summary>
-        /// Gets the description.
-        /// </summary>
-        /// <value>
-        /// The description of this effect.
-        /// </value>
-        public virtual string Description
-        {
-            get
-            {
-                return "Sımple Mutator";
-            }
-        }
-
-        public virtual string[] Tags
-        {
-            get
-            {
-                return new string[] { "effect" };
-            }
-            set
-            {
+                return GetType().Name;
             }
         }
 
@@ -75,7 +47,7 @@ namespace Quark
         /// <summary>
         /// Applies this effect on the specified target Vector3.
         /// </summary>
-        /// <param name='point'>
+        /// <param name='point'>  
         /// Target Point.
         /// </param>
         public virtual void Apply(Vector3 point)
@@ -89,6 +61,35 @@ namespace Quark
         public virtual void Apply(Targetable target)
         {
         }
+
+        #region Tagging
+        public TagCollection Tags { get; protected set; }
+
+        public void Tag(string tag)
+        {
+            Tags.Add(tag);
+        }
+
+        public void Tag(string tag, object value)
+        {
+            Tags.Add(tag, value);
+        }
+
+        public void Untag(string tag)
+        {
+            Tags.Delete(tag);
+        }
+
+        public bool IsTagged(string tag)
+        {
+            return Tags.Has(tag);
+        }
+
+        public object GetTag(string tag)
+        {
+            return Tags.Get(tag);
+        }
+        #endregion
     }
 
     public enum EffectSource
@@ -112,7 +113,7 @@ namespace Quark
         }
 
         public EffectSource Source
-        { 
+        {
             get
             {
                 if (Effect.Context != null)

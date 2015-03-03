@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Quark.Attributes;
 using System.Collections;
 
@@ -41,6 +40,11 @@ namespace Quark
             return _modifiers.GetEnumerator();
         }
  
+        /// <summary>
+        /// Calculates the current value of this Interaction for a given Character
+        /// </summary>
+        /// <param name="of"></param>
+        /// <returns></returns>
         public float Calculate(Character of)
         {
             float val = 0;

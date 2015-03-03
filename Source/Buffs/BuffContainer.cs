@@ -41,7 +41,7 @@ namespace Quark.Buffs
                 return;
             }
             _buffs.Add(buff);
-            buff.OnPossess(_owner);
+            buff.Possess(_owner);
         }
 
         void StackBuff(Buff buff)
