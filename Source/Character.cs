@@ -17,7 +17,7 @@ namespace Quark
                 return GetHashCode().ToString();
             }
         }
-        public TagCollection Tags { get; protected set; }
+        public DynamicTags Tags { get; protected set; }
 
         public void Tag(string tag)
         {
@@ -52,6 +52,7 @@ namespace Quark
         List<Cast> _casting;
         BuffContainer _regularBuffs;
         BuffContainer _hiddenBuffs;
+        ItemCollection _inventory;
 
         ConditionCollection _interruptConditions;
 
@@ -59,7 +60,8 @@ namespace Quark
 
         void Awake()
         {
-            Tags = new TagCollection();
+            Tags = new DynamicTags();
+            _inventory = new ItemCollection(this);
             _attributes = QuarkMain.GetInstance().Config.DefaultAttributes.DeepCopy();
             _attributes.SetCarrier(this);
             _regularBuffs = new BuffContainer(this);
@@ -134,6 +136,26 @@ namespace Quark
                 _regularBuffs.AttachBuff(buff);
         }
 
+        public void AddItem(Item item)
+        {
+            _inventory.Add(item);
+        }
+
+        public void RemoveItem(Item item)
+        {
+            _inventory.Remove(item);
+        }
+
+        public bool HasItem(Item item)
+        {
+            return _inventory.Has(item);
+        }
+
+        public bool EquippedItem(Item item)
+        {
+            return _inventory.Equipped(item);
+        }
+
         /// <summary>
         /// Returns a readonly collection of the Buffs being carried by this Character
         /// </summary>
@@ -182,10 +204,8 @@ namespace Quark
             }
         }
 
-        public static Character operator +(Character character, Buff buff)
+        void OnAnimatorMove()
         {
-            character.AttachBuff(buff);
-            return character;
         }
     }
 }

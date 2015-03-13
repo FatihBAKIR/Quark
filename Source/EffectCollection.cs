@@ -56,6 +56,11 @@ namespace Quark
             return _effects.GetEnumerator();
         }
 
+        public int Count
+        {
+            get { return _effects.Count; }
+        }
+
         /// <summary>
         /// Run the effects contained in this collection with no target
         /// </summary>

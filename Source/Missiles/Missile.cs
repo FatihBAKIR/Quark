@@ -78,14 +78,16 @@ namespace Quark.Missiles
                 a.y = 0;
                 b.y = 0;
                 return Vector3.Distance(a, b) <= NearEnough;
-            }   
+            }
         }
 
         #region Initialization
 
         public static Missile Make(GameObject prefab, MissileController controller, Cast context)
         {
-            GameObject obj = (GameObject)MonoBehaviour.Instantiate(prefab, context.CastBeginPoint, Quaternion.identity);
+            Vector3 point = context.CastBeginPoint;
+            point.y = 1;
+            GameObject obj = (GameObject)MonoBehaviour.Instantiate(prefab, point, Quaternion.identity);
             Missile m = obj.AddComponent<Missile>();
             m._context = context;
             m._controller = controller;
@@ -129,10 +131,10 @@ namespace Quark.Missiles
             {
                 _context.Spell.OnHit(hit);
 
-                if ((!ToPos && hit.Equals(this._target)) || (this._context.Spell.TargetForm == TargetForm.Singular))
+                if ((!ToPos && hit.Equals(_target)) || (_context.Spell.TargetForm == TargetForm.Singular))
                 {
                     _context.Spell.CollectProjectile(this);
-                    Destroy(this.gameObject);
+                    Destroy(gameObject);
                 }
             }
             Logger.Debug("Hit: " + c.gameObject.name + "\nTarget Was" + (hit == null ? " Not" : "") + " A Character");

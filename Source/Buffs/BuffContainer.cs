@@ -13,7 +13,7 @@ namespace Quark.Buffs
         {
             _owner = owner;
             _buffs = new List<Buff>();
-            Messenger.AddListener("Update", this.Update);
+            Messenger.AddListener("Update", Update);
         }
 
         public IList<Buff> Buffs
@@ -29,7 +29,7 @@ namespace Quark.Buffs
             _owner = null;
             _buffs.Clear();
             _buffs = null;
-            Messenger.RemoveListener("Update", this.Update);
+            Messenger.RemoveListener("Update", Update);
         }
 
         public void AttachBuff(Buff buff)
@@ -95,6 +95,7 @@ namespace Quark.Buffs
                     _toDispose.Add(buff);
                 }
             }
+
             foreach (Buff buff in _toDispose)
                 _buffs.Remove(buff);
 

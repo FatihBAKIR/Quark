@@ -1,5 +1,8 @@
-﻿namespace Quark.Utilities
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Quark.Utilities
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public interface Identifiable
     {
         string Identifier
