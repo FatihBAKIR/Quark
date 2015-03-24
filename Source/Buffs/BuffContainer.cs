@@ -7,21 +7,19 @@ namespace Quark.Buffs
     public class BuffContainer : IDisposable
     {
         Character _owner;
-        List<Buff> _buffs;
+        //List<Buff> _buffs;
+        private Dictionary<string, Buff> _buffs;
 
         public BuffContainer(Character owner)
         {
             _owner = owner;
-            _buffs = new List<Buff>();
+            _buffs = new Dictionary<string, Buff>();
             Messenger.AddListener("Update", Update);
         }
 
         public IList<Buff> Buffs
         {
-            get
-            {
-                return _buffs.AsReadOnly();
-            }
+            get { return new List<Buff>(_buffs.Values); }
         }
 
         public void Dispose()
@@ -40,7 +38,7 @@ namespace Quark.Buffs
                 StackBuff(existing);
                 return;
             }
-            _buffs.Add(buff);
+            _buffs.Add(buff.Identifier, buff);
             buff.Possess(_owner);
         }
 
@@ -68,36 +66,37 @@ namespace Quark.Buffs
 
         public T HasBuff<T>() where T : Buff
         {
+            /*
             foreach (Buff buff in _buffs)
                 if (buff is T)
                     return (T)buff;
+             */
             return null;
         }
 
         public Buff GetBuff(Buff buff)
         {
             string id = buff.Identifier;
-            foreach (Buff existing in _buffs)
-                if (existing.Identifier == id)
-                    return existing;
+            if (_buffs.ContainsKey(id))
+                return _buffs[id];
             return null;
         }
 
-        List<Buff> _toDispose;
+        List<string> _toDispose;
 
         void Update()
         {
-            _toDispose = new List<Buff>();
-            foreach (Buff buff in _buffs)
+            _toDispose = new List<string>();
+            foreach (Buff buff in _buffs.Values)
             {
                 if (CheckBuff(buff))
                 {
-                    _toDispose.Add(buff);
+                    _toDispose.Add(buff.Identifier);
                 }
             }
 
-            foreach (Buff buff in _toDispose)
-                _buffs.Remove(buff);
+            foreach (string id in _toDispose)
+                _buffs.Remove(id);
 
             _toDispose.Clear();
             _toDispose = null;

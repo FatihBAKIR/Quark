@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Quark.Utilities;
 
 namespace Quark
 {
-    /// <summary>
     /// TODO: let items carry other items in form of a bag
-    /// </summary>
 
-    public class ItemCollection : Item, IEnumerable<Item>, IDisposable
+    public class ItemCollection : Item, IEnumerable<Item>, IDisposable, IBag
     {
         private Dictionary<string, Item> _items;
-        private uint _maxSize = 0;
+        private int _maxSize = 0;
 
         /// <summary>
         /// Initialize a new item container
         /// </summary>
-        public ItemCollection(Character carrier = null, uint size = 0)
+        public ItemCollection(Character carrier = null, int size = 0)
         {
             _maxSize = size;
             Carrier = carrier;
@@ -35,11 +34,7 @@ namespace Quark
             _items = null;
         }
 
-        /// <summary>
-        /// Add a new item to this container
-        /// </summary>
-        /// <param name="item">The item to be added</param>
-        public void Add(Item item)
+        public void AddItem(Item item)
         {
             if (!CanAdd())
                 return;
@@ -51,7 +46,7 @@ namespace Quark
 
             if (Has(item))
             {
-                Item existing = Get(item);
+                Item existing = GetItem(item);
                 existing.CurrentStacks++;
                 existing.CurrentStacks = Math.Min(existing.CurrentStacks, existing.MaxStacks);
                 existing.OnStack();
@@ -62,12 +57,7 @@ namespace Quark
             item.OnGrab();
         }
 
-        public void Remove(Item item)
-        {
-            _items.Remove(MakeID(item, Carrier));
-        }
-
-        public bool Has(Item item)
+        public bool HasItem(Item item)
         {
             if (_items.ContainsKey(MakeID(item, Carrier)))
                 return true;
@@ -77,7 +67,7 @@ namespace Quark
                 if (!(search is ItemCollection))
                     continue;
 
-                ItemCollection bag = (ItemCollection) search;
+                ItemCollection bag = (ItemCollection)search;
                 if (bag.Has(item))
                     return true;
             }
@@ -85,14 +75,48 @@ namespace Quark
             return false;
         }
 
+        public Item GetItem(Item item)
+        {
+            return _items[MakeID(item, Carrier)];
+        }
+
+        public bool RemoveItem(Item item)
+        {
+            return _items.Remove(MakeID(item, Carrier));
+        }
+
+        public int Size
+        {
+            get { return _maxSize; }
+        }
+
+        public int Empty
+        {
+            get { return _maxSize - _items.Count; }
+        }
+
+        /// <summary>
+        /// Add a new item to this container
+        /// </summary>
+        /// <param name="item">The item to be added</param>
+        public void Add(Item item)
+        {
+            AddItem(item);
+        }
+
+        public bool Remove(Item item)
+        {
+            return RemoveItem(item);
+        }
+
+        public bool Has(Item item)
+        {
+            return HasItem(item);
+        }
+
         public bool Equipped(Item item)
         {
             return _items.ContainsKey(MakeID(item, Carrier));
-        }
-
-        public Item Get(Item item)
-        {
-            return _items[MakeID(item, Carrier)];
         }
 
         public bool CanAdd()
