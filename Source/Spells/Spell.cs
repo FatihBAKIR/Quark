@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Quark.Missiles;
 using Quark.Targeting;
 using Quark.Utilities;
@@ -5,7 +6,7 @@ using UnityEngine;
 
 namespace Quark.Spells
 {
-    public class Spell : ITaggable, Identifiable
+    public class Spell : ITagged, Identifiable
     {
 #if DEBUG
         ~Spell()
@@ -40,10 +41,17 @@ namespace Quark.Spells
 
         public string Identifier
         {
-            get
-            {
-                return Name + "@" + Context.Caster.Identifier;
-            }
+            get { return MakeID(this, Context); }
+        }
+
+        public static string MakeID(Spell spell, Cast context)
+        {
+            return spell.Name + "@" + context.Caster.Identifier;
+        }
+
+        public static string MakeID(Spell spell, Character caster)
+        {
+            return spell.Name + "@" + caster.Identifier;
         }
 
         /// <summary>
@@ -126,7 +134,7 @@ namespace Quark.Spells
         public bool CanInvoke()
         {
             InvokeCondition.SetContext(Context);
-            return InvokeCondition.Check();
+            return InvokeCondition.Check(Context.Caster);
         }
 
         #region Effect Holders
@@ -351,31 +359,11 @@ namespace Quark.Spells
         }
 
         #region Tagging
-        public TagCollection Tags { get; protected set; }
-
-        public void Tag(string tag)
-        {
-            Tags.Add(tag);
-        }
-
-        public void Tag(string tag, object value)
-        {
-            Tags.Add(tag, value);
-        }
-
-        public void Untag(string tag)
-        {
-            Tags.Delete(tag);
-        }
+        public StaticTags Tags { get; protected set; }
 
         public bool IsTagged(string tag)
         {
             return Tags.Has(tag);
-        }
-
-        public object GetTag(string tag)
-        {
-            return Tags.Get(tag);
         }
         #endregion
     }

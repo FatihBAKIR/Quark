@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Quark.Spells
 {
-    public class Cast
+    public class Cast : Identifiable
     {
         Character _caster;
         Vector3 _beginPoint;
@@ -48,10 +48,7 @@ namespace Quark.Spells
         /// </param>
         public static Cast PrepareCast(Character caster, Spell spell)
         {
-            Cast data = new Cast();
-            data._step = LifeStep.Null;
-            data._caster = caster;
-            data._spell = spell;
+            Cast data = new Cast {_step = LifeStep.Null, _caster = caster, _spell = spell, NonSpell = false };
             Messenger<Cast>.Broadcast("Prepare", data);
             Messenger<Cast>.Broadcast(data.Spell.Name + ".Prepare", data);
             Messenger<Cast>.Broadcast(caster.Identifier + "." + data.Spell.Name + ".Prepare", data);
@@ -59,9 +56,26 @@ namespace Quark.Spells
             Logger.Debug("Cast::PrepareCast");
             if (!data._spell.CanInvoke())
                 return null;
+            data.Identifier = spell.Identifier;
             data.Invoke();
             return data;
         }
+
+        public bool NonSpell { get; protected set; }
+
+        public static Cast PrepareCast(Character caster, Item item)
+        {
+            Cast data = new Cast
+            {
+                _step = LifeStep.Null,
+                _caster = caster,
+                NonSpell = true,
+                Identifier = item.Identifier
+            };
+            return data;
+        }
+
+        public string Identifier { get; private set; }
 
         /// <summary>
         /// Gets the caster.

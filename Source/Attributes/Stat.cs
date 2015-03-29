@@ -25,6 +25,11 @@
             }
         }
 
+        public float Rate
+        {
+            get { return Value / Maximum; }
+        }
+
         public void Manipulate(float amount)
         {
             _lostValue += amount;

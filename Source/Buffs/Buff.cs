@@ -1,13 +1,16 @@
-﻿using System;
-using Quark.Spells;
+﻿using Quark.Spells;
 using Quark.Utilities;
 using UnityEngine;
 
 namespace Quark.Buffs
 {
-    public class Buff : ITaggable, Identifiable
+    public class Buff : ITagged, Identifiable
     {
-        public string Name { get; set; }
+        public virtual string Name
+        {
+            get { return GetType().Name; }
+            set { }
+        }
         protected float Interval;
         protected float Duration;
         protected bool Continuous;
@@ -20,7 +23,7 @@ namespace Quark.Buffs
         public int MaxStacks = 1;
         public int CurrentStacks = 1;
         public StackBehavior StackBehaviour = StackBehavior.Nothing;
-        
+
 #if DEBUG
         public Buff()
         {
@@ -35,12 +38,19 @@ namespace Quark.Buffs
         }
 #endif
 
-        public virtual string Identifier
+        public string Identifier
         {
-            get
-            {
-                return Name + "@" + (Context == null ? "NullSpell" : Context.Spell.Identifier);
-            }
+            get { return MakeID(this, Context); }
+        }
+
+        public static string MakeID(Buff buff, Cast context)
+        {
+            return buff.Name + "@" + (buff.Context == null ? "NaC" : buff.Context.Identifier);
+        }
+
+        public static string MakeID(Buff buff, string contextID)
+        {
+            return buff.Name + "@" + contextID;
         }
 
         /// <summary>
@@ -163,7 +173,7 @@ namespace Quark.Buffs
         {
             PossessEffects.Run(Possessor, Context);
         }
-        
+
         /// <summary>
         /// This event is raised when an existing Buff is attached again
         /// </summary>
@@ -202,31 +212,11 @@ namespace Quark.Buffs
         protected virtual EffectCollection TerminateEffects { get { return new EffectCollection { }; } }
 
         #region Tagging
-        public TagCollection Tags { get; protected set; }
-
-        public void Tag(string tag)
-        {
-            Tags.Add(tag);
-        }
-
-        public void Tag(string tag, object value)
-        {
-            Tags.Add(tag, value);
-        }
-
-        public void Untag(string tag)
-        {
-            Tags.Delete(tag);
-        }
+        public StaticTags Tags { get; protected set; }
 
         public bool IsTagged(string tag)
         {
             return Tags.Has(tag);
-        }
-
-        public object GetTag(string tag)
-        {
-            return Tags.Get(tag);
         }
         #endregion
     }

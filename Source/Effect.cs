@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Quark
 {
-    public class Effect : ITaggable
+    public class Effect : ITagged
     {
         /// <summary>
         /// Gets the name.
@@ -63,31 +63,11 @@ namespace Quark
         }
 
         #region Tagging
-        public TagCollection Tags { get; protected set; }
-
-        public void Tag(string tag)
-        {
-            Tags.Add(tag);
-        }
-
-        public void Tag(string tag, object value)
-        {
-            Tags.Add(tag, value);
-        }
-
-        public void Untag(string tag)
-        {
-            Tags.Delete(tag);
-        }
+        public StaticTags Tags { get; protected set; }
 
         public bool IsTagged(string tag)
         {
             return Tags.Has(tag);
-        }
-
-        public object GetTag(string tag)
-        {
-            return Tags.Get(tag);
         }
         #endregion
     }
@@ -116,9 +96,7 @@ namespace Quark
         {
             get
             {
-                if (Effect.Context != null)
-                    return EffectSource.Spell;
-                return EffectSource.Custom;
+                return Effect.Context != null ? EffectSource.Spell : EffectSource.Custom;
             }
         }
 
@@ -138,7 +116,7 @@ namespace Quark
             }
         }
 
-        public Spells.Spell Spell
+        public Spell Spell
         {
             get
             {

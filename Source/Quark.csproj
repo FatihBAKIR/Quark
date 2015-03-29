@@ -44,9 +44,11 @@
     <Compile Include="Character.cs" />
     <Compile Include="EffectCollection.cs" />
     <Compile Include="Exceptions\Targeting.cs" />
+    <Compile Include="Item.cs" />
+    <Compile Include="ItemCollection.cs" />
     <Compile Include="QuarkConfig.cs" />
     <Compile Include="Spells\CastError.cs" />
-    <Compile Include="TagCollection.cs" />
+    <Compile Include="Tagging.cs" />
     <Compile Include="Targeting\TargetMacro.cs" />
     <Compile Include="Utilities\AssemblyInfo.cs" />
     <Compile Include="Utilities\Daemon.cs" />
