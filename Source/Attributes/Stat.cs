@@ -32,7 +32,7 @@
 
         public void Manipulate(float amount)
         {
-            _lostValue += amount;
+            _lostValue -= amount;
             _lostValue = System.Math.Max(0, _lostValue);
             _lostValue = System.Math.Min(Maximum, _lostValue);
         }
