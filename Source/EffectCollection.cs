@@ -46,6 +46,12 @@ namespace Quark
             _effects.Add(effect);
         }
 
+        public void AddRange(EffectCollection range)
+        {
+            foreach (Effect effect in range._effects)
+                Add(effect);
+        }
+
         public IEnumerator<Effect> GetEnumerator()
         {
             return _effects.GetEnumerator();
@@ -201,6 +207,12 @@ namespace Quark
         {
             Run(point, Context);
             base.Apply(point);
+        }
+
+        public static EffectCollection operator +(EffectCollection lhs, EffectCollection rhs)
+        {
+            lhs.AddRange(rhs);
+            return lhs;
         }
     }
 }

@@ -134,7 +134,7 @@ namespace Quark.Spells
         public bool CanInvoke()
         {
             InvokeCondition.SetContext(Context);
-            return InvokeCondition.Check();
+            return InvokeCondition.Check(Context.Caster);
         }
 
         #region Effect Holders
