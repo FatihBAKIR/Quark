@@ -32,7 +32,7 @@ namespace Quark.Utilities
         int Empty { get; }
 
         bool HasItem(Item item);
-        void AddItem(Item item);
+        bool AddItem(Item item);
         Item GetItem(Item item);
         bool RemoveItem(Item item);
 
@@ -45,7 +45,7 @@ namespace Quark.Utilities
         int EmptyRecursive { get; }
 
         bool HasItemRecursive(Item item);
-        void AddItemRecursive(Item item);
+        bool AddItemRecursive(Item item);
         Item GetItemRecursive(Item item);
         bool RemoveItemRecursive(Item item);
 

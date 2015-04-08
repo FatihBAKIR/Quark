@@ -7,7 +7,7 @@ namespace Quark
 {
     /// TODO: let items carry other items in form of a bag
 
-    public class ItemCollection : Item, IEnumerable<Item>, IDisposable, IBag
+    public class ItemCollection : Item, IEnumerable<Item>, IDisposable, IBag, IBagRecursive
     {
         private Dictionary<string, Item> _items;
         private int _maxSize = 0;
@@ -27,6 +27,11 @@ namespace Quark
             Dispose();
         }
 
+        public IList<Item> Items()
+        {
+            return new List<Item>(_items.Values);
+        }
+
         public void Dispose()
         {
             Carrier = null;
@@ -34,15 +39,15 @@ namespace Quark
             _items = null;
         }
 
-        public void AddItem(Item item)
+        public bool AddItem(Item item)
         {
             if (!CanAdd())
-                return;
+                return false;
 
             item.SetCarrier(Carrier);
 
             if (!item.CanGrab())
-                return;
+                return false;
 
             if (Has(item))
             {
@@ -50,11 +55,13 @@ namespace Quark
                 existing.CurrentStacks++;
                 existing.CurrentStacks = Math.Min(existing.CurrentStacks, existing.MaxStacks);
                 existing.OnStack();
-                return;
+                return true;
             }
 
             _items.Add(item.Identifier, item);
             item.OnGrab();
+
+            return true;
         }
 
         public bool HasItem(Item item)
@@ -77,6 +84,7 @@ namespace Quark
 
         public Item GetItem(Item item)
         {
+            if (!HasItem(item)) return null;
             return _items[MakeID(item, Carrier)];
         }
 
@@ -132,6 +140,119 @@ namespace Quark
         IEnumerator IEnumerable.GetEnumerator()
         {
             return _items.GetEnumerator();
+        }
+
+
+
+        public int SizeRecursive
+        {
+            get
+            {
+                int size = _maxSize;
+                foreach (KeyValuePair<string, Item> item in _items)
+                {
+                    if (item.Value is IBag)
+                        size += ((IBag) item.Value).Size;
+                    if (item.Value is IBagRecursive)
+                        size += ((IBagRecursive) item.Value).SizeRecursive;
+                }
+                return size;
+            }
+        }
+
+        public int EmptyRecursive
+        {
+            get
+            {
+                int empty = Empty;
+                foreach (KeyValuePair<string, Item> item in _items)
+                {
+                    if (item.Value is IBag)
+                        empty += ((IBag)item.Value).Empty;
+                    if (item.Value is IBagRecursive)
+                        empty += ((IBagRecursive)item.Value).EmptyRecursive;
+                }
+                return empty;
+            }
+        }
+
+        public bool HasItemRecursive(Item item)
+        {
+            if (HasItem(item))
+                return true;
+
+            foreach (KeyValuePair<string, Item> i in _items)
+            {
+                if (i.Value is IBag)
+                    if (((IBag) i.Value).HasItem(item))
+                        return true;
+                if (i.Value is IBagRecursive)
+                    if (((IBagRecursive) i.Value).HasItemRecursive(item))
+                        return true;
+            }
+
+            return false;
+        }
+
+        public bool AddItemRecursive(Item item)
+        {
+            if (AddItem(item))
+                return true;
+
+            foreach (KeyValuePair<string, Item> bag in _items)
+            {
+                if (bag.Value is IBag)
+                    if (((IBag) bag.Value).AddItem(item)) return true;
+                if (bag.Value is IBagRecursive)
+                    if (((IBagRecursive) bag.Value).AddItemRecursive(item)) return true;
+            }
+
+            return false;
+        }
+
+        public Item GetItemRecursive(Item item)
+        {
+            Item i;
+            if ((i = GetItem(item)) != null)
+                return i;
+
+            foreach (KeyValuePair<string, Item> bag in _items)
+            {
+                if (bag.Value is IBag)
+                    if ((i = ((IBag)bag.Value).GetItem(item)) != null) return i;
+                if (bag.Value is IBagRecursive)
+                    if ((i = ((IBagRecursive)bag.Value).GetItemRecursive(item)) != null) return i;
+            }
+
+            return null;
+        }
+
+        public bool RemoveItemRecursive(Item item)
+        {
+            if (RemoveItem(item))
+                return true;
+
+            foreach (KeyValuePair<string, Item> bag in _items)
+            {
+                if (bag.Value is IBag)
+                    if (((IBag)bag.Value).RemoveItem(item)) return true;
+                if (bag.Value is IBagRecursive)
+                    if (((IBagRecursive)bag.Value).RemoveItem(item)) return true;
+            }
+
+            return false;
+        }
+
+        public void SetCarrierRecursive(Character carrier)
+        {
+            SetCarrier(carrier);
+            foreach (KeyValuePair<string, Item> bag in _items)
+            {
+                if (bag.Value is IBag)
+                    ((IBag)bag.Value).SetCarrier(carrier);
+                if (bag.Value is IBagRecursive)
+                    ((IBagRecursive)bag.Value).SetCarrierRecursive(carrier);
+            }
         }
     }
 }

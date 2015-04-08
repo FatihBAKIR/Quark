@@ -138,7 +138,7 @@ namespace Quark
 
         public void AddItem(Item item)
         {
-            _inventory.Add(item);
+            _inventory.AddItemRecursive(item);
         }
 
         public void RemoveItem(Item item)
@@ -154,6 +154,11 @@ namespace Quark
         public bool EquippedItem(Item item)
         {
             return _inventory.Equipped(item);
+        }
+
+        public IList<Item> EquippedItems
+        {
+            get { return _inventory.Items(); }
         }
 
         /// <summary>

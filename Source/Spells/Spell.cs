@@ -137,7 +137,7 @@ namespace Quark.Spells
             return InvokeCondition.Check(Context.Caster);
         }
 
-        #region Effect Holders
+        #region Effect Collections
 
         /// <summary>
         /// The begin effects.
@@ -155,19 +155,25 @@ namespace Quark.Spells
         /// The casting began effects
         /// Effects within this list are applied after targeting done and casting began, these effects are not executed for instant spells
         /// </summary>
-        protected virtual EffectCollection CastingEffects { get { return new EffectCollection { }; } }
+        protected virtual EffectCollection CastingBeginEffects { get { return new EffectCollection { }; } }
 
         /// <summary>
-        /// The interruption effects
-        /// Effects within this list are applied if the spell gets interrupted either by the caster or other Characters
+        /// The casting effects
+        /// Effects within this list are applied while the casting occurs
         /// </summary>
-        protected virtual EffectCollection InterruptEffects { get { return new EffectCollection { }; } }
+        protected virtual EffectCollection CastingEffects { get { return new EffectCollection { }; } }
 
         /// <summary>
         /// The casting done effects
         /// Effects within this list are applied when the casting successfully finishes
         /// </summary>
         protected virtual EffectCollection CastDoneEffects { get { return new EffectCollection { }; } }
+
+        /// <summary>
+        /// The interruption effects
+        /// Effects within this list are applied if the spell gets interrupted either by the caster or other Characters
+        /// </summary>
+        protected virtual EffectCollection InterruptEffects { get { return new EffectCollection { }; } }
 
         /// <summary>
         /// The travelling effects
@@ -231,9 +237,13 @@ namespace Quark.Spells
         public virtual void OnCastingBegan()
         {
             Logger.Debug("Spell.OnCastingBegan");
-            CastingEffects.Run(Context);
         }
 
+        public virtual void OnCasting()
+        {
+            Logger.Debug("Spell.OnCasting");
+            CastingEffects.Run(Context);
+        }
 
         /// <summary>
         /// 

@@ -14,7 +14,7 @@ namespace Quark
         public int MaxStacks = 1;
         public int CurrentStacks = 1;
 
-        private string Name
+        public string Name
         {
             get { return GetType().Name; }
         }
