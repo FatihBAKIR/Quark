@@ -27,6 +27,22 @@ namespace Quark.Spells
             set;
         }
 
+	/// <summary>
+	/// This field determines the interval of the OnCasting logic to run while this Spell is being casted.
+	/// </summary>
+	/// <value>
+	/// Interval in seconds.
+	/// </value>
+	protected float CastingInterval = 0;
+
+	/// <summary>
+	/// This field determines the interval of the OnTravel logic to run while a projectile belonging to this Spell is traveling.
+	/// </summary>
+	/// <value>
+	/// Interval in distance units.
+	/// </value> 
+	protected float TravelingInterval = 0;
+
         /// <summary>
         /// Name of the Spell
         /// </summary>
