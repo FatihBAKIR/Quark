@@ -46,6 +46,7 @@
     <Compile Include="Exceptions\Targeting.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemCollection.cs" />
+    <Compile Include="Platform\Unity3D.cs" />
     <Compile Include="QuarkConfig.cs" />
     <Compile Include="Spells\CastError.cs" />
     <Compile Include="Tagging.cs" />
@@ -60,8 +61,8 @@
     <Compile Include="Attributes\AttributeModifier.cs" />
     <Compile Include="Attributes\Stat.cs" />
     <Compile Include="QuarkMain.cs" />
-    <Compile Include="Missiles\Missile.cs" />
-    <Compile Include="Missiles\MissileController.cs" />
+    <Compile Include="Projectiles\Projectile.cs" />
+    <Compile Include="Projectiles\ProjectileController.cs" />
     <Compile Include="Buffs\Buff.cs" />
     <Compile Include="Buffs\BuffContainer.cs" />
     <Compile Include="Spells\Spell.cs" />

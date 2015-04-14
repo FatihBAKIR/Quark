@@ -1,9 +1,9 @@
 ﻿using Quark.Utilities;
 using UnityEngine;
 
-namespace Quark.Missiles
+namespace Quark.Projectiles
 {
-    public class MissileController
+    public class ProjectileController
     {
         /// <summary>
         /// Gets the position update type for the missile
@@ -11,7 +11,7 @@ namespace Quark.Missiles
         /// <value>Update type.</value>
         public virtual MovementType Type { get { return MovementType.ReturnsMovement; } }
 
-        protected Missile Obj { get; set; }
+        protected Projectile Obj { get; set; }
 
         /// <summary>
         /// Controls the missile object's position
@@ -30,7 +30,12 @@ namespace Quark.Missiles
             //Obj.transform.LookAt(Target);
         }
 
-        public void Set(Missile obj)
+        public virtual bool HasReached()
+        {
+            return Utils.Distance2(Obj.transform.position, Target) <= Projectile.NearEnough;
+        }
+
+        public void Set(Projectile obj)
         {
             Obj = obj;
         }

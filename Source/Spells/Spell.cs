@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using Quark.Missiles;
+using Quark.Projectiles;
 using Quark.Targeting;
 using Quark.Utilities;
 using UnityEngine;
@@ -27,21 +26,21 @@ namespace Quark.Spells
             set;
         }
 
-	/// <summary>
-	/// This field determines the interval of the OnCasting logic to run while this Spell is being casted.
-	/// </summary>
-	/// <value>
-	/// Interval in seconds.
-	/// </value>
-	protected float CastingInterval = 0;
+        /// <summary>
+        /// This field determines the interval of the OnCasting logic to run while this Spell is being casted.
+        /// </summary>
+        /// <value>
+        /// Interval in seconds.
+        /// </value>
+        public float CastingInterval { get; protected set; }
 
-	/// <summary>
-	/// This field determines the interval of the OnTravel logic to run while a projectile belonging to this Spell is traveling.
-	/// </summary>
-	/// <value>
-	/// Interval in distance units.
-	/// </value> 
-	protected float TravelingInterval = 0;
+        /// <summary>
+        /// This field determines the interval of the OnTravel logic to run while a projectile belonging to this Spell is   traveling.
+        /// </summary>
+        /// <value>
+        /// Interval in distance units.
+        /// </value> 
+        public virtual float TravelingInterval { get; protected set; }
 
         /// <summary>
         /// Name of the Spell
@@ -94,7 +93,7 @@ namespace Quark.Spells
             }
         }
 
-        protected virtual GameObject MissileObject
+        protected virtual GameObject ProjectileObject
         {
             get
             {
@@ -102,11 +101,11 @@ namespace Quark.Spells
             }
         }
 
-        protected virtual MissileController Controller
+        protected virtual ProjectileController Controller
         {
             get
             {
-                return new MissileController();
+                return new ProjectileController();
             }
         }
 
@@ -130,7 +129,7 @@ namespace Quark.Spells
         {
             get
             {
-                return MissileObject != null;
+                return ProjectileObject != null;
             }
         }
 
@@ -192,8 +191,8 @@ namespace Quark.Spells
         protected virtual EffectCollection InterruptEffects { get { return new EffectCollection { }; } }
 
         /// <summary>
-        /// The travelling effects
-        /// Effects within this list are applied while the projectiles of this missile are travelling
+        /// The traveling effects
+        /// Effects within this list are applied while the projectiles of this Projectile are traveling
         /// </summary>
         protected virtual EffectCollection TravelEffects { get { return new EffectCollection { }; } }
 
@@ -253,6 +252,7 @@ namespace Quark.Spells
         public virtual void OnCastingBegan()
         {
             Logger.Debug("Spell.OnCastingBegan");
+            CastingBeginEffects.Run(Context);
         }
 
         public virtual void OnCasting()
@@ -349,8 +349,8 @@ namespace Quark.Spells
         /// <summary>
         /// Collects a projectile which were created by this spell
         /// </summary>
-        /// <param name="missile">Missile to collect.</param>
-        public void CollectProjectile(Missile missile)
+        /// <param name="projectile">Projectile to collect.</param>
+        public void CollectProjectile(Projectile projectile)
         {
             Logger.Debug("Collecting Projectile");
             _onAirMissileCount--;
@@ -368,19 +368,19 @@ namespace Quark.Spells
             foreach (Vector3 point in Context.Targets.Points)
             {
                 _onAirMissileCount++;
-                Missile.Make(MissileObject, Controller, Context).Set(point);
+                Projectile.Make(ProjectileObject, Controller, Context).Set(point);
             }
 
             foreach (Character target in Context.Targets.Characters)
             {
                 _onAirMissileCount++;
-                Missile.Make(MissileObject, Controller, Context).Set(target);
+                Projectile.Make(ProjectileObject, Controller, Context).Set(target);
             }
 
             foreach (Targetable target in Context.Targets.Targetables)
             {
                 _onAirMissileCount++;
-                Missile.Make(MissileObject, Controller, Context).Set(target);
+                Projectile.Make(ProjectileObject, Controller, Context).Set(target);
             }
         }
 

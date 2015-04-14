@@ -20,16 +20,25 @@ namespace Quark.Utilities
             
             float sin = Mathf.Sin(angle);
             float cos = Mathf.Cos(angle);
-            
-            Vector3 temp = new Vector3();
-            temp.x = vector.x * cos - vector.z * sin;
-            temp.z = vector.x * sin + vector.z * cos;
+
+            Vector3 temp = new Vector3
+            {
+                x = vector.x*cos - vector.z*sin, 
+                z = vector.x*sin + vector.z*cos
+            };
 
             temp = temp * isNegative;
 
             temp.y = vector.y;
 
             return temp;
+        }
+
+        public static float Distance2(Vector3 v1, Vector3 v2)
+        {
+            v1.y = 0;
+            v2.y = 0;
+            return Vector3.Distance(v1, v2);
         }
     }
 }

@@ -3,14 +3,14 @@ using Quark.Targeting;
 using Quark.Utilities;
 using UnityEngine;
 
-namespace Quark.Missiles
+namespace Quark.Projectiles
 {
     /// <summary>
-    /// Missile class provides interface for MissileController objects to access to properties about the projectile
+    /// Projectile class provides interface for MissileController objects to access to properties about the projectile
     /// It also retrieves necessary movement vector or position vector and moves the carrier object appropriately
     /// It is also responsible for handling the collisions and target checks
     /// </summary>
-    public class Missile : MonoBehaviour
+    public class Projectile : MonoBehaviour
     {
         /// <summary>
         /// The near enough distance constant which indicates that a missile will consider itself reached to a target point
@@ -22,8 +22,11 @@ namespace Quark.Missiles
         Targetable _target;
         Cast _context;
 
-        MissileController _controller;
-
+        ProjectileController _controller;
+        
+        /// <summary>
+        /// This property denotes the total hit count of this Spell Cast
+        /// </summary>
         uint HitCount
         {
             get
@@ -52,7 +55,7 @@ namespace Quark.Missiles
         {
             get
             {
-                return ToPos ? _targetPosition : _target.transform.position;
+                return _toPos ? _targetPosition : _target.transform.position;
             }
         }
 
@@ -72,48 +75,42 @@ namespace Quark.Missiles
 
         bool HasReached
         {
-            get
-            {
-                Vector3 a = transform.position, b = _targetPosition;
-                a.y = 0;
-                b.y = 0;
-                return Vector3.Distance(a, b) <= NearEnough;
-            }
+            get { return _controller.HasReached(); }
         }
 
         #region Initialization
 
-        public static Missile Make(GameObject prefab, MissileController controller, Cast context)
+        public static Projectile Make(GameObject prefab, ProjectileController controller, Cast context)
         {
             Vector3 point = context.CastBeginPoint;
             point.y = 1;
-            GameObject obj = (GameObject)MonoBehaviour.Instantiate(prefab, point, Quaternion.identity);
-            Missile m = obj.AddComponent<Missile>();
+            GameObject obj = (GameObject)Instantiate(prefab, point, Quaternion.identity);
+            Projectile m = obj.AddComponent<Projectile>();
             m._context = context;
             m._controller = controller;
             m._controller.Set(m);
             return m;
         }
 
-        bool ToPos = false;
+        bool _toPos;
 
         public void Set(Vector3 target)
         {
-            this.CastRotation = target - _context.CastBeginPoint;
-            this.ToPos = true;
-            this._targetPosition = target;
+            CastRotation = target - _context.CastBeginPoint;
+            _toPos = true;
+            _targetPosition = target;
         }
 
         public void Set(Character target)
         {
-            this.CastRotation = target.transform.position - _context.CastBeginPoint;
-            this._target = target;
+            CastRotation = target.transform.position - _context.CastBeginPoint;
+            _target = target;
         }
 
         public void Set(Targetable target)
         {
-            this.CastRotation = target.transform.position - _context.CastBeginPoint;
-            this._target = target;
+            CastRotation = target.transform.position - _context.CastBeginPoint;
+            _target = target;
         }
 
         #endregion
@@ -131,7 +128,7 @@ namespace Quark.Missiles
             {
                 _context.Spell.OnHit(hit);
 
-                if ((!ToPos && hit.Equals(_target)) || (_context.Spell.TargetForm == TargetForm.Singular))
+                if ((!_toPos && hit.Equals(_target)) || (_context.Spell.TargetForm == TargetForm.Singular))
                 {
                     _context.Spell.CollectProjectile(this);
                     Destroy(gameObject);
@@ -148,19 +145,26 @@ namespace Quark.Missiles
             return result;
         }
 
+        private Vector3 _lastTravel;
         void Update()
         {
-            if (!ToPos)
+            if (!_toPos)
                 _targetPosition = _target.transform.position;
         
             _controller.Control();
-            _context.Spell.OnTravel(transform.position);
 
-            if (ToPos && HasReached)
+            if (_toPos && HasReached)
             {
                 _context.Spell.OnHit(_targetPosition);
                 _context.Spell.CollectProjectile(this);
                 Destroy(gameObject);
+                return;
+            }
+
+            if (Utils.Distance2(transform.position, _lastTravel) >= _context.Spell.TravelingInterval)
+            {
+                _lastTravel = transform.position;
+                _context.Spell.OnTravel(transform.position);
             }
         }
     }

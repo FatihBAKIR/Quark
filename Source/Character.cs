@@ -56,8 +56,6 @@ namespace Quark
 
         ConditionCollection _interruptConditions;
 
-        //TODO: items
-
         void Awake()
         {
             Tags = new DynamicTags();

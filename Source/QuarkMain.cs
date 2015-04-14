@@ -11,7 +11,7 @@ namespace Quark
     /// </summary>
     public class QuarkMain : MonoBehaviour
     {
-        void Awake()
+        protected virtual void Awake()
         {
             if (IsPresent)
             {

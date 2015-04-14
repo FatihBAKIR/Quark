@@ -269,7 +269,12 @@ namespace Quark.Spells
         /// <summary>
         /// This flag determines whether the current Cast instance has been interrupted or not
         /// </summary>
-        bool _interrupted = false;
+        bool _interrupted;
+
+        /// <summary>
+        /// This field stores the last time the Casting logic of the spell being casted was executed
+        /// </summary>
+        private float _lastCast;
 
         void ControlCast()
         {
@@ -279,6 +284,11 @@ namespace Quark.Spells
                 CastFail();
             if (CastPercentage >= 100)
                 CastDone();
+            if (Time.timeSinceLevelLoad > _lastCast + Spell.CastingInterval)
+            {
+                Spell.OnCasting();
+                _lastCast = Time.timeSinceLevelLoad;
+            }
         }
 
         void CastDone()
