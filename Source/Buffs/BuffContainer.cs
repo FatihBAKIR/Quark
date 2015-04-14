@@ -7,7 +7,6 @@ namespace Quark.Buffs
     public class BuffContainer : IDisposable
     {
         Character _owner;
-        //List<Buff> _buffs;
         private Dictionary<string, Buff> _buffs;
 
         public BuffContainer(Character owner)

@@ -1,16 +1,37 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Buff/Buff.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Utilities/AssemblyInfo.cs">
     <Files>
-      <File FileName="Spell/Cast.cs" Line="1" Column="1" />
-      <File FileName="Spell/Spell.cs" Line="1" Column="1" />
-      <File FileName="ConditionCollection.cs" Line="1" Column="1" />
-      <File FileName="EffectCollection.cs" Line="1" Column="1" />
-      <File FileName="Condition.cs" Line="1" Column="1" />
-      <File FileName="Buff/BuffContainer.cs" Line="1" Column="1" />
-      <File FileName="Buff/Buff.cs" Line="50" Column="50" />
-      <File FileName="Utilities/MetaData.cs" Line="1" Column="1" />
+      <File FileName="Exceptions/Targeting.cs" Line="10" Column="6" />
+      <File FileName="Targeting/TargetManager.cs" Line="232" Column="5" />
+      <File FileName="Spells/Spell.cs" Line="74" Column="23" />
+      <File FileName="Targeting/TargetCollection.cs" Line="95" Column="16" />
+      <File FileName="Spells/Cast.cs" Line="23" Column="9" />
+      <File FileName="Utilities/MetaData.cs" Line="19" Column="31" />
+      <File FileName="Items/Item.cs" Line="81" Column="10" />
+      <File FileName="Utilities/AssemblyInfo.cs" Line="12" Column="36" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Quark" expanded="True">
+            <Node name="Attributes" expanded="True" />
+            <Node name="Buffs" expanded="True" />
+            <Node name="Conditions" expanded="True" />
+            <Node name="Effects" expanded="True" />
+            <Node name="Exceptions" expanded="True" />
+            <Node name="General" expanded="True" />
+            <Node name="Items" expanded="True" />
+            <Node name="Projectiles" expanded="True" />
+            <Node name="Spells" expanded="True" />
+            <Node name="Targeting" expanded="True" />
+            <Node name="Utilities" expanded="True">
+              <Node name="AssemblyInfo.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

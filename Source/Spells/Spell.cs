@@ -340,7 +340,7 @@ namespace Quark.Spells
             Logger.Debug("Spell.OnFinal");
             ClearEffects.Run(Context);
 
-            Context.Clear(LifeStep.Done);
+            Context.Clear(Stages.Done);
             Context = null;
         }
 

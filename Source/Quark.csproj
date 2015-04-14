@@ -8,6 +8,8 @@
     <RootNamespace>Quark</RootNamespace>
     <AssemblyName>Quark</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <ProductVersion>12.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -40,16 +42,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Effect.cs" />
-    <Compile Include="Character.cs" />
-    <Compile Include="EffectCollection.cs" />
     <Compile Include="Exceptions\Targeting.cs" />
-    <Compile Include="Item.cs" />
-    <Compile Include="ItemCollection.cs" />
-    <Compile Include="Platform\Unity3D.cs" />
-    <Compile Include="QuarkConfig.cs" />
     <Compile Include="Spells\CastError.cs" />
-    <Compile Include="Tagging.cs" />
     <Compile Include="Targeting\TargetMacro.cs" />
     <Compile Include="Utilities\AssemblyInfo.cs" />
     <Compile Include="Utilities\Daemon.cs" />
@@ -60,7 +54,6 @@
     <Compile Include="Attributes\AttributeCollection.cs" />
     <Compile Include="Attributes\AttributeModifier.cs" />
     <Compile Include="Attributes\Stat.cs" />
-    <Compile Include="QuarkMain.cs" />
     <Compile Include="Projectiles\Projectile.cs" />
     <Compile Include="Projectiles\ProjectileController.cs" />
     <Compile Include="Buffs\Buff.cs" />
@@ -71,12 +64,20 @@
     <Compile Include="Utilities\EventDictionary.cs" />
     <Compile Include="Utilities\KeyBinding.cs" />
     <Compile Include="Utilities\KeyBindings.cs" />
-    <Compile Include="Condition.cs" />
     <Compile Include="Spells\Cast.cs" />
-    <Compile Include="Interaction.cs" />
-    <Compile Include="TargetCollection.cs" />
-    <Compile Include="ConditionCollection.cs" />
     <Compile Include="Utilities\MetaData.cs" />
+    <Compile Include="Items\Item.cs" />
+    <Compile Include="Items\ItemCollection.cs" />
+    <Compile Include="Conditions\Condition.cs" />
+    <Compile Include="Conditions\ConditionCollection.cs" />
+    <Compile Include="Effects\Effect.cs" />
+    <Compile Include="Effects\EffectCollection.cs" />
+    <Compile Include="Targeting\TargetCollection.cs" />
+    <Compile Include="General\Character.cs" />
+    <Compile Include="General\QuarkConfig.cs" />
+    <Compile Include="General\QuarkMain.cs" />
+    <Compile Include="General\Tagging.cs" />
+    <Compile Include="General\Interaction.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -87,10 +88,16 @@
       <Properties>
         <Policies>
           <TextStylePolicy inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/x-csharp" />
-          <CSharpFormattingPolicy IndentSwitchBody="True" IndentBlocksInsideExpressions="True" AnonymousMethodBraceStyle="NextLine" PropertyBraceStyle="NextLine" PropertyGetBraceStyle="NextLine" PropertySetBraceStyle="NextLine" EventBraceStyle="NextLine" EventAddBraceStyle="NextLine" EventRemoveBraceStyle="NextLine" StatementBraceStyle="NextLine" ElseNewLinePlacement="NewLine" CatchNewLinePlacement="NewLine" FinallyNewLinePlacement="NewLine" WhileNewLinePlacement="DoNotCare" ArrayInitializerWrapping="DoNotChange" ArrayInitializerBraceStyle="NextLine" BeforeMethodDeclarationParentheses="False" BeforeMethodCallParentheses="False" BeforeConstructorDeclarationParentheses="False" NewLineBeforeConstructorInitializerColon="NewLine" NewLineAfterConstructorInitializerColon="SameLine" BeforeDelegateDeclarationParentheses="False" NewParentheses="False" SpacesBeforeBrackets="False" inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp" />
+          <CSharpFormattingPolicy IndentSwitchBody="True" AnonymousMethodBraceStyle="NextLine" PropertyBraceStyle="NextLine" PropertyGetBraceStyle="NextLine" PropertySetBraceStyle="NextLine" EventBraceStyle="NextLine" EventAddBraceStyle="NextLine" EventRemoveBraceStyle="NextLine" StatementBraceStyle="NextLine" ElseNewLinePlacement="NewLine" CatchNewLinePlacement="NewLine" FinallyNewLinePlacement="NewLine" WhileNewLinePlacement="DoNotCare" ArrayInitializerWrapping="DoNotChange" ArrayInitializerBraceStyle="NextLine" BeforeMethodDeclarationParentheses="False" BeforeMethodCallParentheses="False" BeforeConstructorDeclarationParentheses="False" BeforeDelegateDeclarationParentheses="False" NewParentheses="False" SpacesBeforeBrackets="False" inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp" />
         </Policies>
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Items\" />
+    <Folder Include="Conditions\" />
+    <Folder Include="Effects\" />
+    <Folder Include="General\" />
+  </ItemGroup>
 </Project>

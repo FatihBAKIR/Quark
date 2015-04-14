@@ -140,6 +140,7 @@ namespace Quark.Attributes
             _interactions.Add(tag, multiplier);
         }
 
+        ///
         public void SetInteractions(Interaction interaction)
         {
             _interactions = interaction;

@@ -8,14 +8,17 @@ namespace Quark.Spells
     public class Cast : Identifiable
     {
         Character _caster;
-        Vector3 _beginPoint;
-        float _beginningTime;
+        Vector3 _castBeginPoint;
+        float _castBeginningTime;
 
         TargetCollection _targets;
         Spell _spell;
         TargetMacro _macro;
-        LifeStep _step = LifeStep.Null;
+        Stages _step = Stages.Null;
 
+        /// <summary>
+        /// The total hit count in this context.
+        /// </summary>
         public uint HitCount = 0;
         
 #if DEBUG
@@ -48,7 +51,7 @@ namespace Quark.Spells
         /// </param>
         public static Cast PrepareCast(Character caster, Spell spell)
         {
-            Cast data = new Cast {_step = LifeStep.Null, _caster = caster, _spell = spell, NonSpell = false };
+            Cast data = new Cast {_step = Stages.Null, _caster = caster, _spell = spell, NonSpell = false };
             Messenger<Cast>.Broadcast("Prepare", data);
             Messenger<Cast>.Broadcast(data.Spell.Name + ".Prepare", data);
             Messenger<Cast>.Broadcast(caster.Identifier + "." + data.Spell.Name + ".Prepare", data);
@@ -61,13 +64,17 @@ namespace Quark.Spells
             return data;
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="Quark.Spells.Cast"/> context is Item sourced.
+        /// </summary>
+        /// <value><c>true</c> if non Spell; otherwise, <c>false</c>.</value>
         public bool NonSpell { get; protected set; }
 
         public static Cast PrepareCast(Character caster, Item item)
         {
             Cast data = new Cast
             {
-                _step = LifeStep.Null,
+                _step = Stages.Null,
                 _caster = caster,
                 NonSpell = true,
                 Identifier = item.Identifier
@@ -101,7 +108,7 @@ namespace Quark.Spells
         {
             get
             {
-                return Time.timeSinceLevelLoad - _beginningTime;
+                return Time.timeSinceLevelLoad - _castBeginningTime;
             }
         }
 
@@ -155,7 +162,7 @@ namespace Quark.Spells
         {
             get
             {
-                return _beginPoint;
+                return _castBeginPoint;
             }
         }
 
@@ -167,7 +174,7 @@ namespace Quark.Spells
             }
             set
             {
-                if (_step != LifeStep.Null)
+                if (_step != Stages.Null)
                     return;
                 _spell = value;
             }
@@ -175,7 +182,7 @@ namespace Quark.Spells
 
         public bool CanAddTarget()
         {
-            if (_step != LifeStep.Targeting)
+            if (_step != Stages.Targeting)
                 throw new NotTargetingException();
 
             if (_spell.TargetForm == TargetForm.Singular && (_targets.Count > 0))
@@ -207,7 +214,7 @@ namespace Quark.Spells
         /// </summary>
         void Invoke()
         {
-            _step = LifeStep.Begin;
+            _step = Stages.Invoke;
             Logger.Debug("Cast::Invoke");
             if (!_caster.CanCast(Spell))
             {
@@ -224,7 +231,7 @@ namespace Quark.Spells
         /// </summary>
         void BeginTargeting()
         {
-            _step = LifeStep.Targeting;
+            _step = Stages.Targeting;
             _targets = new TargetCollection();
             _macro = _spell.TargetMacro;
             _macro.SetData(this);
@@ -234,7 +241,7 @@ namespace Quark.Spells
         public void TargetingFail(TargetingError error)
         {
             _macro = null;
-            Clear(LifeStep.Fail);
+            Clear(Stages.Failed);
         }
 
         /// <summary>
@@ -247,8 +254,8 @@ namespace Quark.Spells
              * otherwise, begin the casting logic
              */
             _macro = null; // Let GC collect the target macro we used
-            _beginningTime = Time.timeSinceLevelLoad;
-            _beginPoint = _caster.transform.position;
+            _castBeginningTime = Time.timeSinceLevelLoad;
+            _castBeginPoint = _caster.transform.position;
             _spell.OnTargetingDone();
             if (_spell.IsInstant)
                 CastDone();
@@ -260,7 +267,8 @@ namespace Quark.Spells
         void StartCast()
         {
             Logger.Debug("Cast::StartCast");
-            _step = LifeStep.Casting;
+
+            _step = Stages.Casting;
             _interruptConditions = Caster.InterruptConditions.DeepCopy();
             Messenger.AddListener("Update", ControlCast);
             _spell.OnCastingBegan();
@@ -278,7 +286,7 @@ namespace Quark.Spells
 
         void ControlCast()
         {
-            _step = LifeStep.Casting;
+            _step = Stages.Casting;
             CheckInterrupt();
             if (_interrupted)
                 CastFail();
@@ -294,14 +302,16 @@ namespace Quark.Spells
         void CastDone()
         {
             Logger.Debug("Cast::CastDone");
-            Clear(LifeStep.Done);
+
+            Clear(Stages.Done);
             _spell.OnCastDone();
         }
 
         void CastFail()
         {
             Logger.Debug("Cast::CastFail");
-            Clear(LifeStep.Fail);
+
+            Clear(Stages.Failed);
         }
 
         void CheckInterrupt()
@@ -320,9 +330,10 @@ namespace Quark.Spells
             _spell.OnInterrupt();
         }
 
-        public void Clear(LifeStep step)
+        public void Clear(Stages step)
         {
             Logger.Debug("Cast::Clear");
+
             _interruptConditions = null;
             _step = step;
             _caster.ClearCast(this);
@@ -331,13 +342,13 @@ namespace Quark.Spells
         }
     }
 
-    public enum LifeStep
+    public enum Stages
     {
         Null,
-        Begin,
+        Invoke,
         Targeting,
         Casting,
         Done,
-        Fail
+        Failed
     }
 }

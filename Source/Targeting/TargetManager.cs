@@ -249,13 +249,4 @@ namespace Quark.Targeting
         /// </summary>
         Plural
     }
-
-    [Flags]
-    public enum TargetConstraints
-    {
-        Allied = 1,
-        Neutral = 2,
-        Enemy = 4,
-        Self = 8
-    }
 }
