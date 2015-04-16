@@ -134,30 +134,6 @@ namespace Quark.Spells
             }
         }
 
-        public Targetable[] Targetables
-        {
-            get
-            {
-                return _targets.Targetables;
-            }
-        }
-
-        public Character[] TargetCharacters
-        {
-            get
-            {
-                return _targets.Characters;
-            }
-        }
-
-        public Vector3[] TargetPoints
-        {
-            get
-            {
-                return _targets.Points;
-            }
-        }
-
         public Vector3 CastBeginPoint
         {
             get

@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Quark.Targeting;
 
 namespace Quark
 {
-    public class TargetCollection
+    public class TargetCollection : IEnumerable<TargetUnion>
     {
         List<Vector3> _points = new List<Vector3>();
         List<Targetable> _targetables = new List<Targetable>();
@@ -88,6 +89,35 @@ namespace Quark
                 return Count < 1;
             }
         }
+
+        private TargetUnion[] Targets
+        {
+            get
+            {
+                TargetUnion[] targets = new TargetUnion[_points.Count + _targetables.Count + _characters.Count];
+                int i = 0;
+                foreach (Vector3 point in _points)
+                    targets[i++] = new TargetUnion(point);
+
+                foreach (Targetable target in _targetables)
+                    targets[i++] = new TargetUnion(target);
+
+                foreach (Character character in _characters)
+                    targets[i++] = new TargetUnion(character);
+                return targets;
+            }
+        }
+        
+        public IEnumerator<TargetUnion> GetEnumerator()
+        {
+            return (IEnumerator<TargetUnion>)Targets.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Targets.GetEnumerator();
+        }
+
     }
 
     public struct TargetUnion

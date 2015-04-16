@@ -1,4 +1,5 @@
-﻿using Quark.Utilities;
+﻿using Quark.Spells;
+using Quark.Utilities;
 using UnityEngine;
 
 namespace Quark.Projectiles
@@ -12,6 +13,13 @@ namespace Quark.Projectiles
         public virtual MovementType Type { get { return MovementType.ReturnsMovement; } }
 
         protected Projectile Obj { get; set; }
+
+        public virtual Vector3 CalculateInitial(TargetUnion target, Cast context)
+        {
+            Vector3 point = context.CastBeginPoint;
+            point += new Vector3(0, 1, 0);
+            return point;
+        }
 
         /// <summary>
         /// Controls the missile object's position

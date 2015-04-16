@@ -23,7 +23,7 @@ namespace Quark.Projectiles
         Cast _context;
 
         ProjectileController _controller;
-        
+
         /// <summary>
         /// This property denotes the total hit count of this Spell Cast
         /// </summary>
@@ -80,34 +80,49 @@ namespace Quark.Projectiles
 
         #region Initialization
 
-        public static Projectile Make(GameObject prefab, ProjectileController controller, Cast context)
+        public static Projectile Make(GameObject prefab, ProjectileController controller, Cast context, TargetUnion target)
         {
-            Vector3 point = context.CastBeginPoint;
-            point.y = 1;
-            GameObject obj = (GameObject)Instantiate(prefab, point, Quaternion.identity);
+            GameObject obj = (GameObject)Instantiate(prefab, controller.CalculateInitial(target, context), Quaternion.identity);
             Projectile m = obj.AddComponent<Projectile>();
             m._context = context;
             m._controller = controller;
+            m.SetTarget(target);
             m._controller.Set(m);
             return m;
         }
 
         bool _toPos;
 
-        public void Set(Vector3 target)
+        void SetTarget(TargetUnion target)
+        {
+            switch (target.Type)
+            {
+                case TargetType.Point:
+                    Set(target.Point);
+                    break;
+                case TargetType.Targetable:
+                    Set(target.Targetable);
+                    break;
+                case TargetType.Character:
+                    Set(target.Character);
+                    break;
+            }
+        }
+
+        void Set(Vector3 target)
         {
             CastRotation = target - _context.CastBeginPoint;
             _toPos = true;
             _targetPosition = target;
         }
 
-        public void Set(Character target)
+        void Set(Character target)
         {
             CastRotation = target.transform.position - _context.CastBeginPoint;
             _target = target;
         }
 
-        public void Set(Targetable target)
+        void Set(Targetable target)
         {
             CastRotation = target.transform.position - _context.CastBeginPoint;
             _target = target;
@@ -150,7 +165,7 @@ namespace Quark.Projectiles
         {
             if (!_toPos)
                 _targetPosition = _target.transform.position;
-        
+
             _controller.Control();
 
             if (_toPos && HasReached)

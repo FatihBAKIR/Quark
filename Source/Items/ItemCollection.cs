@@ -142,8 +142,6 @@ namespace Quark
             return _items.GetEnumerator();
         }
 
-
-
         public int SizeRecursive
         {
             get

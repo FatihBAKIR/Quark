@@ -192,7 +192,7 @@ namespace Quark.Spells
 
         /// <summary>
         /// The traveling effects
-        /// Effects within this list are applied while the projectiles of this Projectile are traveling
+        /// Effects within this list are applied while the projectiles of this Spell are traveling
         /// </summary>
         protected virtual EffectCollection TravelEffects { get { return new EffectCollection { }; } }
 
@@ -363,24 +363,12 @@ namespace Quark.Spells
         /// <summary>
         /// Invokes necessary projectiles for this spell
         /// </summary>
-        protected virtual void CreateProjectiles()
+        protected void CreateProjectiles()
         {
-            foreach (Vector3 point in Context.Targets.Points)
+            foreach (TargetUnion target in Context.Targets)
             {
+                Projectile.Make(ProjectileObject, Controller, Context, target);
                 _onAirMissileCount++;
-                Projectile.Make(ProjectileObject, Controller, Context).Set(point);
-            }
-
-            foreach (Character target in Context.Targets.Characters)
-            {
-                _onAirMissileCount++;
-                Projectile.Make(ProjectileObject, Controller, Context).Set(target);
-            }
-
-            foreach (Targetable target in Context.Targets.Targetables)
-            {
-                _onAirMissileCount++;
-                Projectile.Make(ProjectileObject, Controller, Context).Set(target);
             }
         }
 
