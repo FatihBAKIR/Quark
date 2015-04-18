@@ -46,7 +46,6 @@
     <Compile Include="Spells\CastError.cs" />
     <Compile Include="Targeting\TargetMacro.cs" />
     <Compile Include="Utilities\AssemblyInfo.cs" />
-    <Compile Include="Utilities\Daemon.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\Messenger.cs" />
     <Compile Include="Utilities\Utils.cs" />
@@ -78,7 +77,11 @@
     <Compile Include="General\QuarkMain.cs" />
     <Compile Include="General\Tagging.cs" />
     <Compile Include="General\Interaction.cs" />
+<<<<<<< Updated upstream
     <Compile Include="General\Expression.cs" />
+=======
+    <Compile Include="General\Daemon.cs" />
+>>>>>>> Stashed changes
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
