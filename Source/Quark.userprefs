@@ -1,15 +1,8 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Utilities/AssemblyInfo.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="General/Expression.cs">
     <Files>
-      <File FileName="Exceptions/Targeting.cs" Line="10" Column="6" />
-      <File FileName="Targeting/TargetManager.cs" Line="232" Column="5" />
-      <File FileName="Spells/Spell.cs" Line="74" Column="23" />
-      <File FileName="Targeting/TargetCollection.cs" Line="95" Column="16" />
-      <File FileName="Spells/Cast.cs" Line="23" Column="9" />
-      <File FileName="Utilities/MetaData.cs" Line="19" Column="31" />
-      <File FileName="Items/Item.cs" Line="81" Column="10" />
-      <File FileName="Utilities/AssemblyInfo.cs" Line="12" Column="36" />
+      <File FileName="General/Expression.cs" Line="117" Column="26" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -20,14 +13,14 @@
             <Node name="Conditions" expanded="True" />
             <Node name="Effects" expanded="True" />
             <Node name="Exceptions" expanded="True" />
-            <Node name="General" expanded="True" />
+            <Node name="General" expanded="True">
+              <Node name="Expression.cs" selected="True" />
+            </Node>
             <Node name="Items" expanded="True" />
             <Node name="Projectiles" expanded="True" />
             <Node name="Spells" expanded="True" />
             <Node name="Targeting" expanded="True" />
-            <Node name="Utilities" expanded="True">
-              <Node name="AssemblyInfo.cs" selected="True" />
-            </Node>
+            <Node name="Utilities" expanded="True" />
           </Node>
         </State>
       </Pad>

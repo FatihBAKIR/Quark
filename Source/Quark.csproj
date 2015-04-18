@@ -78,6 +78,7 @@
     <Compile Include="General\QuarkMain.cs" />
     <Compile Include="General\Tagging.cs" />
     <Compile Include="General\Interaction.cs" />
+    <Compile Include="General\Expression.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
