@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Quark;
 using Quark.Attributes;
 using Quark.Buffs;
 using Quark.Spells;
@@ -207,8 +208,53 @@ namespace Quark
             }
         }
 
+        void OnCollisionEnter(Collision hit)
+        {
+            if (hit.gameObject.Equals(gameObject))
+                return;
+            if (hit.gameObject.GetComponent<Targetable>() != null)
+                OnQuarkCollision(new QuarkCollision(this, hit.gameObject.GetComponent<Targetable>()));
+        }
+        void OnTriggerEnter(Collider hit)
+        {
+            if (hit.gameObject.Equals(gameObject))
+                return;
+            if (hit.gameObject.GetComponent<Targetable>() != null)
+                OnQuarkCollision(new QuarkCollision(this, hit.gameObject.GetComponent<Targetable>()));
+        }
+        void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+            if (hit.gameObject.Equals(gameObject))
+                return;
+            if (hit.gameObject.GetComponent<Targetable>() != null)
+                OnQuarkCollision(new QuarkCollision(this, hit.gameObject.GetComponent<Targetable>()));
+        }
+
+        void OnQuarkCollision(QuarkCollision collision)
+        {
+            Messenger<QuarkCollision>.Broadcast("Collision", collision);
+            QuarkCollision(collision);
+        }
+
+        public delegate void CollisionDel(QuarkCollision collision);
+
+        public event CollisionDel QuarkCollision = delegate { };
+
         void OnAnimatorMove()
         {
+        }
+    }
+
+    public class QuarkCollision
+    {
+        public Targetable Source { get; private set; }
+        public Targetable Other { get; private set; }
+
+        public QuarkCollision(Targetable source, Targetable other)
+        {
+            //Debug.Log(source.name + " collided with " + other.name);
+            Source = source;
+            Other = other;
         }
     }
 }
