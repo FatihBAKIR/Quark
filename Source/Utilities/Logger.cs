@@ -1,5 +1,5 @@
-using System.Diagnostics;
-using System.Reflection;
+using System;
+
 namespace Quark.Utilities
 {
     public static class Logger
@@ -9,13 +9,13 @@ namespace Quark.Utilities
 
         private static void Add(string message, LogLevel level)
         {
-            if (level > Logger.Level)
+            if (level > Level)
                 return;
-            if ((Logger.Type & LogType.Unity) == LogType.Unity)
+            if ((Type & LogType.Unity) == LogType.Unity)
             {
-                if (Logger.Level >= LogLevel.Debug || Logger.Level == LogLevel.GC)
+                if (Level >= LogLevel.Debug || Level == LogLevel.GC)
                     UnityEngine.Debug.Log(message);
-                else if (Logger.Level == LogLevel.Warning)
+                else if (Level == LogLevel.Warning)
                     UnityEngine.Debug.LogWarning(message);
                 else
                     UnityEngine.Debug.LogError(message);
@@ -24,12 +24,12 @@ namespace Quark.Utilities
 
         public static void Info(string message)
         {
-            Logger.Add(message, LogLevel.Info);
+            Add(message, LogLevel.Info);
         }
 
         public static void Log(string message)
         {
-            Logger.Add(message, LogLevel.Log);
+            Add(message, LogLevel.Log);
         }
 
         public static void Debug(string message)
@@ -41,12 +41,12 @@ namespace Quark.Utilities
 
         public static void Warn(string message)
         {
-            Logger.Add(message, LogLevel.Warning);
+            Add(message, LogLevel.Warning);
         }
 
         public static void Error(string message)
         {
-            Logger.Add(message, LogLevel.Error);
+            Add(message, LogLevel.Error);
         }
 
         public static void GC(string message)
@@ -66,6 +66,7 @@ namespace Quark.Utilities
         }
     }
 
+    [Flags]
     public enum LogLevel
     {
         Info = 6,

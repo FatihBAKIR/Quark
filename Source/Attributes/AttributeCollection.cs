@@ -8,6 +8,7 @@ namespace Quark.Attributes
 {
     public class AttributeCollection : IDisposable, IEnumerable<Attribute>, IDeepCopiable<AttributeCollection>
     {
+        public event StatDel StatManipulated = delegate { };
         Dictionary<string, Attribute> _attributes;
         Character _carrier;
 
@@ -119,6 +120,10 @@ namespace Quark.Attributes
         Stat AddStat(string tag, string name)
         {
             _attributes.Add(tag, new Stat(tag, name, this));
+            ((Stat)_attributes[tag]).Manipulated += delegate(Character source, Stat stat, float change)
+            {
+                StatManipulated(source, stat, change);
+            };
             return (Stat)_attributes[tag];
         }
 

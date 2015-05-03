@@ -83,6 +83,8 @@ namespace Quark.Buffs
 
         List<string> _toDispose;
 
+        public event BuffDel BuffDetached = delegate { }; 
+
         void Update()
         {
             _toDispose = new List<string>();
@@ -95,7 +97,11 @@ namespace Quark.Buffs
             }
 
             foreach (string id in _toDispose)
+            {
+                Buff toDetach = _buffs[id];
                 _buffs.Remove(id);
+                BuffDetached(_owner, toDetach);
+            }
 
             _toDispose.Clear();
             _toDispose = null;

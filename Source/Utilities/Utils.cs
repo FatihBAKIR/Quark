@@ -12,7 +12,13 @@ namespace Quark.Utilities
             return (longVal & longOpt) == longOpt;
         }
 
-        public static Vector3 RotateVector(Vector3 vector, Vector3 align)
+        /// <summary>
+        /// Aligns a vector in the given direction
+        /// </summary>
+        /// <param name="vector">Vector to align</param>
+        /// <param name="align">Direction</param>
+        /// <returns>Aligned vector</returns>
+        public static Vector3 AlignVector(Vector3 vector, Vector3 align)
         {
             float angle = Mathf.Atan(align.z / align.x);
 
@@ -48,7 +54,7 @@ namespace Quark.Utilities
         }
 
         /// <summary>
-        /// Returns the angle between 2 points in degrees on XY plane
+        /// Returns the angle between 2 points in degrees on XY plane using cross product
         /// </summary>
         /// <param name="v1">First Point</param>
         /// <param name="v2">Second Point</param>
@@ -66,6 +72,12 @@ namespace Quark.Utilities
             return radians * Mathf.Rad2Deg;
         }
 
+        /// <summary>
+        /// Returns the slope in degrees from a vector to another on the XY plane
+        /// </summary>
+        /// <param name="v1">First point</param>
+        /// <param name="v2">Second point</param>
+        /// <returns>Slope from the first point to the other in degrees</returns>
         public static float Slope2(Vector3 v1, Vector3 v2)
         {
             v1.z = 0;

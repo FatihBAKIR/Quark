@@ -43,9 +43,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\Targeting.cs" />
+    <Compile Include="General\Targetable.cs" />
     <Compile Include="Spells\CastError.cs" />
     <Compile Include="Targeting\TargetMacro.cs" />
     <Compile Include="Utilities\AssemblyInfo.cs" />
+    <Compile Include="Utilities\Delegates.cs" />
     <Compile Include="Utilities\Logger.cs" />
     <Compile Include="Utilities\Messenger.cs" />
     <Compile Include="Utilities\Utils.cs" />
@@ -95,10 +97,5 @@
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="Items\" />
-    <Folder Include="Conditions\" />
-    <Folder Include="Effects\" />
-    <Folder Include="General\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

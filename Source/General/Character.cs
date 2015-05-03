@@ -8,45 +8,6 @@ using UnityEngine;
 
 namespace Quark
 {
-    public class Targetable : MonoBehaviour, Identifiable, ITaggable
-    {
-        public bool IsTargetable { get; set; }
-        public string Identifier
-        {
-            get
-            {
-                return GetHashCode().ToString();
-            }
-        }
-        public DynamicTags Tags { get; protected set; }
-
-        public void Tag(string tag)
-        {
-            Tags.Add(tag);
-        }
-
-        public void Tag(string tag, object value)
-        {
-            Tags.Add(tag, value);
-        }
-
-        public void Untag(string tag)
-        {
-            Tags.Delete(tag);
-        }
-
-        public bool IsTagged(string tag)
-        {
-            return Tags.Has(tag);
-        }
-
-        public object GetTag(string tag)
-        {
-            return Tags.Get(tag);
-        }
-
-    }
-
     public class Character : Targetable
     {
         AttributeCollection _attributes;
@@ -59,6 +20,7 @@ namespace Quark
 
         void Awake()
         {
+            IsTargetable = true;
             Tags = new DynamicTags();
             _inventory = new ItemCollection(this);
             _attributes = QuarkMain.GetInstance().Config.DefaultAttributes.DeepCopy();
@@ -68,6 +30,13 @@ namespace Quark
             _casting = new List<Cast>();
             _interruptConditions = QuarkMain.GetInstance().Config.DefaultInterruption.DeepCopy();
             Configure();
+
+            _attributes.StatManipulated += delegate(Character source, Stat stat, float change)
+            {
+                OnStatManipulated(stat, change);
+            };
+            _regularBuffs.BuffDetached += delegate(Character source, Buff buff) { OnBuffDetached(buff); };
+            _hiddenBuffs.BuffDetached += delegate(Character source, Buff buff) { OnBuffDetached(buff); };
         }
 
         protected virtual void Configure()
@@ -76,7 +45,6 @@ namespace Quark
 
         public virtual void Start()
         {
-            IsTargetable = true;
         }
 
 #if DEBUG
@@ -127,14 +95,6 @@ namespace Quark
             _casting.Remove(cast);
         }
 
-        public void AttachBuff(Buff buff)
-        {
-            if (buff.Hidden)
-                _hiddenBuffs.AttachBuff(buff);
-            else
-                _regularBuffs.AttachBuff(buff);
-        }
-
         public void AddItem(Item item)
         {
             _inventory.AddItemRecursive(item);
@@ -158,6 +118,15 @@ namespace Quark
         public IList<Item> EquippedItems
         {
             get { return _inventory.Items(); }
+        }
+
+        public void AttachBuff(Buff buff)
+        {
+            if (buff.Hidden)
+                _hiddenBuffs.AttachBuff(buff);
+            else
+                _regularBuffs.AttachBuff(buff);
+            OnBuffAttached(buff);
         }
 
         /// <summary>
@@ -215,6 +184,7 @@ namespace Quark
             if (hit.gameObject.GetComponent<Targetable>() != null)
                 OnQuarkCollision(new QuarkCollision(this, hit.gameObject.GetComponent<Targetable>()));
         }
+
         void OnTriggerEnter(Collider hit)
         {
             if (hit.gameObject.Equals(gameObject))
@@ -222,6 +192,7 @@ namespace Quark
             if (hit.gameObject.GetComponent<Targetable>() != null)
                 OnQuarkCollision(new QuarkCollision(this, hit.gameObject.GetComponent<Targetable>()));
         }
+
         void OnControllerColliderHit(ControllerColliderHit hit)
         {
             if (hit.gameObject.Equals(gameObject))
@@ -232,27 +203,73 @@ namespace Quark
 
         void OnQuarkCollision(QuarkCollision collision)
         {
-            Messenger<QuarkCollision>.Broadcast("Collision", collision);
+            Messenger<QuarkCollision>.Broadcast("QuarkCollision", collision);
             QuarkCollision(collision);
         }
 
-        public delegate void CollisionDel(QuarkCollision collision);
+        void OnBuffAttached(Buff buff)
+        {
+            Messenger<Character, Buff>.Broadcast("BuffAttached", this, buff); 
+            BuffAttached(this, buff);
+        }
 
+        void OnBuffDetached(Buff buff)
+        {
+            Messenger<Character, Buff>.Broadcast("BuffDetached", this, buff);
+            BuffDetached(this, buff);
+        }
+
+        void OnStatManipulated(Stat stat, float change)
+        {
+            Messenger<Character, Stat, float>.Broadcast("StatManipulated", this, stat, change);
+            StatManipulated(this, stat, change);
+        }
+
+        /// <summary>
+        /// This event is raised when this Character collides with another Targetable
+        /// </summary>
         public event CollisionDel QuarkCollision = delegate { };
 
-        void OnAnimatorMove()
-        {
-        }
+        /// <summary>
+        /// This event is raised when a new Buff is attached to this Character
+        /// </summary>
+        public event BuffDel BuffAttached = delegate { };
+
+        /// <summary>
+        /// This event is raised when a Buff is detached from this Character 
+        /// </summary>
+        public event BuffDel BuffDetached = delegate { };
+
+        /// <summary>
+        /// This event is raised when a Stat of this Character is manipulated
+        /// </summary>
+        public event StatDel StatManipulated = delegate { };
     }
 
     public class QuarkCollision
     {
+        /// <summary>
+        /// The Targetable this collision was catched from
+        /// </summary>
         public Targetable Source { get; private set; }
+        
+        /// <summary>
+        /// Other Targetable
+        /// </summary>
         public Targetable Other { get; private set; }
+
+        /// <summary>
+        /// Source Targetable's position
+        /// </summary>
+        public Vector3 SourcePosition { get { return Source.transform.position; } }
+
+        /// <summary>
+        /// Other Targetable's position
+        /// </summary>
+        public Vector3 OtherPosition { get { return Other.transform.position; } }
 
         public QuarkCollision(Targetable source, Targetable other)
         {
-            //Debug.Log(source.name + " collided with " + other.name);
             Source = source;
             Other = other;
         }

@@ -32,7 +32,7 @@ namespace Quark.Projectiles
                     Obj.transform.Translate(Movement);
                     break;
                 case MovementType.ReturnsPosition:
-                    Obj.transform.position = Utils.RotateVector(Position, Obj.CastRotation) + InitialPosition;
+                    Obj.transform.position = Utils.AlignVector(Position, Obj.CastRotation) + InitialPosition;
                     break;
             }
             //Obj.transform.LookAt(Target);
