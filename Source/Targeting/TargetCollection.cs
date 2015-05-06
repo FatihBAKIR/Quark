@@ -110,7 +110,7 @@ namespace Quark
         
         public IEnumerator<TargetUnion> GetEnumerator()
         {
-            return (IEnumerator<TargetUnion>)Targets.GetEnumerator();
+            return ((IEnumerable<TargetUnion>)Targets).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

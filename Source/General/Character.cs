@@ -29,7 +29,6 @@ namespace Quark
             _hiddenBuffs = new BuffContainer(this);
             _casting = new List<Cast>();
             _interruptConditions = QuarkMain.GetInstance().Config.DefaultInterruption.DeepCopy();
-            Configure();
 
             _attributes.StatManipulated += delegate(Character source, Stat stat, float change)
             {
@@ -37,14 +36,17 @@ namespace Quark
             };
             _regularBuffs.BuffDetached += delegate(Character source, Buff buff) { OnBuffDetached(buff); };
             _hiddenBuffs.BuffDetached += delegate(Character source, Buff buff) { OnBuffDetached(buff); };
+
+            Configure();
+        }
+
+        protected virtual EffectCollection ConfigurationEffects {
+            get { return new EffectCollection(); }
         }
 
         protected virtual void Configure()
         {
-        }
-
-        public virtual void Start()
-        {
+            ConfigurationEffects.Run(this);
         }
 
 #if DEBUG
@@ -71,6 +73,9 @@ namespace Quark
             return _attributes.GetStat(tag);
         }
 
+        /// <summary>
+        /// Returns a read-only collection of the casts this Character is casting
+        /// </summary>
         public IList<Cast> Casts
         {
             get
@@ -177,36 +182,6 @@ namespace Quark
             }
         }
 
-        void OnCollisionEnter(Collision hit)
-        {
-            if (hit.gameObject.Equals(gameObject))
-                return;
-            if (hit.gameObject.GetComponent<Targetable>() != null)
-                OnQuarkCollision(new QuarkCollision(this, hit.gameObject.GetComponent<Targetable>()));
-        }
-
-        void OnTriggerEnter(Collider hit)
-        {
-            if (hit.gameObject.Equals(gameObject))
-                return;
-            if (hit.gameObject.GetComponent<Targetable>() != null)
-                OnQuarkCollision(new QuarkCollision(this, hit.gameObject.GetComponent<Targetable>()));
-        }
-
-        void OnControllerColliderHit(ControllerColliderHit hit)
-        {
-            if (hit.gameObject.Equals(gameObject))
-                return;
-            if (hit.gameObject.GetComponent<Targetable>() != null)
-                OnQuarkCollision(new QuarkCollision(this, hit.gameObject.GetComponent<Targetable>()));
-        }
-
-        void OnQuarkCollision(QuarkCollision collision)
-        {
-            Messenger<QuarkCollision>.Broadcast("QuarkCollision", collision);
-            QuarkCollision(collision);
-        }
-
         void OnBuffAttached(Buff buff)
         {
             Messenger<Character, Buff>.Broadcast("BuffAttached", this, buff); 
@@ -224,11 +199,6 @@ namespace Quark
             Messenger<Character, Stat, float>.Broadcast("StatManipulated", this, stat, change);
             StatManipulated(this, stat, change);
         }
-
-        /// <summary>
-        /// This event is raised when this Character collides with another Targetable
-        /// </summary>
-        public event CollisionDel QuarkCollision = delegate { };
 
         /// <summary>
         /// This event is raised when a new Buff is attached to this Character

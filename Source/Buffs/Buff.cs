@@ -98,7 +98,8 @@ namespace Quark.Buffs
         bool _terminated;
 
         /// <summary>
-        /// Immediately finalize this Buff
+        /// Immediately terminates this Buff.
+        /// Termination assures no other Tick will take place in this instance.
         /// </summary>
         protected void Terminate()
         {
@@ -116,6 +117,13 @@ namespace Quark.Buffs
         /// </summary>
         private void Tick()
         {
+            if (_terminated)
+            {
+                Deregister();
+                OnTerminate();
+                return;
+            }
+
             if (Continuous)
             {
                 OnTick();
@@ -130,12 +138,6 @@ namespace Quark.Buffs
             {
                 Deregister();
                 OnDone();
-            }
-
-            if (_terminated)
-            {
-                Deregister();
-                OnTerminate();
             }
         }
 

@@ -39,5 +39,42 @@ namespace Quark
         {
             return Tags.Get(tag);
         }
+
+        void OnCollisionEnter(Collision hit)
+        {
+            if (hit.gameObject.Equals(gameObject))
+                return;
+            if (hit.gameObject.GetComponent<Targetable>() != null)
+                OnQuarkCollision(new QuarkCollision(this, hit.gameObject.GetComponent<Targetable>()));
+        }
+
+        void OnTriggerEnter(Collider hit)
+        {
+            if (hit.gameObject.Equals(gameObject))
+                return;
+            if (hit.gameObject.GetComponent<Targetable>() != null)
+                OnQuarkCollision(new QuarkCollision(this, hit.gameObject.GetComponent<Targetable>()));
+        }
+
+        void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+            if (hit.gameObject.Equals(gameObject))
+                return;
+            if (hit.gameObject.GetComponent<Targetable>() != null)
+                OnQuarkCollision(new QuarkCollision(this, hit.gameObject.GetComponent<Targetable>()));
+        }
+
+        void OnQuarkCollision(QuarkCollision collision)
+        {
+            Messenger<QuarkCollision>.Broadcast("QuarkCollision", collision);
+            QuarkCollision(collision);
+        }
+
+        //TODO: Event for tagging and untagging
+
+        /// <summary>
+        /// This event is raised when this Character collides with another Targetable
+        /// </summary>
+        public event CollisionDel QuarkCollision = delegate { };
     }
 }
