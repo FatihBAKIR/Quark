@@ -40,13 +40,54 @@ namespace Quark
             Configure();
         }
 
-        protected virtual EffectCollection ConfigurationEffects {
-            get { return new EffectCollection(); }
+        protected virtual EffectCollection ConfigurationEffects
+        {
+            get
+            {
+                return new EffectCollection();
+            }
+        }
+
+        protected virtual EffectCollection DestructionEffects
+        {
+            get
+            {
+                return new EffectCollection();
+            }
         }
 
         protected virtual void Configure()
         {
             ConfigurationEffects.Run(this);
+        }
+
+        void OnDestroy()
+        {
+            Destruction();
+            OnCharacterDestruction();
+
+            _inventory.Dispose();
+            _inventory = null;
+
+            _attributes.Dispose();
+            _attributes = null;
+
+            _regularBuffs.Dispose();
+            _regularBuffs = null;
+
+            _hiddenBuffs.Dispose();
+            _hiddenBuffs = null;
+
+            _casting.Clear();
+            _casting = null;
+
+            _interruptConditions.Dispose();
+            _interruptConditions = null;
+        }
+
+        protected virtual void Destruction()
+        {
+            DestructionEffects.Run(this);
         }
 
 #if DEBUG
@@ -184,7 +225,7 @@ namespace Quark
 
         void OnBuffAttached(Buff buff)
         {
-            Messenger<Character, Buff>.Broadcast("BuffAttached", this, buff); 
+            Messenger<Character, Buff>.Broadcast("BuffAttached", this, buff);
             BuffAttached(this, buff);
         }
 
@@ -199,6 +240,22 @@ namespace Quark
             Messenger<Character, Stat, float>.Broadcast("StatManipulated", this, stat, change);
             StatManipulated(this, stat, change);
         }
+
+        void OnCharacterDestruction()
+        {
+            Messenger<Character>.Broadcast("CharacterDestroyed", this); 
+            CharacterDestroyed(this);
+        }
+
+        void OnCharacterInstantiation()
+        {
+            
+        }
+
+        /// <summary>
+        /// This event is raised after the Character component is destroyed
+        /// </summary>
+        public event CharacterDel CharacterDestroyed = delegate {};
 
         /// <summary>
         /// This event is raised when a new Buff is attached to this Character
@@ -222,7 +279,7 @@ namespace Quark
         /// The Targetable this collision was catched from
         /// </summary>
         public Targetable Source { get; private set; }
-        
+
         /// <summary>
         /// Other Targetable
         /// </summary>

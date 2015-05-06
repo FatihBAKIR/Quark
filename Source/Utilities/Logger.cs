@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Quark.Utilities
 {
@@ -35,7 +36,7 @@ namespace Quark.Utilities
         public static void Debug(string message)
         {
 #if DEBUG
-            Logger.Add(message, LogLevel.Debug);
+            Add(message, LogLevel.Debug);
 #endif
         }
 
@@ -52,7 +53,7 @@ namespace Quark.Utilities
         public static void GC(string message)
         {
 #if DEBUG
-            Logger.Add("GC: " + message, LogLevel.GC);
+            Add("GC: " + message, LogLevel.GC);
 #endif
         }
 

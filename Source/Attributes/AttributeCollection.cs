@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Quark.Utilities;
-using UnityEngine;
 
 namespace Quark.Attributes
 {
@@ -17,6 +16,7 @@ namespace Quark.Attributes
             _carrier = null;
             _attributes.Clear();
             _attributes = null;
+            StatManipulated = null;
         }
 
         public void Add(string tag, string name, bool isStat = false)

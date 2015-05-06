@@ -1,15 +1,15 @@
-﻿using Quark.Spells;
+﻿using System;
+using Quark.Spells;
 using Quark.Utilities;
 using UnityEngine;
 
 namespace Quark.Buffs
 {
-    public class Buff : ITagged, Identifiable
+    public class Buff : ITagged, Identifiable, IDisposable
     {
         public virtual string Name
         {
             get { return GetType().Name; }
-            set { }
         }
         protected float Interval;
         protected float Duration;
@@ -31,12 +31,17 @@ namespace Quark.Buffs
         }
 #endif
 
-#if DEBUG
+        public void Dispose()
+        {
+            Terminate();
+        }
+
         ~Buff()
         {
+#if DEBUG
             Logger.GC("Buff::dtor");
-        }
 #endif
+        }
 
         public string Identifier
         {

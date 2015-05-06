@@ -51,11 +51,16 @@ namespace Quark.Projectiles
             }
         }
 
+        Vector3 HeightOffset
+        {
+            get { return new Vector3(0, _target.transform.localScale.y / 2, 0); }
+        }
+
         public Vector3 Target
         {
             get
             {
-                return _toPos ? _targetPosition : _target.transform.position;
+                return _toPos ? _targetPosition : (_target.transform.position + HeightOffset);
             }
         }
 

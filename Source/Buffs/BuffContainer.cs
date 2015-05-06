@@ -23,10 +23,16 @@ namespace Quark.Buffs
 
         public void Dispose()
         {
+            Messenger.RemoveListener("Update", Update);
             _owner = null;
+
+            foreach (Buff buff in _buffs.Values)
+            {
+                buff.Dispose();
+            }
+
             _buffs.Clear();
             _buffs = null;
-            Messenger.RemoveListener("Update", Update);
         }
 
         public void AttachBuff(Buff buff)
