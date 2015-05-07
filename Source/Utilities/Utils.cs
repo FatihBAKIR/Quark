@@ -3,6 +3,15 @@ using UnityEngine;
 
 namespace Quark.Utilities
 {
+    public enum Planes
+    {
+        // ReSharper disable once InconsistentNaming
+        XY,
+        // ReSharper disable once InconsistentNaming
+        XZ,
+        // ReSharper disable once InconsistentNaming
+        YZ
+    }
     public class Utils
     {
         public static bool Checkflag(Enum value, Enum checkfor)
@@ -40,31 +49,66 @@ namespace Quark.Utilities
             return temp;
         }
 
+        static Vector3 VectorOnPlane(Vector3 vector, Planes plane)
+        {
+            switch (plane)
+            {
+                case Planes.XY:
+                    vector.z = 0;
+                    break;
+                case Planes.XZ:
+                    vector.y = 0;
+                    break;
+                case Planes.YZ:
+                    vector.x = 0;
+                    break;
+            }
+
+            return vector;
+        }
+
         /// <summary>
-        /// Calculates the distance between two points on XZ plane
+        /// Calculates the distance between two points
         /// </summary>
         /// <param name="v1">First point</param>
         /// <param name="v2">Second point</param>
+        /// <param name="plane">The plane this function should work on (default XZ)</param>
         /// <returns>Calculated distance</returns>
-        public static float Distance2(Vector3 v1, Vector3 v2)
+        public static float Distance2(Vector3 v1, Vector3 v2, Planes plane = Planes.XZ)
         {
-            v1.y = 0;
-            v2.y = 0;
+            v1 = VectorOnPlane(v1, plane);
+            v2 = VectorOnPlane(v2, plane);
+
             return Vector3.Distance(v1, v2);
         }
 
         /// <summary>
-        /// Returns the angle between 2 points in degrees on XY plane using cross product
+        /// Returns the angle between 2 points in degrees using cross product
         /// </summary>
         /// <param name="v1">First Point</param>
         /// <param name="v2">Second Point</param>
+        /// <param name="plane">The plane this function should work on (default XZ)</param>
         /// <returns>Angle between them in degrees</returns>
-        public static float Angle2(Vector3 v1, Vector3 v2)
+        public static float Angle2(Vector3 v1, Vector3 v2, Planes plane = Planes.XZ)
         {
-            v1.z = 0;
-            v2.z = 0;
+            v1 = VectorOnPlane(v1, plane);
+            v2 = VectorOnPlane(v2, plane);
 
-            float nominator = v1.x * v2.x + v1.y * v2.y;
+            float nominator = 0;
+
+            switch (plane)
+            {
+                case Planes.XY:
+                    nominator = v1.x * v2.x + v1.y * v2.y;
+                    break;
+                case Planes.XZ:
+                    nominator = v1.x * v2.x + v1.z * v2.z;
+                    break;
+                case Planes.YZ:
+                    nominator  = v1.y * v2.y + v1.z * v2.z;
+                    break;
+            }
+
             float denominator = v1.magnitude * v2.magnitude;
 
             float radians = Mathf.Acos(nominator / denominator);
@@ -73,18 +117,35 @@ namespace Quark.Utilities
         }
 
         /// <summary>
-        /// Returns the slope in degrees from a vector to another on the XY plane
+        /// Returns the slope in degrees from a vector to another 
         /// </summary>
         /// <param name="v1">First point</param>
         /// <param name="v2">Second point</param>
+        /// <param name="plane">The plane this function should work on (default XZ)</param>
         /// <returns>Slope from the first point to the other in degrees</returns>
-        public static float Slope2(Vector3 v1, Vector3 v2)
+        public static float Slope2(Vector3 v1, Vector3 v2, Planes plane = Planes.XZ)
         {
-            v1.z = 0;
-            v2.z = 0;
+            v1 = VectorOnPlane(v1, plane);
+            v2 = VectorOnPlane(v2, plane);
 
-            float nominator = v2.y - v1.y;
-            float denominator = v2.x - v1.x;
+            float nominator = 0;
+            float denominator = 0;
+
+            switch (plane)
+            {
+                case Planes.XY:
+                    nominator = v2.y - v1.y;
+                    denominator = v2.x - v1.x;
+                    break;
+                case Planes.XZ:
+                    nominator = v2.z - v1.z;
+                    denominator = v2.x - v1.x;
+                    break;
+                case Planes.YZ:
+                    nominator = v2.z - v1.z;
+                    denominator = v2.y - v1.y;
+                    break;
+            }
 
             float angle = denominator == 0 ? 90 : Mathf.Atan(nominator / denominator) * Mathf.Rad2Deg;
 

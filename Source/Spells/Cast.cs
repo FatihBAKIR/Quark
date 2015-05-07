@@ -37,6 +37,11 @@ namespace Quark.Spells
 #endif
         }
 
+        public static Cast CasterContext(Character caster)
+        {
+            return new Cast {_caster = caster, _spell = null, NonSpell = true, _step = Stages.Done};
+        }
+
         /// <summary>
         /// Prepares a new instance of <see cref="Cast"/> with the specified caster and spell.
         /// </summary>
@@ -210,7 +215,7 @@ namespace Quark.Spells
             _step = Stages.Targeting;
             _targets = new TargetCollection();
             _macro = _spell.TargetMacro;
-            _macro.SetData(this);
+            _macro.SetContext(this);
             _macro.Run();
         }
 
@@ -262,6 +267,8 @@ namespace Quark.Spells
 
         void ControlCast()
         {
+            Logger.Debug("Cast::ControlCast");
+
             _step = Stages.Casting;
             CheckInterrupt();
             if (_interrupted)
@@ -302,6 +309,8 @@ namespace Quark.Spells
         /// </summary>
         public void Interrupt()
         {
+            Logger.Debug("Cast::Interrupt");
+
             _interrupted = true;
             _spell.OnInterrupt();
         }

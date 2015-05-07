@@ -49,14 +49,14 @@ namespace Quark.Buffs
 
         void StackBuff(Buff buff)
         {
-            if (buff.StackBehaviour == StackBehavior.Nothing)
+            if (buff.StackBehavior == StackBehavior.Nothing)
                 return;
-            if (Utils.Checkflag(buff.StackBehaviour, StackBehavior.IncreaseStacks))
+            if (Utils.Checkflag(buff.StackBehavior, StackBehavior.IncreaseStacks))
             {
                 if (buff.CurrentStacks < buff.MaxStacks)
                     buff.CurrentStacks++;
             }
-            if (Utils.Checkflag(buff.StackBehaviour, StackBehavior.ResetBeginning))
+            if (Utils.Checkflag(buff.StackBehavior, StackBehavior.ResetBeginning))
             {
                 buff.ResetBeginning();
             }

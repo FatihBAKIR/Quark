@@ -282,7 +282,7 @@ namespace Quark.Spells
 
         public virtual void OnInterrupt()
         {
-            Logger.Debug("Spell.OnCastDone");
+            Logger.Debug("Spell.OnInterrupt");
 
             InterruptEffects.Run(Context);
         }

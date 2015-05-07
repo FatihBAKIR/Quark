@@ -17,14 +17,6 @@ namespace Quark.Targeting
 
     public class TargetMacro
     {
-        //Should we add a `TargetMacro sender` argument to handlers?
-        //Should we add the final selected targets to the success handler?
-        public delegate void MacroSuccess(TargetCollection targets);
-        public delegate void MacroError(TargetingError error);
-        public delegate void TargetableHandler(Targetable target);
-        public delegate void CharacterHandler(Character target);
-        public delegate void PointHandler(Vector3 target);
-
         /// <summary>
         /// On targeting succession
         /// </summary>
@@ -45,16 +37,16 @@ namespace Quark.Targeting
         /// On a Point selection
         /// </summary>
         public event PointHandler PointSelected = delegate { };
-        
+
         protected Cast Context { get; private set; }
         public TargetMacro()
         {
-            Logger.GC(this.GetType().Name + "::ctor");
+            Logger.GC(GetType().Name + "::ctor");
         }
 
         ~TargetMacro()
         {
-            Logger.GC(this.GetType().Name + "::dtor");
+            Logger.GC(GetType().Name + "::dtor");
         }
 
         /// <summary>
@@ -85,14 +77,16 @@ namespace Quark.Targeting
             PointSelected = null;
         }
 
-        public virtual void SetData(Cast context)
+        public virtual void SetContext(Cast context, bool withoutCallbacks = false)
         {
+            Context = context;
+            if (withoutCallbacks)
+                return;
             TargetingSuccess += context.TargetingDone;
             TargetingFailed += context.TargetingFail;
             TargetSelected += context.AddTarget;
             CharacterSelected += context.AddTarget;
             PointSelected += context.AddTarget;
-            Context = context;
         }
 
         public Character Caster
@@ -135,9 +129,9 @@ namespace Quark.Targeting
             TargetingFailed(error);
         }
 
-        TargetCollection _targets = new TargetCollection();
+        readonly TargetCollection _targets = new TargetCollection();
     }
-    
+
     public enum TargetingError
     {
         /// <summary>

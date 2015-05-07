@@ -125,15 +125,22 @@ namespace Quark
             }
         }
 
+        public bool HasCast
+        {
+            get { return _casting.Count > 0; }
+        }
+
         public virtual bool CanCast(Spell spell)
         {
-            return _casting.Count == 0;
+            return !HasCast;
         }
 
         public void AddCast(Cast cast)
         {
             if (CanCast(cast.Spell))
+            {
                 _casting.Add(cast);
+            }
         }
 
         public void ClearCast(Cast cast)
@@ -243,19 +250,19 @@ namespace Quark
 
         void OnCharacterDestruction()
         {
-            Messenger<Character>.Broadcast("CharacterDestroyed", this); 
+            Messenger<Character>.Broadcast("CharacterDestroyed", this);
             CharacterDestroyed(this);
         }
 
         void OnCharacterInstantiation()
         {
-            
+
         }
 
         /// <summary>
         /// This event is raised after the Character component is destroyed
         /// </summary>
-        public event CharacterDel CharacterDestroyed = delegate {};
+        public event CharacterDel CharacterDestroyed = delegate { };
 
         /// <summary>
         /// This event is raised when a new Buff is attached to this Character
