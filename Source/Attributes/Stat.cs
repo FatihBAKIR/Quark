@@ -1,4 +1,7 @@
-﻿namespace Quark.Attributes
+﻿using System;
+using Quark.Utilities;
+
+namespace Quark.Attributes
 {
     public class Stat : Attribute
     {
@@ -33,13 +36,28 @@
         public void Manipulate(float amount)
         {
             float temp = _lostValue;
+
             _lostValue -= amount;
             _lostValue = System.Math.Max(0, _lostValue);
             _lostValue = System.Math.Min(Maximum, _lostValue);
 
-            Manipulated(Owner, this, _lostValue - temp);
+            OnManipulation(_lostValue - temp);
         }
 
+        public void ClearEvents()
+        {
+            Manipulated = null;
+            Manipulated = delegate { };
+        }
+
+        protected void OnManipulation(float amount)
+        {
+            Logger.Debug("Stat::OnManipulation");
+
+            Messenger<Character, Stat, float>.Broadcast("Manipulated", Owner, this, amount);
+            Manipulated(Owner, this, amount);
+        }
+        
         public event StatDel Manipulated = delegate { };
         
         public override string ToString()

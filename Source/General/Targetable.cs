@@ -77,4 +77,34 @@ namespace Quark
         /// </summary>
         public event CollisionDel QuarkCollision = delegate { };
     }
+
+
+    public class QuarkCollision
+    {
+        /// <summary>
+        /// The Targetable this collision was catched from
+        /// </summary>
+        public Targetable Source { get; private set; }
+
+        /// <summary>
+        /// Other Targetable
+        /// </summary>
+        public Targetable Other { get; private set; }
+
+        /// <summary>
+        /// Source Targetable's position
+        /// </summary>
+        public Vector3 SourcePosition { get { return Source.transform.position; } }
+
+        /// <summary>
+        /// Other Targetable's position
+        /// </summary>
+        public Vector3 OtherPosition { get { return Other.transform.position; } }
+
+        public QuarkCollision(Targetable source, Targetable other)
+        {
+            Source = source;
+            Other = other;
+        }
+    }
 }

@@ -4,7 +4,7 @@ using Quark.Attributes;
 using Quark.Buffs;
 using Quark.Spells;
 using Quark.Utilities;
-using UnityEngine;
+// ReSharper disable ParameterHidesMember
 
 namespace Quark
 {
@@ -17,6 +17,27 @@ namespace Quark
         ItemCollection _inventory;
 
         ConditionCollection _interruptConditions;
+
+        /// <summary>
+        /// This property stores whether this Character is suspended or not.
+        /// </summary>
+        public bool IsSuspended { get; private set; }
+
+        /// <summary>
+        /// This method suspends this Character, practically disabling it
+        /// </summary>
+        public virtual void Suspend()
+        {
+            IsSuspended = true;
+        }
+
+        /// <summary>
+        /// This method continues this Character if it was suspended
+        /// </summary>
+        public virtual void Continue()
+        {
+            IsSuspended = false;
+        }
 
         void Awake()
         {
@@ -32,6 +53,7 @@ namespace Quark
 
             _attributes.StatManipulated += delegate(Character source, Stat stat, float change)
             {
+                Logger.Debug("Character::HandleStatManipulation");
                 OnStatManipulated(stat, change);
             };
             _regularBuffs.BuffDetached += delegate(Character source, Buff buff) { OnBuffDetached(buff); };
@@ -40,6 +62,9 @@ namespace Quark
             Configure();
         }
 
+        /// <summary>
+        /// These effects are applied when this Character is instantiated
+        /// </summary>
         protected virtual EffectCollection ConfigurationEffects
         {
             get
@@ -48,6 +73,9 @@ namespace Quark
             }
         }
 
+        /// <summary>
+        /// These effects are applied when the GameObject this Character belongs is destroyed
+        /// </summary>
         protected virtual EffectCollection DestructionEffects
         {
             get
@@ -56,6 +84,9 @@ namespace Quark
             }
         }
 
+        /// <summary>
+        /// Configure this Character
+        /// </summary>
         protected virtual void Configure()
         {
             ConfigurationEffects.Run(this);
@@ -85,6 +116,9 @@ namespace Quark
             _interruptConditions = null;
         }
 
+        /// <summary>
+        /// Handle the destruction of this character
+        /// </summary>
         protected virtual void Destruction()
         {
             DestructionEffects.Run(this);
@@ -104,11 +138,21 @@ namespace Quark
         }
 #endif
 
+        /// <summary>
+        /// Gets the <see cref="Attribute"/> belonging to this Character with the given tag
+        /// </summary>
+        /// <param name="tag">Tag of the attribute</param>
+        /// <returns>Attribute with the given tag</returns>
         public virtual Attribute GetAttribute(string tag)
         {
             return _attributes.GetAttribute(tag);
         }
 
+        /// <summary>
+        /// Gets the <see cref="Stat"/> belonging to this Character with the given tag
+        /// </summary>
+        /// <param name="tag">Tag of the stat</param>
+        /// <returns>Stat with the given tag</returns>
         public virtual Stat GetStat(string tag)
         {
             return _attributes.GetStat(tag);
@@ -125,16 +169,28 @@ namespace Quark
             }
         }
 
+        /// <summary>
+        /// This property determines whether this Character is casting currently.
+        /// </summary>
         public bool HasCast
         {
             get { return _casting.Count > 0; }
         }
 
+        /// <summary>
+        /// Determines whether the given <see cref="Spell"/> can be casted by this Character.
+        /// </summary>
+        /// <param name="spell"></param>
+        /// <returns></returns>
         public virtual bool CanCast(Spell spell)
         {
-            return !HasCast;
+            return !HasCast && !IsSuspended;
         }
 
+        /// <summary>
+        /// Add the given <see cref="Cast"/> context to this character.
+        /// </summary>
+        /// <param name="cast">A <see cref="Cast"/> context.</param>
         public void AddCast(Cast cast)
         {
             if (CanCast(cast.Spell))
@@ -143,6 +199,10 @@ namespace Quark
             }
         }
 
+        /// <summary>
+        /// Removes the given <see cref="Cast"/> context from this character.
+        /// </summary>
+        /// <param name="cast"></param>
         public void ClearCast(Cast cast)
         {
             _casting.Remove(cast);
@@ -244,6 +304,8 @@ namespace Quark
 
         void OnStatManipulated(Stat stat, float change)
         {
+            Logger.Debug("Character::OnStatManipulated");
+
             Messenger<Character, Stat, float>.Broadcast("StatManipulated", this, stat, change);
             StatManipulated(this, stat, change);
         }
@@ -278,34 +340,5 @@ namespace Quark
         /// This event is raised when a Stat of this Character is manipulated
         /// </summary>
         public event StatDel StatManipulated = delegate { };
-    }
-
-    public class QuarkCollision
-    {
-        /// <summary>
-        /// The Targetable this collision was catched from
-        /// </summary>
-        public Targetable Source { get; private set; }
-
-        /// <summary>
-        /// Other Targetable
-        /// </summary>
-        public Targetable Other { get; private set; }
-
-        /// <summary>
-        /// Source Targetable's position
-        /// </summary>
-        public Vector3 SourcePosition { get { return Source.transform.position; } }
-
-        /// <summary>
-        /// Other Targetable's position
-        /// </summary>
-        public Vector3 OtherPosition { get { return Other.transform.position; } }
-
-        public QuarkCollision(Targetable source, Targetable other)
-        {
-            Source = source;
-            Other = other;
-        }
     }
 }

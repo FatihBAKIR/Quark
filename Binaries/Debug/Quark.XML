@@ -9,6 +9,26 @@
             This event is raised when this Character collides with another Targetable
             </summary>
         </member>
+        <member name="P:Quark.QuarkCollision.Source">
+            <summary>
+            The Targetable this collision was catched from
+            </summary>
+        </member>
+        <member name="P:Quark.QuarkCollision.Other">
+            <summary>
+            Other Targetable
+            </summary>
+        </member>
+        <member name="P:Quark.QuarkCollision.SourcePosition">
+            <summary>
+            Source Targetable's position
+            </summary>
+        </member>
+        <member name="P:Quark.QuarkCollision.OtherPosition">
+            <summary>
+            Other Targetable's position
+            </summary>
+        </member>
         <member name="M:Quark.Targeting.TargetMacro.Run">
             <summary>
             Begins the targeting procedure for this macro
@@ -916,26 +936,6 @@
         <member name="E:Quark.Character.StatManipulated">
             <summary>
             This event is raised when a Stat of this Character is manipulated
-            </summary>
-        </member>
-        <member name="P:Quark.QuarkCollision.Source">
-            <summary>
-            The Targetable this collision was catched from
-            </summary>
-        </member>
-        <member name="P:Quark.QuarkCollision.Other">
-            <summary>
-            Other Targetable
-            </summary>
-        </member>
-        <member name="P:Quark.QuarkCollision.SourcePosition">
-            <summary>
-            Source Targetable's position
-            </summary>
-        </member>
-        <member name="P:Quark.QuarkCollision.OtherPosition">
-            <summary>
-            Other Targetable's position
             </summary>
         </member>
         <member name="T:Quark.QuarkMain">

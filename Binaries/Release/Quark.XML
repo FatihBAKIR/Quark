@@ -9,6 +9,26 @@
             This event is raised when this Character collides with another Targetable
             </summary>
         </member>
+        <member name="P:Quark.QuarkCollision.Source">
+            <summary>
+            The Targetable this collision was catched from
+            </summary>
+        </member>
+        <member name="P:Quark.QuarkCollision.Other">
+            <summary>
+            Other Targetable
+            </summary>
+        </member>
+        <member name="P:Quark.QuarkCollision.SourcePosition">
+            <summary>
+            Source Targetable's position
+            </summary>
+        </member>
+        <member name="P:Quark.QuarkCollision.OtherPosition">
+            <summary>
+            Other Targetable's position
+            </summary>
+        </member>
         <member name="M:Quark.Targeting.TargetMacro.Run">
             <summary>
             Begins the targeting procedure for this macro
@@ -183,6 +203,64 @@
             <value>
             The value this attribute has.
             </value>
+        </member>
+        <member name="T:Quark.Attributes.AttributeCollection">
+            <summary>
+            This class is responsible for storing and managing the Attributes and Stats of Characters
+            </summary>
+        </member>
+        <member name="M:Quark.Attributes.AttributeCollection.Add(System.String,System.String,System.Boolean)">
+            <summary>
+            Adds a new <see cref="T:Quark.Attributes.Attribute"/> or <see cref="T:Quark.Attributes.Stat"/> to this collection. 
+            </summary>
+            <param name="tag">Tag of the attribute or stat</param>
+            <param name="name">Name of the attribute or stat</param>
+            <param name="isStat">This flag determines whether the element is a stat or attribute</param>
+        </member>
+        <member name="M:Quark.Attributes.AttributeCollection.Add(System.String,System.String,Quark.Interaction,System.Boolean)">
+            <summary>
+            Adds a new <see cref="T:Quark.Attributes.Attribute"/> or <see cref="T:Quark.Attributes.Stat"/> with an <see cref="T:Quark.Interaction"/> to this collection. 
+            </summary>
+            <param name="tag">Tag of the attribute or stat</param>
+            <param name="name">Name of the attribute or stat</param>
+            <param name="interaction">Interaction of the new attribute or stat</param>
+            <param name="isStat">This flag determines whether the element is a stat or attribute</param>
+        </member>
+        <member name="M:Quark.Attributes.AttributeCollection.DeepCopy">
+            <summary>
+            Deep copies this collection by recreating it attribute and stat -wise.
+            <remarks>This function will not preserve any event listener or the current state of the states</remarks>
+            </summary>
+            <returns>A new collection</returns>
+        </member>
+        <member name="M:Quark.Attributes.AttributeCollection.SetCarrier(Quark.Character)">
+            <summary>
+            Sets the carrier of this attribute collection.
+            <remarks>Notice this will not remove any existing event listener related with the former carrier</remarks>
+            </summary>
+            <param name="carrier">The new carrier</param>
+        </member>
+        <member name="M:Quark.Attributes.AttributeCollection.#ctor">
+            <summary>
+            Initializes a new AttributeCollection instance.
+            </summary>
+        </member>
+        <member name="M:Quark.Attributes.AttributeCollection.ApplyBases(System.Collections.Generic.Dictionary{System.String,System.Single})">
+            <summary>
+            Sets base values of attributes and stats for this collection
+            </summary>
+            <param name="bases">Base values as (tag, value) pairs</param>
+        </member>
+        <member name="M:Quark.Attributes.AttributeCollection.GetAttributes">
+            <summary>
+            Gets a readonly collection of the attributes and stats in this collection 
+            </summary>
+            <returns>Readonly collection</returns>
+        </member>
+        <member name="E:Quark.Attributes.AttributeCollection.StatManipulated">
+            <summary>
+            This event is raised when a Stat belonging to this collection is manipulated
+            </summary>
         </member>
         <member name="T:Quark.Projectiles.Projectile">
             <summary>
@@ -880,6 +958,59 @@
             <param name="context">The Cast context for the Effects to run</param>
             <returns>This collection itself</returns>
         </member>
+        <member name="M:Quark.Character.Suspend">
+            <summary>
+            This method suspends this Character, practically disabling it
+            </summary>
+        </member>
+        <member name="M:Quark.Character.Continue">
+            <summary>
+            This method continues this Character if it was suspended
+            </summary>
+        </member>
+        <member name="M:Quark.Character.Configure">
+            <summary>
+            Configure this Character
+            </summary>
+        </member>
+        <member name="M:Quark.Character.Destruction">
+            <summary>
+            Handle the destruction of this character
+            </summary>
+        </member>
+        <member name="M:Quark.Character.GetAttribute(System.String)">
+            <summary>
+            Gets the <see cref="T:Quark.Attributes.Attribute"/> belonging to this Character with the given tag
+            </summary>
+            <param name="tag">Tag of the attribute</param>
+            <returns>Attribute with the given tag</returns>
+        </member>
+        <member name="M:Quark.Character.GetStat(System.String)">
+            <summary>
+            Gets the <see cref="T:Quark.Attributes.Stat"/> belonging to this Character with the given tag
+            </summary>
+            <param name="tag">Tag of the stat</param>
+            <returns>Stat with the given tag</returns>
+        </member>
+        <member name="M:Quark.Character.CanCast(Quark.Spells.Spell)">
+            <summary>
+            Determines whether the given <see cref="T:Quark.Spells.Spell"/> can be casted by this Character.
+            </summary>
+            <param name="spell"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Quark.Character.AddCast(Quark.Spells.Cast)">
+            <summary>
+            Add the given <see cref="T:Quark.Spells.Cast"/> context to this character.
+            </summary>
+            <param name="cast">A <see cref="T:Quark.Spells.Cast"/> context.</param>
+        </member>
+        <member name="M:Quark.Character.ClearCast(Quark.Spells.Cast)">
+            <summary>
+            Removes the given <see cref="T:Quark.Spells.Cast"/> context from this character.
+            </summary>
+            <param name="cast"></param>
+        </member>
         <member name="M:Quark.Character.GetBuff(Quark.Buffs.Buff)">
             <summary>
             If a buff with the given type exists on this Character, it will return the correct instance on the Character, otherwise it will return null.
@@ -887,9 +1018,29 @@
             <returns>The buff instance being carried by this Character.</returns>
             <param name="buff">Example of the Buff to find. Only types should match.</param>
         </member>
+        <member name="P:Quark.Character.IsSuspended">
+            <summary>
+            This property stores whether this Character is suspended or not.
+            </summary>
+        </member>
+        <member name="P:Quark.Character.ConfigurationEffects">
+            <summary>
+            These effects are applied when this Character is instantiated
+            </summary>
+        </member>
+        <member name="P:Quark.Character.DestructionEffects">
+            <summary>
+            These effects are applied when the GameObject this Character belongs is destroyed
+            </summary>
+        </member>
         <member name="P:Quark.Character.Casts">
             <summary>
             Returns a read-only collection of the casts this Character is casting
+            </summary>
+        </member>
+        <member name="P:Quark.Character.HasCast">
+            <summary>
+            This property determines whether this Character is casting currently.
             </summary>
         </member>
         <member name="P:Quark.Character.Buffs">
@@ -916,26 +1067,6 @@
         <member name="E:Quark.Character.StatManipulated">
             <summary>
             This event is raised when a Stat of this Character is manipulated
-            </summary>
-        </member>
-        <member name="P:Quark.QuarkCollision.Source">
-            <summary>
-            The Targetable this collision was catched from
-            </summary>
-        </member>
-        <member name="P:Quark.QuarkCollision.Other">
-            <summary>
-            Other Targetable
-            </summary>
-        </member>
-        <member name="P:Quark.QuarkCollision.SourcePosition">
-            <summary>
-            Source Targetable's position
-            </summary>
-        </member>
-        <member name="P:Quark.QuarkCollision.OtherPosition">
-            <summary>
-            Other Targetable's position
             </summary>
         </member>
         <member name="T:Quark.QuarkMain">

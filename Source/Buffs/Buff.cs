@@ -19,11 +19,12 @@ namespace Quark.Buffs
         protected float Duration;
         protected bool Continuous;
 
+        protected bool TicksWhileSuspended;
+
         public bool Hidden { get; protected set; }
 
         protected Character Possessor { get; private set; }
         public Cast Context { get; private set; }
-
 
         /// <summary>
         /// This field stores the maximum stack count of this Buff.
@@ -41,18 +42,18 @@ namespace Quark.Buffs
         /// </summary>
         public StackBehavior StackBehavior = StackBehavior.Nothing;
 
-#if DEBUG
-        public Buff()
-        {
-            Logger.GC("Buff::ctor");
-        }
-#endif
 
         public void Dispose()
         {
             Terminate();
         }
 
+#if DEBUG
+        public Buff()
+        {
+            Logger.GC("Buff::ctor");
+        }
+#endif
         ~Buff()
         {
 #if DEBUG
@@ -168,20 +169,23 @@ namespace Quark.Buffs
         {
             if (CleanedUp)
                 return;
-            
+
             if (_terminated)
             {
                 Deregister();
                 OnTerminate();
                 return;
-            }   
+            }
 
-            if (Continuous)
-                OnTick();
-            else if (Time.timeSinceLevelLoad - _lastTick >= Interval)
+            if (!Possessor.IsSuspended || TicksWhileSuspended)
             {
-                _lastTick = Time.timeSinceLevelLoad;
-                OnTick();
+                if (Continuous)
+                    OnTick();
+                else if (Time.timeSinceLevelLoad - _lastTick >= Interval)
+                {
+                    _lastTick = Time.timeSinceLevelLoad;
+                    OnTick();
+                }
             }
 
             ConditionCollection collection = DoneConditions;
@@ -197,7 +201,7 @@ namespace Quark.Buffs
                 OnDone();
                 return;
             }
-            
+
             collection = TerminateConditions;
             collection.SetContext(Context);
             if (collection.Check(Possessor))
@@ -241,7 +245,7 @@ namespace Quark.Buffs
         public virtual void OnPossess()
         {
             Logger.Debug("Buff::OnPossess");
-            
+
             PossessEffects.Run(Possessor, Context);
         }
 
@@ -251,7 +255,7 @@ namespace Quark.Buffs
         protected virtual void OnStack()
         {
             Logger.Debug("Buff::OnStack");
-            
+
             StackEffects.Run(Possessor, Context);
         }
 
@@ -282,7 +286,7 @@ namespace Quark.Buffs
         protected virtual void OnTerminate()
         {
             Logger.Debug("Buff::OnTerminate");
-            
+
             TerminateEffects.Run(Possessor, Context);
             CleanedUp = true;
         }
