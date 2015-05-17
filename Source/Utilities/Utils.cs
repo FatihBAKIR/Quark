@@ -94,6 +94,11 @@ namespace Quark.Utilities
             v1 = VectorOnPlane(v1, plane);
             v2 = VectorOnPlane(v2, plane);
 
+            v1.Normalize();
+            v2.Normalize();
+
+            //bool bottom = v1.y > v2.y;
+
             float nominator = 0;
 
             switch (plane)
@@ -105,13 +110,15 @@ namespace Quark.Utilities
                     nominator = v1.x * v2.x + v1.z * v2.z;
                     break;
                 case Planes.YZ:
-                    nominator  = v1.y * v2.y + v1.z * v2.z;
+                    nominator = v1.y * v2.y + v1.z * v2.z;
                     break;
             }
 
             float denominator = v1.magnitude * v2.magnitude;
 
             float radians = Mathf.Acos(nominator / denominator);
+
+            //if (bottom) radians += Mathf.PI;
 
             return radians * Mathf.Rad2Deg;
         }

@@ -236,8 +236,8 @@ namespace Quark.Spells
         public virtual void OnTargetingDone()
         {
             /*
-         * The default behavior of spell lifecycle steps are only about running preset effects with appropriate targets.
-         */
+             * The default behavior of spell lifecycle steps are only about running preset effects with appropriate targets.
+             */
             Logger.Debug("Spell.OnTargetingDone");
             TargetingDoneEffects
                 .Run(Context.Targets.Points, Context)
@@ -246,9 +246,6 @@ namespace Quark.Spells
                 .Run(Context);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public virtual void OnCastingBegan()
         {
             Logger.Debug("Spell.OnCastingBegan");

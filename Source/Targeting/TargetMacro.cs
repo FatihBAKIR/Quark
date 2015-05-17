@@ -122,14 +122,16 @@ namespace Quark.Targeting
         protected void OnTargetingSuccess()
         {
             TargetingSuccess(_targets);
+            _targets = new TargetCollection();
         }
 
         protected void OnTargetingFail(TargetingError error)
         {
             TargetingFailed(error);
+            _targets = new TargetCollection();
         }
 
-        readonly TargetCollection _targets = new TargetCollection();
+        TargetCollection _targets = new TargetCollection();
     }
 
     public enum TargetingError

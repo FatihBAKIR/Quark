@@ -274,7 +274,10 @@ namespace Quark.Spells
             if (_interrupted)
                 CastFail();
             if (CastPercentage >= 100)
+            {
                 CastDone();
+                return;
+            }
             if (Time.timeSinceLevelLoad > _lastCast + Spell.CastingInterval)
             {
                 Spell.OnCasting();

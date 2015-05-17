@@ -547,11 +547,6 @@
             Executes the spell targeting done logic.
             </summary>
         </member>
-        <member name="M:Quark.Spells.Spell.OnCastingBegan">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="M:Quark.Spells.Spell.OnCastDone">
             <summary>
             
