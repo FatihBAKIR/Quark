@@ -528,6 +528,18 @@
             In the case of stacking, the Buff shouldn't respond.
             </summary>
         </member>
+        <member name="M:Quark.Buffs.BuffContainer.GetBuff(Quark.Buffs.Buff)">
+            <summary>
+            This method finds the given Buff in this container by its Identifier.
+            </summary>
+            <param name="buff">Buff to find by Identifier.</param>
+            <returns>Buff instance in the container.</returns>
+        </member>
+        <member name="E:Quark.Buffs.BuffContainer.BuffDetached">
+            <summary>
+            This event is raised whenever a Buff was detached from this container.
+            </summary>
+        </member>
         <member name="M:Quark.Spells.Spell.SetContext(Quark.Spells.Cast)">
             <summary>
             Introduce the Cast context which is invoking this Spell instance.
@@ -750,7 +762,7 @@
         </member>
         <member name="F:Quark.Spells.Cast._interrupted">
             <summary>
-            This flag determines whether the current Cast instance has been interrupted or not
+            This flag stores whether the current Cast instance has been interrupted or not
             </summary>
         </member>
         <member name="F:Quark.Spells.Cast._lastCast">
@@ -989,7 +1001,7 @@
             Determines whether the given <see cref="T:Quark.Spells.Spell"/> can be casted by this Character.
             </summary>
             <param name="spell"></param>
-            <returns></returns>
+            <returns>Boolean representing whether this Character can cast the given Spell or not.</returns>
         </member>
         <member name="M:Quark.Character.AddCast(Quark.Spells.Cast)">
             <summary>

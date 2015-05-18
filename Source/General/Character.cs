@@ -181,7 +181,7 @@ namespace Quark
         /// Determines whether the given <see cref="Spell"/> can be casted by this Character.
         /// </summary>
         /// <param name="spell"></param>
-        /// <returns></returns>
+        /// <returns>Boolean representing whether this Character can cast the given Spell or not.</returns>
         public virtual bool CanCast(Spell spell)
         {
             return !HasCast && !IsSuspended;

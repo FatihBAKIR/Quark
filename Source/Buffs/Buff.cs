@@ -42,7 +42,6 @@ namespace Quark.Buffs
         /// </summary>
         public StackBehavior StackBehavior = StackBehavior.Nothing;
 
-
         public void Dispose()
         {
             Terminate();
@@ -148,7 +147,7 @@ namespace Quark.Buffs
         /// Immediately terminates this Buff.
         /// Termination assures no other Tick will take place in this instance.
         /// </summary>
-        protected void Terminate()
+        public void Terminate()
         {
             _terminated = true;
             _lastTick = Mathf.Infinity;
@@ -208,6 +207,11 @@ namespace Quark.Buffs
                 _terminated = true;
         }
 
+        internal bool ShouldDispose()
+        {
+            return (LifeRatio >= 1 || _terminated) && CleanedUp;
+        }
+
         /// <summary>
         /// Register proper events to the Messenger.
         /// This method should <b>not</b> contain any gameplay related logic
@@ -252,7 +256,7 @@ namespace Quark.Buffs
         /// <summary>
         /// This event is raised when an existing Buff is attached again
         /// </summary>
-        protected virtual void OnStack()
+        public virtual void OnStack()
         {
             Logger.Debug("Buff::OnStack");
 

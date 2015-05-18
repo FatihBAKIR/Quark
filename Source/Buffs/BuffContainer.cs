@@ -54,7 +54,10 @@ namespace Quark.Buffs
             if (Utils.Checkflag(buff.StackBehavior, StackBehavior.IncreaseStacks))
             {
                 if (buff.CurrentStacks < buff.MaxStacks)
+                {
                     buff.CurrentStacks++;
+                    buff.OnStack();
+                }
             }
             if (Utils.Checkflag(buff.StackBehavior, StackBehavior.ResetBeginning))
             {
@@ -62,12 +65,6 @@ namespace Quark.Buffs
             }
         }
 
-        bool CheckBuff(Buff buff)
-        {
-            if (buff.LifeRatio >= 1)
-                return true;
-            return false;
-        }
 
         public T HasBuff<T>() where T : Buff
         {
@@ -79,16 +76,22 @@ namespace Quark.Buffs
             return null;
         }
 
+        /// <summary>
+        /// This method finds the given Buff in this container by its Identifier.
+        /// </summary>
+        /// <param name="buff">Buff to find by Identifier.</param>
+        /// <returns>Buff instance in the container.</returns>
         public Buff GetBuff(Buff buff)
         {
             string id = buff.Identifier;
-            if (_buffs.ContainsKey(id))
-                return _buffs[id];
-            return null;
+            return _buffs.ContainsKey(id) ? _buffs[id] : null;
         }
 
         List<string> _toDispose;
 
+        /// <summary>
+        /// This event is raised whenever a Buff was detached from this container.
+        /// </summary>
         public event BuffDel BuffDetached = delegate { }; 
 
         void Update()
@@ -96,7 +99,7 @@ namespace Quark.Buffs
             _toDispose = new List<string>();
             foreach (Buff buff in _buffs.Values)
             {
-                if (CheckBuff(buff))
+                if (buff.ShouldDispose())
                 {
                     _toDispose.Add(buff.Identifier);
                 }

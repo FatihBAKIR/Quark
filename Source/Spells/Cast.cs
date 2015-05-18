@@ -256,7 +256,7 @@ namespace Quark.Spells
         }
 
         /// <summary>
-        /// This flag determines whether the current Cast instance has been interrupted or not
+        /// This flag stores whether the current Cast instance has been interrupted or not
         /// </summary>
         bool _interrupted;
 
