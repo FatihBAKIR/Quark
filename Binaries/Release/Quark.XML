@@ -163,9 +163,6 @@
             The amoubt that will be multiplied with the value of the related attribute on calculation.
             </param>
         </member>
-        <member name="M:Quark.Attributes.Attribute.SetInteractions(Quark.Interaction)">
-            
-        </member>
         <member name="P:Quark.Attributes.Attribute.Owner">
             <summary>
             Gets the owner of this attribute.
@@ -1104,6 +1101,13 @@
             </summary>
             <param name="of"></param>
             <returns></returns>
+        </member>
+        <member name="M:Quark.Interaction.DeepCopy">
+            <summary>
+            Deep copies this collection by recreating it attribute and stat -wise.
+            <remarks>This function will not preserve any event listener or the current state of the states</remarks>
+            </summary>
+            <returns>A new collection</returns>
         </member>
         <member name="T:Quark.Symbol">
             <summary>

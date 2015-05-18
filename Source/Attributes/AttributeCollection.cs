@@ -76,6 +76,8 @@ namespace Quark.Attributes
                     newCollection.AddStat(pair.Value.Tag, pair.Value.Name);
                 else
                     newCollection.AddAttribute(pair.Value.Tag, pair.Value.Name);
+
+                newCollection.GetAttribute(pair.Value.Tag).SetInteractions(pair.Value.Interactions.DeepCopy());
             }
 
             return newCollection;
