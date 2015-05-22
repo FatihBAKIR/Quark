@@ -66,8 +66,6 @@
     <Compile Include="Targeting\TargetManager.cs" />
     <Compile Include="Utilities\Interfaces.cs" />
     <Compile Include="Utilities\EventDictionary.cs" />
-    <Compile Include="Utilities\KeyBinding.cs" />
-    <Compile Include="Utilities\KeyBindings.cs" />
     <Compile Include="Spells\Cast.cs" />
     <Compile Include="Utilities\MetaData.cs" />
     <Compile Include="Items\Item.cs" />

@@ -56,13 +56,13 @@ namespace Quark.Spells
         /// </param>
         public static Cast PrepareCast(Character caster, Spell spell)
         {
+            Logger.Debug("Cast::PrepareCast");
             Cast data = new Cast {_step = Stages.Null, _caster = caster, _spell = spell, NonSpell = false };
             Messenger<Cast>.Broadcast("Prepare", data);
             Messenger<Cast>.Broadcast(data.Spell.Name + ".Prepare", data);
             Messenger<Cast>.Broadcast(caster.Identifier + "." + data.Spell.Name + ".Prepare", data);
-            data._spell.SetContext(data);
-            Logger.Debug("Cast::PrepareCast");
-            if (!data._spell.CanInvoke())
+            data.Spell.SetContext(data);
+            if (!data.Spell.CanInvoke())
                 return null;
             data.Identifier = spell.Identifier;
             data.Invoke();

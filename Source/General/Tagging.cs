@@ -52,9 +52,14 @@ namespace Quark
         {
             if (!Has(key))
                 return;
+
             _tagc[key]--;
+
             if (_tagc[key] < 1)
+            {
                 _tags.Remove(key);
+                _tagc.Remove(key);
+            }
         }
 
         public bool this[string key]

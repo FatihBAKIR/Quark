@@ -55,6 +55,7 @@ namespace Quark.Projectiles
         {
             get
             {
+                return new Vector3(0, 2, 0);
                 return new Vector3(0, _target.transform.localScale.y / 2, 0);
             }
         }
@@ -162,7 +163,8 @@ namespace Quark.Projectiles
 
         protected virtual bool IsHitValid(Character hit)
         {
-            bool result = hit != null && !hit.Equals(_context.Caster) && hit.IsTargetable;
+            bool result = hit != null && !hit.Equals(_context.Caster) && hit.IsTargetable && (!_toPos && hit.Equals(_target));
+
             if (result)
                 HitCount++;
             return result;

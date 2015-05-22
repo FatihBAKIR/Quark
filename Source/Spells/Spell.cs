@@ -148,8 +148,9 @@ namespace Quark.Spells
 
         public bool CanInvoke()
         {
-            InvokeCondition.SetContext(Context);
-            return InvokeCondition.Check(Context.Caster);
+            Condition invokeCondition = InvokeCondition;
+            invokeCondition.SetContext(Context);
+            return invokeCondition.Check(Context.Caster);
         }
 
         #region Effect Collections

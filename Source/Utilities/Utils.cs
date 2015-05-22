@@ -118,9 +118,16 @@ namespace Quark.Utilities
 
             float radians = Mathf.Acos(nominator / denominator);
 
-            //if (bottom) radians += Mathf.PI;
+            float angle = radians*Mathf.Rad2Deg;
 
-            return radians * Mathf.Rad2Deg;
+            Vector3 normal = Vector3.Cross(v1, v2).normalized;
+            
+            float sign = Mathf.Sign(Vector3.Dot(normal, Vector3.Cross(v1, v2)));
+            float signedAngle = angle * sign;
+
+            //  360 angle
+
+            return (signedAngle <= 0) ? 360 + signedAngle : signedAngle;
         }
 
         /// <summary>
