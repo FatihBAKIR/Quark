@@ -1,4 +1,6 @@
 Quark Framework
+![](https://api.travis-ci.org/FatihBAKIR/Quark.svg)
+
 ====
 ![](http://quarkup.io/res/quark.png)
 [http://quarkup.io][6]
