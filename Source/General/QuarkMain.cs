@@ -19,15 +19,8 @@ namespace Quark
                 Logger.Warn("The QuarkMain object must be unique!");
                 return;
             }
+
             _headRef = new WeakReference(this);
-
-            _daemons = new List<Daemon>
-            {
-                //new TargetManager()
-            };
-
-            foreach (Daemon daemon in _daemons)
-                daemon.Register();
 
             Logger.Debug("QuarkMain::Start");
         }
@@ -37,7 +30,7 @@ namespace Quark
             Messenger.Broadcast("Update");
         }
 
-        private List<Daemon> _daemons = new List<Daemon>();
+        private readonly List<Daemon> _daemons = new List<Daemon>();
 
         public T GetDaemon<T>() where T : Daemon
         {
@@ -61,12 +54,6 @@ namespace Quark
             _daemons.Remove(daemon);
         }
 
-        /// <summary>
-        /// Gets or sets the active player Character.
-        /// </summary>
-        /// <value>The player.</value>
-        public Character Player { get; set; }
-
         public virtual QuarkConfig Config {
             get { return new QuarkConfig(); }
         }
@@ -75,11 +62,7 @@ namespace Quark
         /// A weak reference to the singleton QuarkMain object.
         /// It is accessed via a weak reference so that it will be garbage collected after the GameObject it is attached to is destroyed
         /// </summary>
-        private static WeakReference _headRef = null;
-
-        static QuarkMain()
-        {
-        }
+        private static WeakReference _headRef;
 
         static bool IsPresent
         {
