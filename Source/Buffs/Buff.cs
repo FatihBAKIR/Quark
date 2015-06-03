@@ -15,15 +15,40 @@ namespace Quark.Buffs
         {
             get { return GetType().Name; }
         }
+
+        /// <summary>
+        /// This field stores the interval of calling the Tick method in seconds.
+        /// </summary>
         protected float Interval;
+        
+        /// <summary>
+        /// This field stores the total duration of this Buff instance.
+        /// </summary>
         protected float Duration;
+
+        /// <summary>
+        /// This flag determines whether the Tick method should be called every frame or not.
+        /// </summary>
         protected bool Continuous;
 
+        /// <summary>
+        /// This flag determines whether this Buff ticks while its Possessor Character is suspended or not.
+        /// </summary>
         protected bool TicksWhileSuspended;
 
+        /// <summary>
+        /// This field determines whether this Buff should be hidden or not.
+        /// </summary>
         public bool Hidden { get; protected set; }
 
+        /// <summary>
+        /// This property stores the possessor of this Buff instance.
+        /// </summary>
         protected Character Possessor { get; private set; }
+
+        /// <summary>
+        /// The context this Buff resides in.
+        /// </summary>
         public Cast Context { get; private set; }
 
         /// <summary>
@@ -166,6 +191,22 @@ namespace Quark.Buffs
         /// </summary>
         private void Tick()
         {
+            /*
+             * Tick logic:
+             *
+             * ---
+             * Check for whether the custom OnTick logic should be executed or not:
+             * 
+             * A buff should not tick if it is already cleaned up or terminated.
+             * If the possessor is suspended and the buff is not explicitly flagged to tick, it should not tick.
+             * ---
+             * 
+             * ---
+             * Check whether this buff should terminate or prematurely get to the done stage.
+             * If either of the conditions met, finalize appropriately.
+             * ---
+             */
+
             if (CleanedUp)
                 return;
 
@@ -207,6 +248,10 @@ namespace Quark.Buffs
                 _terminated = true;
         }
 
+        /// <summary>
+        /// This method determines whether this Buff instance should get disposed in the current frame.
+        /// </summary>
+        /// <returns>Whether this buff should get disposed.</returns>
         internal bool ShouldDispose()
         {
             return (LifeRatio >= 1 || _terminated) && CleanedUp;
@@ -331,8 +376,16 @@ namespace Quark.Buffs
         protected virtual ConditionCollection TerminateConditions { get { return new ConditionCollection { new FalseCondition() }; } }
 
         #region Tagging
+        /// <summary>
+        /// Stores the static tags of this buff.
+        /// </summary>
         public StaticTags Tags { get; protected set; }
 
+        /// <summary>
+        /// Checks whether this Buff is tagged with the given string or not.
+        /// </summary>
+        /// <param name="tag">Tag to check.</param>
+        /// <returns>Whether the buff is tagged.</returns>
         public bool IsTagged(string tag)
         {
             return Tags.Has(tag);

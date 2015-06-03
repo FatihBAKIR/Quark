@@ -1,19 +1,37 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 namespace Quark.Utilities
 {
+    /// <summary>
+    /// This enumeration is used by the 2 dimensional geometry functions 
+    /// to determine the correct plane to work on in Quark utilities.
+    /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum Planes
     {
-        // ReSharper disable once InconsistentNaming
+        /// <summary>
+        /// The X-Y plane.
+        /// </summary>
         XY,
-        // ReSharper disable once InconsistentNaming
+        /// <summary>
+        /// The X-Z plane.
+        /// </summary>
         XZ,
-        // ReSharper disable once InconsistentNaming
+        /// <summary>
+        /// The Y-Z plane.
+        /// </summary>
         YZ
     }
     public class Utils
     {
+        /// <summary>
+        /// This function checks whether a value is included in a given enumeration.
+        /// </summary>
+        /// <param name="value">The value to check</param>
+        /// <param name="checkfor">The value to check for</param>
+        /// <returns></returns>
         public static bool Checkflag(Enum value, Enum checkfor)
         {
             ulong longVal = Convert.ToUInt64(value);
@@ -49,6 +67,12 @@ namespace Quark.Utilities
             return temp;
         }
 
+        /// <summary>
+        /// Sets the unnecessary component of a 3d vector to zero.
+        /// </summary>
+        /// <param name="vector">The vector</param>
+        /// <param name="plane">The plane</param>
+        /// <returns>A new vector on the given plane.</returns>
         static Vector3 VectorOnPlane(Vector3 vector, Planes plane)
         {
             switch (plane)
