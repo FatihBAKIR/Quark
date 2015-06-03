@@ -39,11 +39,46 @@
             Cancels the target selection
             </summary>
         </member>
+        <member name="M:Quark.Targeting.TargetMacro.Clear">
+            <summary>
+            Clear this TargetMacro from its context.
+            </summary>
+        </member>
+        <member name="M:Quark.Targeting.TargetMacro.SetContext(Quark.Spells.Cast,System.Boolean)">
+            <summary>
+            This method sets the context for this TargetMacro to run in.
+            </summary>
+            <param name="context">The context.</param>
+            <param name="withoutCallbacks">If this flag is set, callbacks to the context will not be registered.</param>
+        </member>
         <member name="M:Quark.Targeting.TargetMacro.OnTargetSelected(Quark.Character)">
             <summary>
             On Target Selection
             </summary>
-            <param name="target">Selected target</param>
+            <param name="target">Selected Character</param>
+        </member>
+        <member name="M:Quark.Targeting.TargetMacro.OnTargetSelected(UnityEngine.Vector3)">
+            <summary>
+            On Target Selection
+            </summary>
+            <param name="target">Selected Point</param>>
+        </member>
+        <member name="M:Quark.Targeting.TargetMacro.OnTargetSelected(Quark.Targetable)">
+            <summary>
+            On Target Selection
+            </summary>
+            <param name="target">Selected Targetable</param>
+        </member>
+        <member name="M:Quark.Targeting.TargetMacro.OnTargetingSuccess">
+            <summary>
+            On Targeting Success
+            </summary>
+        </member>
+        <member name="M:Quark.Targeting.TargetMacro.OnTargetingFail(Quark.Targeting.TargetingError)">
+            <summary>
+            On Targeting Fail
+            </summary>
+            <param name="error">The reason for this targeting to fail.</param>
         </member>
         <member name="E:Quark.Targeting.TargetMacro.TargetingSuccess">
             <summary>
@@ -70,6 +105,21 @@
             On a Point selection
             </summary>
         </member>
+        <member name="P:Quark.Targeting.TargetMacro.Context">
+            <summary>
+            The context this TargetMacro resides in.
+            </summary>
+        </member>
+        <member name="P:Quark.Targeting.TargetMacro.Caster">
+            <summary>
+            This property stores the source Character for this targeting.
+            </summary>
+        </member>
+        <member name="T:Quark.Targeting.TargetingError">
+            <summary>
+            This enumeration represents the reason a targeting has failed.
+            </summary>
+        </member>
         <member name="F:Quark.Targeting.TargetingError.Cancelled">
             <summary>
             User cancelled targeting
@@ -83,6 +133,46 @@
         <member name="F:Quark.Targeting.TargetingError.NotFound">
             <summary>
             No viable target was found
+            </summary>
+        </member>
+        <member name="T:Quark.Targeting.TargetForm">
+            <summary>
+            This enumeration represents a Spells target form.
+            </summary>
+        </member>
+        <member name="F:Quark.Targeting.TargetForm.Singular">
+            <summary>
+            May hit multiple characters
+            </summary>
+        </member>
+        <member name="F:Quark.Targeting.TargetForm.Plural">
+            <summary>
+            May not hit multiple characters
+            </summary>
+        </member>
+        <member name="T:Quark.Targeting.TargetType">
+            <summary>
+            This enumeration represents a Targets type.
+            </summary>
+        </member>
+        <member name="F:Quark.Targeting.TargetType.None">
+            <summary>
+            There is no target.
+            </summary>
+        </member>
+        <member name="F:Quark.Targeting.TargetType.Point">
+            <summary>
+            Target is a Point.
+            </summary>
+        </member>
+        <member name="F:Quark.Targeting.TargetType.Targetable">
+            <summary>
+            The target is a Targetable.
+            </summary>
+        </member>
+        <member name="F:Quark.Targeting.TargetType.Character">
+            <summary>
+            The target is a Character
             </summary>
         </member>
         <member name="T:Quark.StatDel">
@@ -1012,16 +1102,6 @@
         <member name="P:Quark.Spells.Spell.Tags">
             <summary>
             This property stores the static tags of this Spell.
-            </summary>
-        </member>
-        <member name="F:Quark.Targeting.TargetForm.Singular">
-            <summary>
-            May hit multiple characters
-            </summary>
-        </member>
-        <member name="F:Quark.Targeting.TargetForm.Plural">
-            <summary>
-            May not hit multiple characters
             </summary>
         </member>
         <member name="F:Quark.Spells.Cast.HitCount">

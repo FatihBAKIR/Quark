@@ -63,7 +63,6 @@
     <Compile Include="Buffs\Buff.cs" />
     <Compile Include="Buffs\BuffContainer.cs" />
     <Compile Include="Spells\Spell.cs" />
-    <Compile Include="Targeting\TargetManager.cs" />
     <Compile Include="Utilities\Interfaces.cs" />
     <Compile Include="Utilities\EventDictionary.cs" />
     <Compile Include="Spells\Cast.cs" />
