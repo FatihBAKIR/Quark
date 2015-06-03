@@ -23,8 +23,7 @@ namespace Quark
 
             _daemons = new List<Daemon>
             {
-                new KeyBindings(),
-                new TargetManager()
+                //new TargetManager()
             };
 
             foreach (Daemon daemon in _daemons)
