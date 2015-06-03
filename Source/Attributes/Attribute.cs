@@ -65,6 +65,10 @@ namespace Quark.Attributes
             AddInteraction(null, Base);
         }
 
+        /// <summary>
+        /// Set the AttributeCollection of this instance.
+        /// </summary>
+        /// <param name="collection">Collection to set to.</param>
         public void SetCollection(AttributeCollection collection)
         {
             _collection = collection;
@@ -140,6 +144,10 @@ namespace Quark.Attributes
             _interactions.Add(tag, multiplier);
         }
 
+        /// <summary>
+        /// Sets the interactions of this Attribute.
+        /// </summary>
+        /// <param name="interaction">Interactions to set to.</param>
         public void SetInteractions(Interaction interaction)
         {
             _interactions = interaction;
@@ -150,6 +158,9 @@ namespace Quark.Attributes
             return string.Format("[Attribute {0}: {1}]", Name, Value);
         }
 
+        /// <summary>
+        /// Gets the identifier of this Attribute
+        /// </summary>
         public string Identifier
         {
             get

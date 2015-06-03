@@ -28,15 +28,15 @@ namespace Quark.Targeting
         /// <summary>
         /// On a Targetable object selection
         /// </summary>
-        public event TargetableHandler TargetSelected = delegate { };
+        public event TargetableDel TargetSelected = delegate { };
         /// <summary>
         /// On a Characater object selection
         /// </summary>
-        public event CharacterHandler CharacterSelected = delegate { };
+        public event CharacterDel CharacterSelected = delegate { };
         /// <summary>
         /// On a Point selection
         /// </summary>
-        public event PointHandler PointSelected = delegate { };
+        public event PointDel PointSelected = delegate { };
 
         protected Cast Context { get; private set; }
         public TargetMacro()
