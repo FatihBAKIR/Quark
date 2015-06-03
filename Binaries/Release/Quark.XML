@@ -116,7 +116,7 @@
             <summary>
             This delegate is used with the event of a TargetMacro failure.
             </summary>
-            <param name="error">Why the has targeting failed.</param>
+            <param name="error">Why the targeting has failed.</param>
         </member>
         <member name="T:Quark.CharacterDel">
             <summary>
