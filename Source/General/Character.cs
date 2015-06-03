@@ -44,12 +44,12 @@ namespace Quark
             IsTargetable = true;
             Tags = new DynamicTags();
             _inventory = new ItemCollection(this);
-            _attributes = QuarkMain.GetInstance().Config.DefaultAttributes.DeepCopy();
+            _attributes = QuarkMain.GetInstance().Configuration.DefaultAttributes.DeepCopy();
             _attributes.SetCarrier(this);
             _regularBuffs = new BuffContainer(this);
             _hiddenBuffs = new BuffContainer(this);
             _casting = new List<Cast>();
-            _interruptConditions = QuarkMain.GetInstance().Config.DefaultInterruption.DeepCopy();
+            _interruptConditions = QuarkMain.GetInstance().Configuration.DefaultInterruption.DeepCopy();
 
             _attributes.StatManipulated += delegate(Character source, Stat stat, float change)
             {

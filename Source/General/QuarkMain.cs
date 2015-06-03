@@ -11,8 +11,17 @@ namespace Quark
     /// </summary>
     public class QuarkMain : MonoBehaviour
     {
-        protected virtual void Awake()
+        /// <summary>
+        /// This method is used for initializing this QuarkMain instance.
+        /// </summary>
+        protected virtual void Initialize()
         {
+            
+        }
+
+        void Awake()
+        {
+            Initialize();
             if (IsPresent)
             {
                 DestroyImmediate(this);
@@ -54,9 +63,7 @@ namespace Quark
             _daemons.Remove(daemon);
         }
 
-        public virtual QuarkConfig Config {
-            get { return new QuarkConfig(); }
-        }
+        public QuarkConfig Configuration { get; protected set; } 
 
         /// <summary>
         /// A weak reference to the singleton QuarkMain object.
