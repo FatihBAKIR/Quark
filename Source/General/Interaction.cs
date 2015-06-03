@@ -23,7 +23,7 @@ namespace Quark
         }
 
         /// <summary>
-        /// Add a new interaction to this collection
+        /// Add a new interaction to this collection.
         /// </summary>
         /// <param name="modifier">The interaction to be added</param>
         public void Add(AttributeModifier modifier)

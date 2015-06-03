@@ -1,5 +1,7 @@
-Quark Framework
-====
+#Quark Framework
+
+![](https://api.travis-ci.org/FatihBAKIR/Quark.svg)
+
 ![](http://quarkup.io/res/quark.png)
 [http://quarkup.io][6]
 
@@ -29,15 +31,14 @@ public class BoomSpell : Spell
 
 Features
 ----
-Currently, the following list is implemented and running in Quark:
+Currently, the following features of Quark are present in the framework:
 
-+ Quark Controlled Objects (`Characters` and `Targetables`)
-+ Object Manipulation (`Effects`)
-+ Targeting (`TargetMacros`)
-+ Time or Event Driven Activities (`Buffs`)
-+ Projectiles (`MissileControllers`)
-+ Casted Activities (`Spells`)
-+ Casting (`Cast`)
++ [Quark Controlled Objects][read_Objects]
++ [Scene Manipulation][read_Effects]
++ [Targeting][read_Targeting]
++ [Time or Event Driven Activities][read_Buffs]
++ [Projectiles][read_Projectiles]
++ [Actions][read_Actions]
 
 Also there are more features on the way.
 
@@ -63,7 +64,14 @@ Quark is licensed under [Apache V2][4] License.
 
 [1]: http://quarkup.io/Doc/Usage.md
 [2]: https://github.com/FatihBAKIR/Quark
-[3]: mailto:fatih@linux.com
+[3]: mailto:fatih@quarkup.io
 [4]: http://www.apache.org/licenses/LICENSE-2.0
 [5]: http://quarkup.io/Doc/Introduction.md
 [6]: http://quarkup.io/
+
+[read_Objects]: http://read.quarkup.io/content/quark_pattern/objects.html
+[read_Effects]: http://read.quarkup.io/content/quark_pattern/scene_manipulation.html
+[read_Targeting]: http://read.quarkup.io/content/quark_pattern/targeting.html
+[read_Buffs]: http://read.quarkup.io/content/quark_pattern/buffs.html
+[read_Projectiles]: http://read.quarkup.io/content/quark_pattern/projectile_controlling.html
+[read_Actions]: http://read.quarkup.io/content/quark_pattern/actions.html
