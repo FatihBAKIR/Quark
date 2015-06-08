@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using Quark.Targeting;
 
@@ -107,7 +108,7 @@ namespace Quark
                 return targets;
             }
         }
-        
+
         public IEnumerator<TargetUnion> GetEnumerator()
         {
             return ((IEnumerable<TargetUnion>)Targets).GetEnumerator();
@@ -120,29 +121,96 @@ namespace Quark
 
     }
 
+    /// <summary>
+    /// This structure is the generic target type used in Quark framework.
+    /// </summary>
     public struct TargetUnion
     {
+        /// <summary>
+        /// Type of the target of this union.
+        /// </summary>
         public TargetType Type { get; private set; }
-        public Character Character { get; private set; }
-        public Targetable Targetable { get; private set; }
-        public Vector3 Point  { get; private set; }
 
-        public TargetUnion(Vector3 point) : this()
+        /// <summary>
+        /// The target Character of this union.
+        /// </summary>
+        public Character Character { get; private set; }
+
+        /// <summary>
+        /// The target Targetable of this union.
+        /// </summary>
+        public Targetable Targetable { get; private set; }
+
+        /// <summary>
+        /// The target Point of this union.
+        /// </summary>
+        public Vector3 Point { get; private set; }
+
+        /// <summary>
+        /// Initializes a TargetUnion instance with a point target.
+        /// </summary>
+        /// <param name="point">Target point.</param>
+        public TargetUnion(Vector3 point)
+            : this()
         {
             Point = point;
             Type = TargetType.Point;
         }
 
-        public TargetUnion(Character character) : this()
+        /// <summary>
+        /// Initializes a TargetUnion instance with a character target.
+        /// </summary>
+        /// <param name="character">Target character.</param>
+        public TargetUnion(Character character)
+            : this()
         {
             Character = character;
             Type = TargetType.Character;
         }
 
-        public TargetUnion(Targetable targetable) : this()
+        /// <summary>
+        /// Initializes a TargetUnion instance with a targetable target.
+        /// </summary>
+        /// <param name="targetable">Target targetable.</param>
+        public TargetUnion(Targetable targetable)
+            : this()
         {
             Targetable = targetable;
             Type = TargetType.Targetable;
+        }
+
+        /// <summary>
+        /// This method returns appropriate point from its target.
+        /// </summary>
+        /// <returns>Position of the target.</returns>
+        public Vector3 AsPoint()
+        {
+            switch (Type)
+            {
+                case TargetType.Point:
+                    return Point;
+                case TargetType.Targetable:
+                    return Targetable.transform.position;
+                case TargetType.Character:
+                    return Character.transform.position;
+            }
+            return Vector3.zero;
+        }
+
+        /// <summary>
+        /// This method returns appropriate Targetable from its target.
+        /// </summary>
+        /// <returns>Targetable.</returns>
+        public Targetable AsTargetable()
+        {
+            switch (Type)
+            {
+                case TargetType.Targetable:
+                    return Targetable;
+                case TargetType.Character:
+                    return Character;
+            }
+            return null;
         }
     }
 }

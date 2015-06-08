@@ -463,12 +463,17 @@
         </member>
         <member name="F:Quark.Projectiles.Projectile.NearEnough">
             <summary>
-            The near enough distance constant which indicates that a missile will consider itself reached to a target point
+            The near enough distance constant which indicates that a missile will consider itself reached to a target point.
             </summary>
         </member>
         <member name="F:Quark.Projectiles.Projectile.CastRotation">
             <summary>
             Rotation of the caster Character when the projectile stage began.
+            </summary>
+        </member>
+        <member name="F:Quark.Projectiles.Projectile.TargetOffset">
+            <summary>
+            This field stores the Y axis (ie. height) offset to properly hit the target in a proper point.
             </summary>
         </member>
         <member name="M:Quark.Projectiles.Projectile.Make(UnityEngine.GameObject,Quark.Projectiles.ProjectileController,Quark.Spells.Cast,Quark.TargetUnion)">
@@ -488,7 +493,7 @@
             The context this Projectile travels in.
             </summary>
         </member>
-        <member name="P:Quark.Projectiles.Projectile.InitPosition">
+        <member name="P:Quark.Projectiles.Projectile.InitialPosition">
             <summary>
             Gets the initial position for this missile.
             </summary>
@@ -498,7 +503,7 @@
             <summary>
             Current target point of this Projectile instance.
             
-            <remarks>The target may update.</remarks>
+            <remarks>The target may change.</remarks>
             </summary>
         </member>
         <member name="P:Quark.Projectiles.Projectile.InitialTime">
@@ -546,6 +551,12 @@
             <param name="target">The hit object.</param>
             <returns>Whether the hit is valid or not.</returns>
         </member>
+        <member name="M:Quark.Projectiles.ProjectileController.ChangeTarget(Quark.TargetUnion)">
+            <summary>
+            This method changes the target of this Controller instance and the Projectile that's bound with it.
+            </summary>
+            <param name="target">The new target.</param>
+        </member>
         <member name="P:Quark.Projectiles.ProjectileController.Type">
             <summary>
             Gets the position update type for the missile
@@ -575,11 +586,16 @@
             </summary>
             <value>Current position.</value>
         </member>
-        <member name="P:Quark.Projectiles.ProjectileController.Target">
+        <member name="P:Quark.Projectiles.ProjectileController.TargetPoint">
             <summary>
             Gets the target position of the projectile.
             </summary>
             <value>The target.</value>
+        </member>
+        <member name="P:Quark.Projectiles.ProjectileController.Target">
+            <summary>
+            Target of this Controller.
+            </summary>
         </member>
         <member name="P:Quark.Projectiles.ProjectileController.InitialPosition">
             <summary>
@@ -587,13 +603,13 @@
             </summary>
             <value>The initial position.</value>
         </member>
-        <member name="P:Quark.Projectiles.ProjectileController.Alive">
+        <member name="P:Quark.Projectiles.ProjectileController.AliveSeconds">
             <summary>
             Gets the time in seconds since the projectile was created.
             </summary>
             <value>The alive.</value>
         </member>
-        <member name="P:Quark.Projectiles.ProjectileController.Distance">
+        <member name="P:Quark.Projectiles.ProjectileController.TravelAmount">
             <summary>
             Gets the distance from the beginning position to the current projectile position.
             </summary>
@@ -1516,6 +1532,61 @@
         <member name="P:Quark.EffectCollection.Count">
             <summary>
             The count of the Effects in this collection.
+            </summary>
+        </member>
+        <member name="T:Quark.TargetUnion">
+            <summary>
+            This structure is the generic target type used in Quark framework.
+            </summary>
+        </member>
+        <member name="M:Quark.TargetUnion.#ctor(UnityEngine.Vector3)">
+            <summary>
+            Initializes a TargetUnion instance with a point target.
+            </summary>
+            <param name="point">Target point.</param>
+        </member>
+        <member name="M:Quark.TargetUnion.#ctor(Quark.Character)">
+            <summary>
+            Initializes a TargetUnion instance with a character target.
+            </summary>
+            <param name="character">Target character.</param>
+        </member>
+        <member name="M:Quark.TargetUnion.#ctor(Quark.Targetable)">
+            <summary>
+            Initializes a TargetUnion instance with a targetable target.
+            </summary>
+            <param name="targetable">Target targetable.</param>
+        </member>
+        <member name="M:Quark.TargetUnion.AsPoint">
+            <summary>
+            This method returns appropriate point from its target.
+            </summary>
+            <returns>Position of the target.</returns>
+        </member>
+        <member name="M:Quark.TargetUnion.AsTargetable">
+            <summary>
+            This method returns appropriate Targetable from its target.
+            </summary>
+            <returns>Targetable.</returns>
+        </member>
+        <member name="P:Quark.TargetUnion.Type">
+            <summary>
+            Type of the target of this union.
+            </summary>
+        </member>
+        <member name="P:Quark.TargetUnion.Character">
+            <summary>
+            The target Character of this union.
+            </summary>
+        </member>
+        <member name="P:Quark.TargetUnion.Targetable">
+            <summary>
+            The target Targetable of this union.
+            </summary>
+        </member>
+        <member name="P:Quark.TargetUnion.Point">
+            <summary>
+            The target Point of this union.
             </summary>
         </member>
         <member name="M:Quark.Character.Suspend">

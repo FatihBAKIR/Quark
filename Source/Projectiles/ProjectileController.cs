@@ -1,4 +1,5 @@
 ﻿using Quark.Spells;
+using Quark.Targeting;
 using Quark.Utilities;
 using UnityEngine;
 
@@ -60,7 +61,7 @@ namespace Quark.Projectiles
         /// <returns>Whether the projectile should be destroyed.</returns>
         public virtual bool HasReached()
         {
-            return Utils.Distance2(Projectile.transform.position, Target) <= Projectile.NearEnough;
+            return Utils.Distance2(Projectile.transform.position, Target.AsPoint()) <= Projectile.NearEnough;
         }
 
         /// <summary>
@@ -112,12 +113,20 @@ namespace Quark.Projectiles
         /// Gets the target position of the projectile.
         /// </summary>
         /// <value>The target.</value>
-        protected Vector3 Target
+        protected Vector3 TargetPoint
         {
             get
             {
-                return Projectile.Target;
+                return Target.Type == TargetType.Point ? Target.Point : (Target.AsPoint() + Projectile.TargetOffset);
             }
+        }
+
+        /// <summary>
+        /// Target of this Controller.
+        /// </summary>
+        protected TargetUnion Target
+        {
+            get { return Projectile.Target; }
         }
 
         /// <summary>
@@ -128,7 +137,7 @@ namespace Quark.Projectiles
         {
             get
             {
-                return Projectile.InitPosition;
+                return Projectile.InitialPosition;
             }
         }
 
@@ -136,7 +145,7 @@ namespace Quark.Projectiles
         /// Gets the time in seconds since the projectile was created.
         /// </summary>
         /// <value>The alive.</value>
-        protected float Alive
+        protected float AliveSeconds
         {
             get
             {
@@ -148,11 +157,11 @@ namespace Quark.Projectiles
         /// Gets the distance from the beginning position to the current projectile position.
         /// </summary>
         /// <value>The distance.</value>
-        protected float Distance
+        protected float TravelAmount
         {
             get
             {
-                return Vector3.Distance(Projectile.transform.position, Projectile.InitPosition);
+                return Vector3.Distance(Projectile.transform.position, Projectile.InitialPosition);
             }
         }
 
@@ -176,6 +185,15 @@ namespace Quark.Projectiles
         {
             // By default, don't let projectiles hit the caster.
             return !target.Equals(Context.Caster);
+        }
+
+        /// <summary>
+        /// This method changes the target of this Controller instance and the Projectile that's bound with it.
+        /// </summary>
+        /// <param name="target">The new target.</param>
+        public virtual void ChangeTarget(TargetUnion target)
+        {
+            Projectile.SetTarget(target); 
         }
     }
 

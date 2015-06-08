@@ -13,7 +13,7 @@ namespace Quark.Projectiles
     public class Projectile : MonoBehaviour
     {
         /// <summary>
-        /// The near enough distance constant which indicates that a missile will consider itself reached to a target point
+        /// The near enough distance constant which indicates that a missile will consider itself reached to a target point.
         /// </summary>
         public static float NearEnough = 0.1F;
 
@@ -24,11 +24,10 @@ namespace Quark.Projectiles
 
         ProjectileController _controller;
 
-        Vector3 _yOffset;
-
-        Vector3 _targetPosition;
-        Targetable _target;
-        bool _toPos;
+        /// <summary>
+        /// This field stores the Y axis (ie. height) offset to properly hit the target in a proper point.
+        /// </summary>
+        public Vector3 TargetOffset;
 
         /// <summary>
         /// The context this Projectile travels in.
@@ -39,20 +38,14 @@ namespace Quark.Projectiles
         /// Gets the initial position for this missile.
         /// </summary>
         /// <value>The initial position.</value>
-        public Vector3 InitPosition { get; private set; }
+        public Vector3 InitialPosition { get; private set; }
 
         /// <summary>
         /// Current target point of this Projectile instance.
         /// 
-        /// <remarks>The target may update.</remarks>
+        /// <remarks>The target may change.</remarks>
         /// </summary>
-        public Vector3 Target
-        {
-            get
-            {
-                return _toPos ? _targetPosition : (_target.transform.position + _yOffset);
-            }
-        }
+        public TargetUnion Target { get; private set; }
 
         /// <summary>
         /// The time in seconds that this Projectile instance was created.
@@ -89,45 +82,22 @@ namespace Quark.Projectiles
 
         internal void SetTarget(TargetUnion target)
         {
+            Target = target;
             switch (target.Type)
             {
-                case TargetType.Point:
-                    Set(target.Point);
-                    break;
                 case TargetType.Targetable:
-                    Set(target.Targetable);
+                    TargetOffset = new Vector3(0, Target.Targetable.HeightOffset, 0);
                     break;
                 case TargetType.Character:
-                    Set(target.Character);
+                    TargetOffset = new Vector3(0, Target.Character.HeightOffset, 0);
                     break;
             }
         }
-
-        void Set(Vector3 target)
-        {
-            CastRotation = target - Context.CastBeginPoint;
-            _toPos = true;
-            _targetPosition = target;
-        }
-
-        void Set(Character target)
-        {
-            Set((Targetable)target);
-        }
-
-        void Set(Targetable target)
-        {
-            CastRotation = target.transform.position - Context.CastBeginPoint;
-            _toPos = false;
-            _target = target;
-            _yOffset = new Vector3(0, _target.HeightOffset, 0);
-        }
-
         #endregion
 
         void Start()
         {
-            InitPosition = transform.position;
+            InitialPosition = transform.position;
             InitialTime = Time.timeSinceLevelLoad;
         }
 
@@ -139,14 +109,15 @@ namespace Quark.Projectiles
             {
                 Context.Spell.OnHit(hit);
 
-                if ((!_toPos && hit.Equals(_target)) || (Context.Spell.TargetForm == TargetForm.Singular))
+                if ((Target.Type != TargetType.Point && hit.Equals(Target.AsTargetable())) || (Context.Spell.TargetForm == TargetForm.Singular))
                 {
                     Context.Spell.CollectProjectile(this);
                     Destroy(gameObject);
                 }
             }
-
+#if DEBUG
             Logger.Debug("Collision: " + c.gameObject.name + "\nTarget Was" + (hit == null ? " Not" : "") + " A Targetable");
+#endif
         }
 
         bool IsHitValid(Targetable hit)
@@ -161,14 +132,11 @@ namespace Quark.Projectiles
         private Vector3 _lastTravel;
         void Update()
         {
-            if (!_toPos)
-                _targetPosition = _target.transform.position;
-
             _controller.Control();
 
-            if (_toPos && HasReached)
+            if (Target.Type == TargetType.Point && HasReached)
             {
-                Context.Spell.OnHit(_targetPosition);
+                Context.Spell.OnHit(Target.AsPoint());
                 Context.Spell.CollectProjectile(this);
                 Destroy(gameObject);
                 return;

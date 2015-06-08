@@ -187,7 +187,7 @@ namespace Quark.Spells
         /// This method determines whether this Spell can be casted in the current Context.
         /// </summary>
         /// <returns>Whether this Spell can be casted.</returns>
-        public bool CanInvoke()
+        public virtual bool CanInvoke()
         {
             Condition invokeCondition = InvokeCondition;
             invokeCondition.SetContext(Context);
