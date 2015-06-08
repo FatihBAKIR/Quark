@@ -2,7 +2,7 @@
 
 ![](https://api.travis-ci.org/FatihBAKIR/Quark.svg)
 
-![](http://quarkup.io/res/quark.png)
+![](http://quarkup.io/res/quark.md.png)
 [http://quarkup.io][6]
 
 >This page contains a summary of the project, an extended version of this can be found [here][5]
