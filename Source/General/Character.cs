@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Quark;
 using Quark.Attributes;
 using Quark.Buffs;
 using Quark.Spells;
@@ -24,7 +23,7 @@ namespace Quark
         public bool IsSuspended { get; private set; }
 
         /// <summary>
-        /// This method suspends this Character, practically disabling it
+        /// This method suspends this Character, practically disabling it.
         /// </summary>
         public virtual void Suspend()
         {
@@ -32,7 +31,7 @@ namespace Quark
         }
 
         /// <summary>
-        /// This method continues this Character if it was suspended
+        /// This method continues this Character if it was suspended.
         /// </summary>
         public virtual void Continue()
         {
@@ -63,7 +62,7 @@ namespace Quark
         }
 
         /// <summary>
-        /// These effects are applied when this Character is instantiated
+        /// These effects are applied when this Character is instantiated.
         /// </summary>
         protected virtual EffectCollection ConfigurationEffects
         {
@@ -74,7 +73,7 @@ namespace Quark
         }
 
         /// <summary>
-        /// These effects are applied when the GameObject this Character belongs is destroyed
+        /// These effects are applied when the GameObject this Character belongs is destroyed.
         /// </summary>
         protected virtual EffectCollection DestructionEffects
         {
@@ -85,7 +84,7 @@ namespace Quark
         }
 
         /// <summary>
-        /// Configure this Character
+        /// Configure this Character.
         /// </summary>
         protected virtual void Configure()
         {
@@ -314,11 +313,6 @@ namespace Quark
         {
             Messenger<Character>.Broadcast("CharacterDestroyed", this);
             CharacterDestroyed(this);
-        }
-
-        void OnCharacterInstantiation()
-        {
-
         }
 
         /// <summary>

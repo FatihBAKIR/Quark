@@ -466,9 +466,26 @@
             The near enough distance constant which indicates that a missile will consider itself reached to a target point
             </summary>
         </member>
-        <member name="P:Quark.Projectiles.Projectile.HitCount">
+        <member name="F:Quark.Projectiles.Projectile.CastRotation">
             <summary>
-            This property denotes the total hit count of this Spell Cast
+            Rotation of the caster Character when the projectile stage began.
+            </summary>
+        </member>
+        <member name="M:Quark.Projectiles.Projectile.Make(UnityEngine.GameObject,Quark.Projectiles.ProjectileController,Quark.Spells.Cast,Quark.TargetUnion)">
+            <summary>
+            This function creates a new projectile object from a prefab and a controller in a context towards a target.
+            
+            The created projectile will immediately start travelling towars its target.
+            </summary>
+            <param name="prefab">The prefab of a Projectile. The prefab shouldn't contain a Projectile component.</param>
+            <param name="controller">A controller object to control the Projectile instance.</param>
+            <param name="context">Context to create the Projectile instance in.</param>
+            <param name="target">Target of the Projectile instance.</param>
+            <returns>The new Projectile instance.</returns>
+        </member>
+        <member name="P:Quark.Projectiles.Projectile.Context">
+            <summary>
+            The context this Projectile travels in.
             </summary>
         </member>
         <member name="P:Quark.Projectiles.Projectile.InitPosition">
@@ -477,10 +494,57 @@
             </summary>
             <value>The initial position.</value>
         </member>
+        <member name="P:Quark.Projectiles.Projectile.Target">
+            <summary>
+            Current target point of this Projectile instance.
+            
+            <remarks>The target may update.</remarks>
+            </summary>
+        </member>
+        <member name="P:Quark.Projectiles.Projectile.InitialTime">
+            <summary>
+            The time in seconds that this Projectile instance was created.
+            </summary>
+        </member>
+        <member name="M:Quark.Projectiles.ProjectileController.CalculateInitial(Quark.TargetUnion,Quark.Spells.Cast)">
+            <summary>
+            This method should calculate the initial position of the Projectile object.
+            </summary>
+            <param name="target">Target of the Projectile.</param>
+            <param name="context">Context to calculate in.</param>
+            <returns>Initial position of Projectile.</returns>
+        </member>
         <member name="M:Quark.Projectiles.ProjectileController.Control">
             <summary>
-            Controls the missile object's position
+            This method controls the projectile object.
+            
+            There are primarily 2 ways of controlling a projectile:
+                
+                - Calculating the change of position every frame.
+                - Calculating the absolute position every frame.
+            
+            This method gets the appropriate property and updates the position of the Projectile by default.
             </summary>
+        </member>
+        <member name="M:Quark.Projectiles.ProjectileController.HasReached">
+            <summary>
+            This method determines whether the projectile arrived it its destination,
+            and is ready for destruction.
+            </summary>
+            <returns>Whether the projectile should be destroyed.</returns>
+        </member>
+        <member name="M:Quark.Projectiles.ProjectileController.Set(Quark.Projectiles.Projectile)">
+            <summary>
+            Set the Projectile object of this ProjectileController.
+            </summary>
+            <param name="obj">The Projectile object.</param>
+        </member>
+        <member name="M:Quark.Projectiles.ProjectileController.ValidateHit(Quark.Targetable)">
+            <summary>
+            This method should determine whether a hit to a Targetable object is valid or not.
+            </summary>
+            <param name="target">The hit object.</param>
+            <returns>Whether the hit is valid or not.</returns>
         </member>
         <member name="P:Quark.Projectiles.ProjectileController.Type">
             <summary>
@@ -488,47 +552,72 @@
             </summary>
             <value>Update type.</value>
         </member>
+        <member name="P:Quark.Projectiles.ProjectileController.Projectile">
+            <summary>
+            The Projectile component this controller belongs to.
+            </summary>
+        </member>
         <member name="P:Quark.Projectiles.ProjectileController.Movement">
             <summary>
-            Calculates the movement vector for current frame
+            Calculates the change in the position of the projectile in this frame.
             </summary>
-            <value>The movement vector</value>
+            <value>The movement vector.</value>
         </member>
         <member name="P:Quark.Projectiles.ProjectileController.Position">
             <summary>
-            Calculates the position chance
+            Calculates the absolute position of the projectile in this frame.
             </summary>
-            <value>The position difference from the initial position</value>
+            <value>The absolute position, relative to the starting point.</value>
         </member>
-        <member name="P:Quark.Projectiles.ProjectileController.MyPos">
+        <member name="P:Quark.Projectiles.ProjectileController.CurrentPosition">
             <summary>
-            Gets current missile position
+            Gets current projectile position
             </summary>
-            <value>My position.</value>
+            <value>Current position.</value>
         </member>
         <member name="P:Quark.Projectiles.ProjectileController.Target">
             <summary>
-            Gets the target position of the missile
+            Gets the target position of the projectile.
             </summary>
             <value>The target.</value>
         </member>
         <member name="P:Quark.Projectiles.ProjectileController.InitialPosition">
             <summary>
-            Gets the initial position of the missile
+            Gets the initial position of the projectile.
             </summary>
             <value>The initial position.</value>
         </member>
         <member name="P:Quark.Projectiles.ProjectileController.Alive">
             <summary>
-            Gets the time in seconds since the missile was created
+            Gets the time in seconds since the projectile was created.
             </summary>
             <value>The alive.</value>
         </member>
         <member name="P:Quark.Projectiles.ProjectileController.Distance">
             <summary>
-            Gets the distance from the beginning position to the current missile position 
+            Gets the distance from the beginning position to the current projectile position.
             </summary>
             <value>The distance.</value>
+        </member>
+        <member name="P:Quark.Projectiles.ProjectileController.Context">
+            <summary>
+            The context this ProjectileController works in.
+            </summary>
+        </member>
+        <member name="T:Quark.Projectiles.ControlType">
+            <summary>
+            This enumeration represents how a ProjectileController calculates motion of a Projectile.
+            </summary>
+        </member>
+        <member name="F:Quark.Projectiles.ControlType.Movement">
+            <summary>
+            Projectile calculates change from the previous position of the Projectile every frame.
+            </summary>
+        </member>
+        <member name="F:Quark.Projectiles.ControlType.Absolute">
+            <summary>
+            Projectile calculates absolute position relative to the beginning position.
+            </summary>
         </member>
         <member name="F:Quark.Buffs.Buff.Interval">
             <summary>
@@ -1133,6 +1222,12 @@
             Begin targeting logic
             </summary>
         </member>
+        <member name="M:Quark.Spells.Cast.TargetingFail(Quark.Targeting.TargetingError)">
+            <summary>
+            Notice this context for an error in targeting.
+            </summary>
+            <param name="error">The reason of the error.</param>
+        </member>
         <member name="M:Quark.Spells.Cast.TargetingDone(Quark.TargetCollection)">
             <summary>
             BeginTargeting done logic.
@@ -1152,6 +1247,12 @@
             <summary>
             Interrupt this Cast instance.
             </summary>
+        </member>
+        <member name="M:Quark.Spells.Cast.Clear(Quark.Spells.Stages)">
+            <summary>
+            Clears this contexts internal references.
+            </summary>
+            <param name="step">Stage to go after clearing.</param>
         </member>
         <member name="P:Quark.Spells.Cast.NonSpell">
             <summary>
@@ -1182,6 +1283,41 @@
             <value>
             The cast done percentage.
             </value>
+        </member>
+        <member name="T:Quark.Spells.Stages">
+            <summary>
+            This enumeration represents the stages of a cast.
+            </summary>
+        </member>
+        <member name="F:Quark.Spells.Stages.Null">
+            <summary>
+            Null stage.
+            </summary>
+        </member>
+        <member name="F:Quark.Spells.Stages.Invoke">
+            <summary>
+            Configuration stage.
+            </summary>
+        </member>
+        <member name="F:Quark.Spells.Stages.Targeting">
+            <summary>
+            Targeting stage.
+            </summary>
+        </member>
+        <member name="F:Quark.Spells.Stages.Casting">
+            <summary>
+            Casting stage.
+            </summary>
+        </member>
+        <member name="F:Quark.Spells.Stages.Done">
+            <summary>
+            Cast has successfully finalized.
+            </summary>
+        </member>
+        <member name="F:Quark.Spells.Stages.Failed">
+            <summary>
+            Cast has failed.
+            </summary>
         </member>
         <member name="T:Quark.ItemCollection">
             TODO: let items carry other items in form of a bag
@@ -1231,6 +1367,12 @@
             </summary>
             <param name="condition">The condition to be added</param>
         </member>
+        <member name="M:Quark.Effect.SetContext(Quark.Spells.Cast)">
+            <summary>
+            Sets the context of this Effect.
+            </summary>
+            <param name="context">The context.</param>
+        </member>
         <member name="M:Quark.Effect.Apply">
             <summary>
             Applies this effect without a target.
@@ -1258,13 +1400,22 @@
             </summary>
             <param name="target">Targetable.</param>
         </member>
-        <member name="P:Quark.Effect.Name">
+        <member name="M:Quark.Effect.IsTagged(System.String)">
             <summary>
-            Gets the name.
+            Checks whether this Effect is tagged with a particular string or not.
             </summary>
-            <value>
-            The name of this effect.
-            </value>
+            <param name="tag">The string to check.</param>
+            <returns>Whether this Effect is tagged or not.</returns>
+        </member>
+        <member name="P:Quark.Effect.Context">
+            <summary>
+            The context this Effect should apply in.
+            </summary>
+        </member>
+        <member name="P:Quark.Effect.Tags">
+            <summary>
+            The tags of this Effect.
+            </summary>
         </member>
         <member name="T:Quark.EffectCollection">
             <summary>
@@ -1284,6 +1435,12 @@
             Add a new effect to this collection
             </summary>
             <param name="effect">The effect to be added</param>
+        </member>
+        <member name="M:Quark.EffectCollection.AddRange(Quark.EffectCollection)">
+            <summary>
+            Add multiple effects from another collection.
+            </summary>
+            <param name="range">Other collection.</param>
         </member>
         <member name="M:Quark.EffectCollection.Run(Quark.Spells.Cast)">
             <summary>
@@ -1340,19 +1497,40 @@
             <param name="context">The Cast context for the Effects to run</param>
             <returns>This collection itself</returns>
         </member>
+        <member name="M:Quark.EffectCollection.Run(Quark.TargetCollection,Quark.Spells.Cast)">
+            <summary>
+            Apply the effects contained in this collection with a collection of targets
+            </summary>
+            <param name="targets">The targets</param>
+            <param name="context">The Cast context for the Effects to run</param>
+            <returns>This collection itself</returns>
+        </member>
+        <member name="M:Quark.EffectCollection.op_Addition(Quark.EffectCollection,Quark.EffectCollection)">
+            <summary>
+            This operator adds 2 EffectCollection instances by adding the Effects in the right hand side operand to the left hand side operand.
+            </summary>
+            <param name="lhs">Collection to add to.</param>
+            <param name="rhs">Collection to add from.</param>
+            <returns>The left hand side collection.</returns>
+        </member>
+        <member name="P:Quark.EffectCollection.Count">
+            <summary>
+            The count of the Effects in this collection.
+            </summary>
+        </member>
         <member name="M:Quark.Character.Suspend">
             <summary>
-            This method suspends this Character, practically disabling it
+            This method suspends this Character, practically disabling it.
             </summary>
         </member>
         <member name="M:Quark.Character.Continue">
             <summary>
-            This method continues this Character if it was suspended
+            This method continues this Character if it was suspended.
             </summary>
         </member>
         <member name="M:Quark.Character.Configure">
             <summary>
-            Configure this Character
+            Configure this Character.
             </summary>
         </member>
         <member name="M:Quark.Character.Destruction">
@@ -1407,12 +1585,12 @@
         </member>
         <member name="P:Quark.Character.ConfigurationEffects">
             <summary>
-            These effects are applied when this Character is instantiated
+            These effects are applied when this Character is instantiated.
             </summary>
         </member>
         <member name="P:Quark.Character.DestructionEffects">
             <summary>
-            These effects are applied when the GameObject this Character belongs is destroyed
+            These effects are applied when the GameObject this Character belongs is destroyed.
             </summary>
         </member>
         <member name="P:Quark.Character.Casts">

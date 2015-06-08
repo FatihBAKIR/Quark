@@ -46,6 +46,10 @@ namespace Quark
             _effects.Add(effect);
         }
 
+        /// <summary>
+        /// Add multiple effects from another collection.
+        /// </summary>
+        /// <param name="range">Other collection.</param>
         public void AddRange(EffectCollection range)
         {
             foreach (Effect effect in range._effects)
@@ -62,6 +66,9 @@ namespace Quark
             return _effects.GetEnumerator();
         }
 
+        /// <summary>
+        /// The count of the Effects in this collection.
+        /// </summary>
         public int Count
         {
             get { return _effects.Count; }
@@ -176,6 +183,13 @@ namespace Quark
             return this;
         }
 
+
+        /// <summary>
+        /// Apply the effects contained in this collection with a collection of targets
+        /// </summary>
+        /// <param name="targets">The targets</param>
+        /// <param name="context">The Cast context for the Effects to run</param>
+        /// <returns>This collection itself</returns>
         public EffectCollection Run(TargetCollection targets, Cast context = null)
         {
             return this
@@ -209,6 +223,12 @@ namespace Quark
             base.Apply(point);
         }
 
+        /// <summary>
+        /// This operator adds 2 EffectCollection instances by adding the Effects in the right hand side operand to the left hand side operand.
+        /// </summary>
+        /// <param name="lhs">Collection to add to.</param>
+        /// <param name="rhs">Collection to add from.</param>
+        /// <returns>The left hand side collection.</returns>
         public static EffectCollection operator +(EffectCollection lhs, EffectCollection rhs)
         {
             lhs.AddRange(rhs);

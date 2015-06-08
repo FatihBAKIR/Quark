@@ -7,21 +7,14 @@ namespace Quark
     public class Effect : ITagged
     {
         /// <summary>
-        /// Gets the name.
+        /// The context this Effect should apply in.
         /// </summary>
-        /// <value>
-        /// The name of this effect.
-        /// </value>
-        public virtual string Name
-        {
-            get
-            {
-                return GetType().Name;
-            }
-        }
-
         public Cast Context { get; private set; }
 
+        /// <summary>
+        /// Sets the context of this Effect.
+        /// </summary>
+        /// <param name="context">The context.</param>
         public void SetContext(Cast context)
         {
             Context = context;
@@ -63,8 +56,16 @@ namespace Quark
         }
 
         #region Tagging
+        /// <summary>
+        /// The tags of this Effect.
+        /// </summary>
         public StaticTags Tags { get; protected set; }
 
+        /// <summary>
+        /// Checks whether this Effect is tagged with a particular string or not.
+        /// </summary>
+        /// <param name="tag">The string to check.</param>
+        /// <returns>Whether this Effect is tagged or not.</returns>
         public bool IsTagged(string tag)
         {
             return Tags.Has(tag);
