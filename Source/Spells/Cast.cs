@@ -219,6 +219,10 @@ namespace Quark.Spells
             _macro.Run();
         }
 
+        /// <summary>
+        /// Notice this context for an error in targeting.
+        /// </summary>
+        /// <param name="error">The reason of the error.</param>
         public void TargetingFail(TargetingError error)
         {
             _macro = null;
@@ -318,6 +322,10 @@ namespace Quark.Spells
             _spell.OnInterrupt();
         }
 
+        /// <summary>
+        /// Clears this contexts internal references.
+        /// </summary>
+        /// <param name="step">Stage to go after clearing.</param>
         public void Clear(Stages step)
         {
             Logger.Debug("Cast::Clear");
@@ -330,13 +338,39 @@ namespace Quark.Spells
         }
     }
 
+    /// <summary>
+    /// This enumeration represents the stages of a cast.
+    /// </summary>
     public enum Stages
     {
+        /// <summary>
+        /// Null stage.
+        /// </summary>
         Null,
+
+        /// <summary>
+        /// Configuration stage.
+        /// </summary>
         Invoke,
+
+        /// <summary>
+        /// Targeting stage.
+        /// </summary>
         Targeting,
+
+        /// <summary>
+        /// Casting stage.
+        /// </summary>
         Casting,
+
+        /// <summary>
+        /// Cast has successfully finalized.
+        /// </summary>
         Done,
+
+        /// <summary>
+        /// Cast has failed.
+        /// </summary>
         Failed
     }
 }
