@@ -10,7 +10,7 @@ namespace Quark.Projectiles
     /// It also retrieves necessary movement vector or position vector and moves the carrier object appropriately
     /// It is also responsible for handling the collisions and target checks
     /// </summary>
-    public class Projectile : MonoBehaviour
+    public sealed class Projectile : MonoBehaviour
     {
         /// <summary>
         /// The near enough distance constant which indicates that a missile will consider itself reached to a target point.
@@ -22,7 +22,10 @@ namespace Quark.Projectiles
         /// </summary>
         public Vector3 CastRotation;
 
-        ProjectileController _controller;
+        /// <summary>
+        /// The Controller of this projectile object.
+        /// </summary>
+        public ProjectileController Controller { get; private set; }
 
         /// <summary>
         /// This field stores the Y axis (ie. height) offset to properly hit the target in a proper point.
@@ -54,7 +57,7 @@ namespace Quark.Projectiles
 
         bool HasReached
         {
-            get { return _controller.HasReached(); }
+            get { return Controller.HasReached(); }
         }
 
         #region Initialization
@@ -74,9 +77,9 @@ namespace Quark.Projectiles
             GameObject obj = (GameObject)Instantiate(prefab, controller.CalculateInitial(target, context), Quaternion.identity);
             Projectile m = obj.AddComponent<Projectile>();
             m.Context = context;
-            m._controller = controller;
+            m.Controller = controller;
             m.SetTarget(target);
-            m._controller.Set(m);
+            m.Controller.Set(m);
             return m;
         }
 
@@ -122,7 +125,7 @@ namespace Quark.Projectiles
 
         bool IsHitValid(Targetable hit)
         {
-            bool result = hit != null && hit.IsTargetable && _controller.ValidateHit(hit);
+            bool result = hit != null && hit.IsTargetable && Controller.ValidateHit(hit);
 
             if (result)
                 Context.HitCount++;
@@ -132,7 +135,7 @@ namespace Quark.Projectiles
         private Vector3 _lastTravel;
         void Update()
         {
-            _controller.Control();
+            Controller.Control();
 
             if (Target.Type == TargetType.Point && HasReached)
             {

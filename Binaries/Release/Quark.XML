@@ -488,6 +488,11 @@
             <param name="target">Target of the Projectile instance.</param>
             <returns>The new Projectile instance.</returns>
         </member>
+        <member name="P:Quark.Projectiles.Projectile.Controller">
+            <summary>
+            The Controller of this projectile object.
+            </summary>
+        </member>
         <member name="P:Quark.Projectiles.Projectile.Context">
             <summary>
             The context this Projectile travels in.
