@@ -74,13 +74,13 @@ namespace Quark.Projectiles
         /// <returns>The new Projectile instance.</returns>
         public static Projectile Make(GameObject prefab, ProjectileController controller, Cast context, TargetUnion target)
         {
-            GameObject obj = (GameObject)Instantiate(prefab, controller.CalculateInitial(target, context), Quaternion.identity);
-            Projectile m = obj.AddComponent<Projectile>();
-            m.Context = context;
-            m.Controller = controller;
-            m.SetTarget(target);
-            m.Controller.Set(m);
-            return m;
+            GameObject instantiatedObject = (GameObject)Instantiate(prefab, controller.CalculateInitial(target, context), Quaternion.identity);
+            Projectile projectileComponent = instantiatedObject.AddComponent<Projectile>();
+            projectileComponent.Context = context;
+            projectileComponent.Controller = controller;
+            projectileComponent.SetTarget(target);
+            projectileComponent.Controller.SetProjectile(projectileComponent);
+            return projectileComponent;
         }
 
         internal void SetTarget(TargetUnion target)
@@ -118,9 +118,7 @@ namespace Quark.Projectiles
                     Destroy(gameObject);
                 }
             }
-#if DEBUG
             Logger.Debug("Collision: " + c.gameObject.name + "\nTarget Was" + (hit == null ? " Not" : "") + " A Targetable");
-#endif
         }
 
         bool IsHitValid(Targetable hit)

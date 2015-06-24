@@ -1,4 +1,5 @@
 ﻿using Quark.Attributes;
+using Quark.Utilities;
 
 namespace Quark
 {
@@ -9,6 +10,11 @@ namespace Quark
     public class QuarkConfig
     {
         public AttributeCollection DefaultAttributes = new AttributeCollection();
-        public ConditionCollection DefaultInterruption = new ConditionCollection();
+        public ConditionCollection DefaultInterruption = new ConditionCollection{new FalseCondition()};
+        public LogLevel LogLevel
+        {
+            get { return Logger.Level; }
+            set { Logger.Level = value; }
+        }
     }
 }

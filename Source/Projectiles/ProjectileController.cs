@@ -27,9 +27,14 @@ namespace Quark.Projectiles
         public virtual Vector3 CalculateInitial(TargetUnion target, Cast context)
         {
             Vector3 point = context.CastBeginPoint;
-            point += new Vector3(0, 1, 0);
+            point += Utils.VectorOnPlane(context.Caster.transform.forward, Planes.XZ) + new Vector3(0, 1, 0);
             return point;
         }
+
+        /// <summary>
+        /// This field stores the movement speed of the Projectile object.
+        /// </summary>
+        public float Speed;
 
         /// <summary>
         /// This method controls the projectile object.
@@ -65,19 +70,24 @@ namespace Quark.Projectiles
         }
 
         /// <summary>
-        /// Set the Projectile object of this ProjectileController.
+        /// SetProjectile the Projectile object of this ProjectileController.
         /// </summary>
         /// <param name="obj">The Projectile object.</param>
-        public void Set(Projectile obj)
+        public void SetProjectile(Projectile obj)
         {
             Projectile = obj;
+            OnProjectileSet();
+        }
+
+        public virtual void OnProjectileSet()
+        {            
         }
 
         /// <summary>
         /// Calculates the change in the position of the projectile in this frame.
         /// </summary>
         /// <value>The movement vector.</value>
-        public virtual Vector3 Movement
+        protected virtual Vector3 Movement
         {
             get
             {
@@ -89,7 +99,7 @@ namespace Quark.Projectiles
         /// Calculates the absolute position of the projectile in this frame.
         /// </summary>
         /// <value>The absolute position, relative to the starting point.</value>
-        public virtual Vector3 Position
+        protected virtual Vector3 Position
         {
             get
             {

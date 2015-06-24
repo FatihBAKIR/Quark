@@ -16,7 +16,6 @@ namespace Quark
         /// </summary>
         protected virtual void Initialize()
         {
-            
         }
 
         /// <summary>

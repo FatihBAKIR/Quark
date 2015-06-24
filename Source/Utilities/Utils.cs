@@ -73,7 +73,7 @@ namespace Quark.Utilities
         /// <param name="vector">The vector</param>
         /// <param name="plane">The plane</param>
         /// <returns>A new vector on the given plane.</returns>
-        static Vector3 VectorOnPlane(Vector3 vector, Planes plane)
+        public static Vector3 VectorOnPlane(Vector3 vector, Planes plane)
         {
             switch (plane)
             {
@@ -107,7 +107,7 @@ namespace Quark.Utilities
         }
 
         /// <summary>
-        /// Returns the angle between 2 points in degrees using cross product
+        /// Returns the angle between 2 points in the range of [0,360] degrees.
         /// </summary>
         /// <param name="v1">First Point</param>
         /// <param name="v2">Second Point</param>
@@ -121,37 +121,25 @@ namespace Quark.Utilities
             v1.Normalize();
             v2.Normalize();
 
-            //bool bottom = v1.y > v2.y;
-
-            float nominator = 0;
-
+            Vector3 normal = Vector3.up;
             switch (plane)
             {
                 case Planes.XY:
-                    nominator = v1.x * v2.x + v1.y * v2.y;
+                    normal = Vector3.forward;
                     break;
                 case Planes.XZ:
-                    nominator = v1.x * v2.x + v1.z * v2.z;
+                    normal = Vector3.up;
                     break;
                 case Planes.YZ:
-                    nominator = v1.y * v2.y + v1.z * v2.z;
+                    normal = Vector3.right;
                     break;
             }
 
-            float denominator = v1.magnitude * v2.magnitude;
+            float angle = Vector3.Angle(v1, v2);
 
-            float radians = Mathf.Acos(nominator / denominator);
+            float sign = Mathf.Sign(Vector3.Dot(v1, Vector3.Cross(normal, v2)));
 
-            float angle = radians*Mathf.Rad2Deg;
-
-            Vector3 normal = Vector3.Cross(v1, v2).normalized;
-            
-            float sign = Mathf.Sign(Vector3.Dot(normal, Vector3.Cross(v1, v2)));
-            float signedAngle = angle * sign;
-
-            //  360 angle
-
-            return (signedAngle <= 0) ? 360 + signedAngle : signedAngle;
+            return sign * angle + (sign > 0 ? 0 : 360);
         }
 
         /// <summary>

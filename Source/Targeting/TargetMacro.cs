@@ -70,7 +70,6 @@ namespace Quark.Targeting
         public virtual void Cancel()
         {
             TargetingFailed(TargetingError.Cancelled);
-            Clear();
         }
 
         /// <summary>
@@ -151,6 +150,7 @@ namespace Quark.Targeting
         {
             TargetingSuccess(_targets);
             _targets = new TargetCollection();
+            Clear();
         }
 
         /// <summary>
@@ -161,6 +161,7 @@ namespace Quark.Targeting
         {
             TargetingFailed(error);
             _targets = new TargetCollection();
+            Clear();
         }
 
         TargetCollection _targets = new TargetCollection();

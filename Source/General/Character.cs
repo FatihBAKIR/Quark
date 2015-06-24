@@ -108,9 +108,17 @@ namespace Quark
             _hiddenBuffs.Dispose();
             _hiddenBuffs = null;
 
+            List<Cast> casts = _casting;
+
             _casting.Clear();
             _casting = null;
 
+            foreach (Cast cast in casts)
+            {
+                cast.Interrupt();
+                cast.Clear(Stages.Failed);
+            }
+            
             _interruptConditions.Dispose();
             _interruptConditions = null;
         }
@@ -204,7 +212,8 @@ namespace Quark
         /// <param name="cast"></param>
         public void ClearCast(Cast cast)
         {
-            _casting.Remove(cast);
+            if (_casting != null)
+                _casting.Remove(cast);
         }
 
         public void AddItem(Item item)

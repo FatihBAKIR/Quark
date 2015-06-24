@@ -282,7 +282,7 @@
         </member>
         <member name="M:Quark.Utilities.Utils.Angle2(UnityEngine.Vector3,UnityEngine.Vector3,Quark.Utilities.Planes)">
             <summary>
-            Returns the angle between 2 points in degrees using cross product
+            Returns the angle between 2 points in the range of [0,360] degrees.
             </summary>
             <param name="v1">First Point</param>
             <param name="v2">Second Point</param>
@@ -524,6 +524,11 @@
             <param name="context">Context to calculate in.</param>
             <returns>Initial position of Projectile.</returns>
         </member>
+        <member name="F:Quark.Projectiles.ProjectileController.Speed">
+            <summary>
+            This field stores the movement speed of the Projectile object.
+            </summary>
+        </member>
         <member name="M:Quark.Projectiles.ProjectileController.Control">
             <summary>
             This method controls the projectile object.
@@ -543,9 +548,9 @@
             </summary>
             <returns>Whether the projectile should be destroyed.</returns>
         </member>
-        <member name="M:Quark.Projectiles.ProjectileController.Set(Quark.Projectiles.Projectile)">
+        <member name="M:Quark.Projectiles.ProjectileController.SetProjectile(Quark.Projectiles.Projectile)">
             <summary>
-            Set the Projectile object of this ProjectileController.
+            SetProjectile the Projectile object of this ProjectileController.
             </summary>
             <param name="obj">The Projectile object.</param>
         </member>
