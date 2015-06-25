@@ -65,6 +65,21 @@ namespace Quark.Utilities
             GC(callingFrame.GetMethod().DeclaringType.Name + "::" + callingFrame.GetMethod().Name);
 #endif
         }
+
+        public static void Assert(bool condition, string message = "")
+        {
+#if DEBUG
+            if (!condition)
+            {
+                string Format = "Assertion failed at {0}!\n{1}";
+                StackTrace stackTrace = new StackTrace();
+                StackFrame callingFrame = stackTrace.GetFrame(1);
+                string caller = callingFrame.GetMethod().DeclaringType.Name + "::" + callingFrame.GetMethod().Name + " in " + callingFrame.GetFileName() + " (" + callingFrame.GetFileLineNumber() + ")";
+
+                Error(String.Format(Format, caller, message));
+            }
+#endif
+        }
     }
 
     [Flags]

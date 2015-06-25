@@ -1,40 +1,59 @@
-﻿using Quark.Spells;
-using Quark.Targeting;
+﻿using System;
+using Quark.Spells;
 using Quark.Utilities;
 using UnityEngine;
 
 namespace Quark.Projectiles
 {
+    /// <summary>
+    /// ProjectileController is the class that controls the Projectile entities in a scene.
+    /// 
+    /// Their main responsibilities include:
+    ///     + Calculating the initial point of a new Projectile object.
+    ///     + Controlling the object every frame depending on its type of control. <see cref="ControlType"/>
+    ///     + Determining whether the object has reached its final destination.
+    ///     + Determining whether a collision is a valid hit or not in order to decide whether the hit logic of a Spell should be executed or not.
+    /// 
+    /// The reason this class is seperate from the actual <see cref="Projectile"/> class is because ideally, we are trying to keep 
+    /// the physical existance of a Projectile and the logic that controls it seperated.
+    /// </summary>
     public class ProjectileController
     {
         /// <summary>
-        /// Gets the position update type for the missile
+        /// Context of this controller.
         /// </summary>
-        /// <value>Update type.</value>
-        protected virtual ControlType Type { get { return ControlType.Movement; } }
+        protected Cast Context { get; private set; }
 
         /// <summary>
-        /// The Projectile component this controller belongs to.
+        /// This method sets the context this controller runs in.
         /// </summary>
-        protected Projectile Projectile { get; set; }
+        /// <param name="context">The controller.</param>
+        public virtual void SetContext(Cast context)
+        {
+            Context = context;
+        }
 
         /// <summary>
         /// This method should calculate the initial position of the Projectile object.
         /// </summary>
         /// <param name="target">Target of the Projectile.</param>
-        /// <param name="context">Context to calculate in.</param>
-        /// <returns>Initial position of Projectile.</returns>
-        public virtual Vector3 CalculateInitial(TargetUnion target, Cast context)
+        /// <returns>Initial position of Projectile.</returns
+        public virtual Vector3 InitialPoint(TargetUnion target)
         {
-            Vector3 point = context.CastBeginPoint;
-            point += Utils.VectorOnPlane(context.Caster.transform.forward, Planes.XZ) + new Vector3(0, 1, 0);
+            Vector3 point = Context.CastBeginPoint;
+            point += Utils.VectorOnPlane(Context.Caster.transform.forward, Planes.XZ) + new Vector3(0, 1, 0);
             return point;
         }
 
         /// <summary>
-        /// This field stores the movement speed of the Projectile object.
+        /// This method may perform any necessarry initialization logic with the Projectile.
         /// </summary>
-        public float Speed;
+        public virtual void Initialize()
+        {
+            
+        }
+
+        protected ControlType Type;
 
         /// <summary>
         /// This method controls the projectile object.
@@ -51,162 +70,107 @@ namespace Quark.Projectiles
             switch (Type)
             {
                 case ControlType.Movement:
-                    Projectile.transform.Translate(Movement);
+                    Projectile.transform.Translate(CalculateMovement);
                     break;
                 case ControlType.Absolute:
-                    Projectile.transform.position = Utils.AlignVector(Position, Projectile.CastRotation) + InitialPosition;
+                    Projectile.transform.position = Utils.AlignVector(CalculateAbsolute, Projectile.CastRotation) + Projectile.InitialPosition;
                     break;
             }
         }
 
         /// <summary>
-        /// This method determines whether the projectile arrived it its destination,
-        /// and is ready for destruction.
+        /// This property should calculate the change of the position a Projectile.
+        /// 
+        /// <exception cref="NotImplementedException">If not implemented.</exception>
         /// </summary>
-        /// <returns>Whether the projectile should be destroyed.</returns>
-        public virtual bool HasReached()
+        protected virtual Vector3 CalculateMovement
         {
-            return Utils.Distance2(Projectile.transform.position, Target.AsPoint()) <= Projectile.NearEnough;
+            get { throw new NotImplementedException();}
         }
 
         /// <summary>
-        /// SetProjectile the Projectile object of this ProjectileController.
+        /// This property should calculate the absolute position a Projectile should be at any given time.
+        /// 
+        /// <exception cref="NotImplementedException">If not implemented.</exception>
         /// </summary>
-        /// <param name="obj">The Projectile object.</param>
-        public void SetProjectile(Projectile obj)
+        protected virtual Vector3 CalculateAbsolute
         {
-            Projectile = obj;
-            OnProjectileSet();
+            get { throw new NotImplementedException(); }
         }
 
-        public virtual void OnProjectileSet()
+        /// <summary>
+        /// This method should determine whether a hit to a Targetable object is valid or not.
+        /// </summary>
+        /// <param name="hitObject">The hit object.</param>
+        /// <returns>Whether the hit is valid or not.</returns
+        public virtual bool Validate(Targetable hitObject)
         {            
+            // By default, we don't let projectiles hit the caster.
+            return !hitObject.Equals(Context.Caster);
         }
 
         /// <summary>
-        /// Calculates the change in the position of the projectile in this frame.
+        /// The Projectile object this Controller controls.
         /// </summary>
-        /// <value>The movement vector.</value>
-        protected virtual Vector3 Movement
+        protected Projectile Projectile { get; private set; }
+
+        /// <summary>
+        /// Sets the Projectile object of this Controller.
+        /// </summary>
+        /// <param name="projectile">The projectile.</param>
+        public void SetProjectile(Projectile projectile)
         {
-            get
-            {
-                return Vector3.zero;
-            }
+            Projectile = projectile;
+            Initialize();
         }
 
         /// <summary>
-        /// Calculates the absolute position of the projectile in this frame.
+        /// Calculated target point of this Controller.
         /// </summary>
-        /// <value>The absolute position, relative to the starting point.</value>
-        protected virtual Vector3 Position
-        {
-            get
-            {
-                return Vector3.zero;
-            }
-        }
-
-        /// <summary>
-        /// Gets current projectile position
-        /// </summary>
-        /// <value>Current position.</value>
-        protected Vector3 CurrentPosition
-        {
-            get
-            {
-                return Projectile.transform.position;
-            }
-        }
-
-        /// <summary>
-        /// Gets the target position of the projectile.
-        /// </summary>
-        /// <value>The target.</value>
         protected Vector3 TargetPoint
         {
-            get
-            {
-                return Target.Type == TargetType.Point ? Target.Point : (Target.AsPoint() + Projectile.TargetOffset);
-            }
+            get { return Projectile.Target.AsPoint() + Projectile.TargetOffset; }
         }
 
         /// <summary>
-        /// Target of this Controller.
+        /// This method changes the target of this Controller instance and the Projectile that's bound with it.
         /// </summary>
-        protected TargetUnion Target
+        /// <param name="newTarget">The new target.</param>
+        public virtual void ChangeTarget(TargetUnion newTarget)
         {
-            get { return Projectile.Target; }
+            Projectile.SetTarget(newTarget);
         }
 
         /// <summary>
-        /// Gets the initial position of the projectile.
+        /// This property determines whether the Projectile reached it its destination, and is ready for destruction.
         /// </summary>
-        /// <value>The initial position.</value>
-        protected Vector3 InitialPosition
+        public virtual bool Finished
         {
             get
             {
-                return Projectile.InitialPosition;
+                return Utils.Distance2(Projectile.transform.position, TargetPoint) <= Projectile.NearEnough;
             }
         }
 
         /// <summary>
         /// Gets the time in seconds since the projectile was created.
         /// </summary>
-        /// <value>The alive.</value>
-        protected float AliveSeconds
+        /// <value>Travel time in seconds.</value>
+        protected float TravelTime
         {
-            get
-            {
-                return Time.timeSinceLevelLoad - Projectile.InitialTime;
-            }
+            get { return Time.timeSinceLevelLoad - Projectile.InitialTime; }
         }
 
         /// <summary>
         /// Gets the distance from the beginning position to the current projectile position.
         /// </summary>
         /// <value>The distance.</value>
-        protected float TravelAmount
+        protected float TravelDistance
         {
-            get
-            {
-                return Vector3.Distance(Projectile.transform.position, Projectile.InitialPosition);
-            }
-        }
-
-        /// <summary>
-        /// The context this ProjectileController works in.
-        /// </summary>
-        protected Cast Context
-        {
-            get
-            {
-                return Projectile.Context;
-            }
-        }
-
-        /// <summary>
-        /// This method should determine whether a hit to a Targetable object is valid or not.
-        /// </summary>
-        /// <param name="target">The hit object.</param>
-        /// <returns>Whether the hit is valid or not.</returns>
-        public virtual bool ValidateHit(Targetable target)
-        {
-            // By default, don't let projectiles hit the caster.
-            return !target.Equals(Context.Caster);
-        }
-
-        /// <summary>
-        /// This method changes the target of this Controller instance and the Projectile that's bound with it.
-        /// </summary>
-        /// <param name="target">The new target.</param>
-        public virtual void ChangeTarget(TargetUnion target)
-        {
-            Projectile.SetTarget(target); 
+            get { return Vector3.Distance(Projectile.transform.position, Projectile.InitialPosition); }
         }
     }
-
+    
     /// <summary>
     /// This enumeration represents how a ProjectileController calculates motion of a Projectile.
     /// </summary>

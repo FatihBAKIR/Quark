@@ -29,6 +29,118 @@
             Other Targetable's position
             </summary>
         </member>
+        <member name="T:Quark.Projectiles.ProjectileController">
+            <summary>
+            ProjectileController is the class that controls the Projectile entities in a scene.
+            
+            Their main responsibilities include:
+                + Calculating the initial point of a new Projectile object.
+                + Controlling the object every frame depending on its type of control. <see cref="T:Quark.Projectiles.ControlType"/>
+                + Determining whether the object has reached its final destination.
+                + Determining whether a collision is a valid hit or not in order to decide whether the hit logic of a Spell should be executed or not.
+            
+            The reason this class is seperate from the actual <see cref="P:Quark.Projectiles.ProjectileController.Projectile"/> class is because ideally, we are trying to keep 
+            the physical existance of a Projectile and the logic that controls it seperated.
+            </summary>
+        </member>
+        <member name="M:Quark.Projectiles.ProjectileController.SetContext(Quark.Spells.Cast)">
+            <summary>
+            This method sets the context this controller runs in.
+            </summary>
+            <param name="context">The controller.</param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Quark.Projectiles.ProjectileController.InitialPoint(Quark.TargetUnion)" -->
+        <member name="M:Quark.Projectiles.ProjectileController.Initialize">
+            <summary>
+            This method may perform any necessarry initialization logic with the Projectile.
+            </summary>
+        </member>
+        <member name="M:Quark.Projectiles.ProjectileController.Control">
+            <summary>
+            This method controls the projectile object.
+            
+            There are primarily 2 ways of controlling a projectile:
+                
+                - Calculating the change of position every frame.
+                - Calculating the absolute position every frame.
+            
+            This method gets the appropriate property and updates the position of the Projectile by default.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Quark.Projectiles.ProjectileController.Validate(Quark.Targetable)" -->
+        <member name="M:Quark.Projectiles.ProjectileController.SetProjectile(Quark.Projectiles.Projectile)">
+            <summary>
+            Sets the Projectile object of this Controller.
+            </summary>
+            <param name="projectile">The projectile.</param>
+        </member>
+        <member name="M:Quark.Projectiles.ProjectileController.ChangeTarget(Quark.TargetUnion)">
+            <summary>
+            This method changes the target of this Controller instance and the Projectile that's bound with it.
+            </summary>
+            <param name="newTarget">The new target.</param>
+        </member>
+        <member name="P:Quark.Projectiles.ProjectileController.Context">
+            <summary>
+            Context of this controller.
+            </summary>
+        </member>
+        <member name="P:Quark.Projectiles.ProjectileController.CalculateMovement">
+            <summary>
+            This property should calculate the change of the position a Projectile.
+            
+            <exception cref="T:System.NotImplementedException">If not implemented.</exception>
+            </summary>
+        </member>
+        <member name="P:Quark.Projectiles.ProjectileController.CalculateAbsolute">
+            <summary>
+            This property should calculate the absolute position a Projectile should be at any given time.
+            
+            <exception cref="T:System.NotImplementedException">If not implemented.</exception>
+            </summary>
+        </member>
+        <member name="P:Quark.Projectiles.ProjectileController.Projectile">
+            <summary>
+            The Projectile object this Controller controls.
+            </summary>
+        </member>
+        <member name="P:Quark.Projectiles.ProjectileController.TargetPoint">
+            <summary>
+            Calculated target point of this Controller.
+            </summary>
+        </member>
+        <member name="P:Quark.Projectiles.ProjectileController.Finished">
+            <summary>
+            This property determines whether the Projectile reached it its destination, and is ready for destruction.
+            </summary>
+        </member>
+        <member name="P:Quark.Projectiles.ProjectileController.TravelTime">
+            <summary>
+            Gets the time in seconds since the projectile was created.
+            </summary>
+            <value>Travel time in seconds.</value>
+        </member>
+        <member name="P:Quark.Projectiles.ProjectileController.TravelDistance">
+            <summary>
+            Gets the distance from the beginning position to the current projectile position.
+            </summary>
+            <value>The distance.</value>
+        </member>
+        <member name="T:Quark.Projectiles.ControlType">
+            <summary>
+            This enumeration represents how a ProjectileController calculates motion of a Projectile.
+            </summary>
+        </member>
+        <member name="F:Quark.Projectiles.ControlType.Movement">
+            <summary>
+            Projectile calculates change from the previous position of the Projectile every frame.
+            </summary>
+        </member>
+        <member name="F:Quark.Projectiles.ControlType.Absolute">
+            <summary>
+            Projectile calculates absolute position relative to the beginning position.
+            </summary>
+        </member>
         <member name="M:Quark.Targeting.TargetMacro.Run">
             <summary>
             Begins the targeting procedure for this macro
@@ -113,6 +225,11 @@
         <member name="P:Quark.Targeting.TargetMacro.Caster">
             <summary>
             This property stores the source Character for this targeting.
+            </summary>
+        </member>
+        <member name="P:Quark.Targeting.TargetMacro.DontClearUponFinish">
+            <summary>
+            This property stores whether this Macro should clear its listeners and context after running.
             </summary>
         </member>
         <member name="T:Quark.Targeting.TargetingError">
@@ -508,141 +625,12 @@
             <summary>
             Current target point of this Projectile instance.
             
-            <remarks>The target may change.</remarks>
+            <remarks>The target may change over time.</remarks>
             </summary>
         </member>
         <member name="P:Quark.Projectiles.Projectile.InitialTime">
             <summary>
             The time in seconds that this Projectile instance was created.
-            </summary>
-        </member>
-        <member name="M:Quark.Projectiles.ProjectileController.CalculateInitial(Quark.TargetUnion,Quark.Spells.Cast)">
-            <summary>
-            This method should calculate the initial position of the Projectile object.
-            </summary>
-            <param name="target">Target of the Projectile.</param>
-            <param name="context">Context to calculate in.</param>
-            <returns>Initial position of Projectile.</returns>
-        </member>
-        <member name="F:Quark.Projectiles.ProjectileController.Speed">
-            <summary>
-            This field stores the movement speed of the Projectile object.
-            </summary>
-        </member>
-        <member name="M:Quark.Projectiles.ProjectileController.Control">
-            <summary>
-            This method controls the projectile object.
-            
-            There are primarily 2 ways of controlling a projectile:
-                
-                - Calculating the change of position every frame.
-                - Calculating the absolute position every frame.
-            
-            This method gets the appropriate property and updates the position of the Projectile by default.
-            </summary>
-        </member>
-        <member name="M:Quark.Projectiles.ProjectileController.HasReached">
-            <summary>
-            This method determines whether the projectile arrived it its destination,
-            and is ready for destruction.
-            </summary>
-            <returns>Whether the projectile should be destroyed.</returns>
-        </member>
-        <member name="M:Quark.Projectiles.ProjectileController.SetProjectile(Quark.Projectiles.Projectile)">
-            <summary>
-            SetProjectile the Projectile object of this ProjectileController.
-            </summary>
-            <param name="obj">The Projectile object.</param>
-        </member>
-        <member name="M:Quark.Projectiles.ProjectileController.ValidateHit(Quark.Targetable)">
-            <summary>
-            This method should determine whether a hit to a Targetable object is valid or not.
-            </summary>
-            <param name="target">The hit object.</param>
-            <returns>Whether the hit is valid or not.</returns>
-        </member>
-        <member name="M:Quark.Projectiles.ProjectileController.ChangeTarget(Quark.TargetUnion)">
-            <summary>
-            This method changes the target of this Controller instance and the Projectile that's bound with it.
-            </summary>
-            <param name="target">The new target.</param>
-        </member>
-        <member name="P:Quark.Projectiles.ProjectileController.Type">
-            <summary>
-            Gets the position update type for the missile
-            </summary>
-            <value>Update type.</value>
-        </member>
-        <member name="P:Quark.Projectiles.ProjectileController.Projectile">
-            <summary>
-            The Projectile component this controller belongs to.
-            </summary>
-        </member>
-        <member name="P:Quark.Projectiles.ProjectileController.Movement">
-            <summary>
-            Calculates the change in the position of the projectile in this frame.
-            </summary>
-            <value>The movement vector.</value>
-        </member>
-        <member name="P:Quark.Projectiles.ProjectileController.Position">
-            <summary>
-            Calculates the absolute position of the projectile in this frame.
-            </summary>
-            <value>The absolute position, relative to the starting point.</value>
-        </member>
-        <member name="P:Quark.Projectiles.ProjectileController.CurrentPosition">
-            <summary>
-            Gets current projectile position
-            </summary>
-            <value>Current position.</value>
-        </member>
-        <member name="P:Quark.Projectiles.ProjectileController.TargetPoint">
-            <summary>
-            Gets the target position of the projectile.
-            </summary>
-            <value>The target.</value>
-        </member>
-        <member name="P:Quark.Projectiles.ProjectileController.Target">
-            <summary>
-            Target of this Controller.
-            </summary>
-        </member>
-        <member name="P:Quark.Projectiles.ProjectileController.InitialPosition">
-            <summary>
-            Gets the initial position of the projectile.
-            </summary>
-            <value>The initial position.</value>
-        </member>
-        <member name="P:Quark.Projectiles.ProjectileController.AliveSeconds">
-            <summary>
-            Gets the time in seconds since the projectile was created.
-            </summary>
-            <value>The alive.</value>
-        </member>
-        <member name="P:Quark.Projectiles.ProjectileController.TravelAmount">
-            <summary>
-            Gets the distance from the beginning position to the current projectile position.
-            </summary>
-            <value>The distance.</value>
-        </member>
-        <member name="P:Quark.Projectiles.ProjectileController.Context">
-            <summary>
-            The context this ProjectileController works in.
-            </summary>
-        </member>
-        <member name="T:Quark.Projectiles.ControlType">
-            <summary>
-            This enumeration represents how a ProjectileController calculates motion of a Projectile.
-            </summary>
-        </member>
-        <member name="F:Quark.Projectiles.ControlType.Movement">
-            <summary>
-            Projectile calculates change from the previous position of the Projectile every frame.
-            </summary>
-        </member>
-        <member name="F:Quark.Projectiles.ControlType.Absolute">
-            <summary>
-            Projectile calculates absolute position relative to the beginning position.
             </summary>
         </member>
         <member name="F:Quark.Buffs.Buff.Interval">

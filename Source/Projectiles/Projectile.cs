@@ -46,7 +46,7 @@ namespace Quark.Projectiles
         /// <summary>
         /// Current target point of this Projectile instance.
         /// 
-        /// <remarks>The target may change.</remarks>
+        /// <remarks>The target may change over time.</remarks>
         /// </summary>
         public TargetUnion Target { get; private set; }
 
@@ -57,7 +57,7 @@ namespace Quark.Projectiles
 
         bool HasReached
         {
-            get { return Controller.HasReached(); }
+            get { return Controller.Finished; }
         }
 
         #region Initialization
@@ -74,12 +74,18 @@ namespace Quark.Projectiles
         /// <returns>The new Projectile instance.</returns>
         public static Projectile Make(GameObject prefab, ProjectileController controller, Cast context, TargetUnion target)
         {
-            GameObject instantiatedObject = (GameObject)Instantiate(prefab, controller.CalculateInitial(target, context), Quaternion.identity);
+            controller.SetContext(context);
+            Vector3 initialPoint = controller.InitialPoint(target);
+
+            GameObject instantiatedObject = (GameObject)Instantiate(prefab, initialPoint, Quaternion.identity);
+
             Projectile projectileComponent = instantiatedObject.AddComponent<Projectile>();
             projectileComponent.Context = context;
             projectileComponent.Controller = controller;
             projectileComponent.SetTarget(target);
+
             projectileComponent.Controller.SetProjectile(projectileComponent);
+
             return projectileComponent;
         }
 
@@ -93,6 +99,9 @@ namespace Quark.Projectiles
                     break;
                 case TargetType.Character:
                     TargetOffset = new Vector3(0, Target.Character.HeightOffset, 0);
+                    break;
+                default:
+                    TargetOffset = Vector3.zero;
                     break;
             }
         }
@@ -110,7 +119,10 @@ namespace Quark.Projectiles
 
             if (IsHitValid(hit))
             {
-                Context.Spell.OnHit(hit);
+                if (hit is Character)
+                    Context.Spell.OnHit(hit as Character);
+                else
+                    Context.Spell.OnHit(hit);
 
                 if ((Target.Type != TargetType.Point && hit.Equals(Target.AsTargetable())) || (Context.Spell.TargetForm == TargetForm.Singular))
                 {
@@ -123,7 +135,7 @@ namespace Quark.Projectiles
 
         bool IsHitValid(Targetable hit)
         {
-            bool result = hit != null && hit.IsTargetable && Controller.ValidateHit(hit);
+            bool result = hit != null && hit.IsTargetable && Controller.Validate(hit);
 
             if (result)
                 Context.HitCount++;

@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Exceptions\Targeting.cs" />
     <Compile Include="General\Targetable.cs" />
+    <Compile Include="Projectiles\ProjectileController.cs" />
     <Compile Include="Spells\CastError.cs" />
     <Compile Include="Targeting\TargetMacro.cs" />
     <Compile Include="Utilities\AssemblyInfo.cs" />
@@ -59,7 +60,6 @@
     <Compile Include="Attributes\AttributeModifier.cs" />
     <Compile Include="Attributes\Stat.cs" />
     <Compile Include="Projectiles\Projectile.cs" />
-    <Compile Include="Projectiles\ProjectileController.cs" />
     <Compile Include="Buffs\Buff.cs" />
     <Compile Include="Buffs\BuffContainer.cs" />
     <Compile Include="Spells\Spell.cs" />

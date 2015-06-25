@@ -109,9 +109,15 @@ namespace Quark.Targeting
         {
             get
             {
+                Logger.Assert(Context != null);
                 return Context.Caster;
             }
         }
+
+        /// <summary>
+        /// This property stores whether this Macro should clear its listeners and context after running.
+        /// </summary>
+        public bool DontClearUponFinish { get; set; }
 
         /// <summary>
         /// On Target Selection
@@ -150,7 +156,8 @@ namespace Quark.Targeting
         {
             TargetingSuccess(_targets);
             _targets = new TargetCollection();
-            Clear();
+            if (!DontClearUponFinish)
+                Clear();
         }
 
         /// <summary>
@@ -161,7 +168,8 @@ namespace Quark.Targeting
         {
             TargetingFailed(error);
             _targets = new TargetCollection();
-            Clear();
+            if (!DontClearUponFinish)
+                Clear();
         }
 
         TargetCollection _targets = new TargetCollection();

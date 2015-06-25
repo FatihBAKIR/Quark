@@ -5,7 +5,7 @@ namespace Quark
 {
     public class Targetable : MonoBehaviour, Identifiable, ITaggable
     {
-        public float HeightOffset;
+        public float HeightOffset = 1;
 
         public bool IsTargetable { get; set; }
         public string Identifier
