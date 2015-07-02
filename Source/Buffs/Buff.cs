@@ -1,12 +1,112 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Quark.Spells;
+using System.Security.Cryptography.X509Certificates;
+using Quark.Conditions;
+using Quark.Contexts;
+using Quark.Effects;
 using Quark.Utilities;
 using UnityEngine;
 
 namespace Quark.Buffs
 {
-    public class Buff : ITagged, Identifiable, IDisposable
+    public interface IBuff : IDisposable, Identifiable
+    {
+        /// <summary>
+        /// Life ratio of this buff.
+        /// </summary>
+        float LifeRatio { get; }
+
+        /// <summary>
+        /// Total duration of this buff.
+        /// </summary>
+        float Duration { get; }
+
+        /// <summary>
+        /// This property stores how this buff should respond to stacking.
+        /// </summary>
+        StackBehavior StackBehavior { get; }
+
+        /// <summary>
+        /// This field stores the current stack count of this Buff.
+        /// </summary>
+        int CurrentStacks { get; set; }
+
+        /// <summary>
+        /// This field stores the maximum stack count of this Buff.
+        /// </summary>
+        int MaximumStacks { get; }
+
+        /// <summary>
+        /// This property determines whether this Buff should be hidden or not.
+        /// </summary>
+        bool Hidden { get; }
+
+        /// <summary>
+        /// This method determines whether this buff is ready for disposal.
+        /// </summary>
+        /// <returns>Whether this buff is ready for disposal.</returns>
+        bool ShouldDispose();
+
+        /// <summary>
+        /// Register proper events to the Messenger.
+        /// This method should <b>not</b> contain any gameplay related logic
+        /// Refer to the <c>OnPossess()</c> for gameplay logic on possession
+        /// </summary>
+        void Register();
+
+        /// <summary>
+        /// Deregister pre registered events from the messenger.
+        /// </summary>
+        void Deregister();
+
+        /// <summary>
+        /// This event handler is called right after the owning <c>BuffContainer</c> possesses this buff
+        /// </summary>
+        void OnPossess();
+
+        /// <summary>
+        /// This event is raised when an existing Buff is attached again
+        /// </summary>
+        void OnStack();
+
+        /// <summary>
+        /// Executes the finalization logic of this buff
+        /// </summary>
+        void OnDone();
+
+        /// <summary>
+        /// Executes the termination logic of this buff
+        /// </summary>
+        void OnTerminate();
+
+        /// <summary>
+        /// Handles the tick event
+        /// </summary>
+        void OnTick();
+
+        /// <summary>
+        /// Begin the posession logic of this Buff
+        /// </summary>
+        /// <param name="possessor"></param>
+        void Possess(Character possessor);
+
+        /// <summary>
+        /// Immediately terminates this Buff.
+        /// Termination assures no other Tick will take place in this instance.
+        /// </summary>
+        void Terminate();
+
+        /// <summary>
+        /// Resets the possession time of this Buff, practically resetting its lifetime
+        /// </summary>
+        void ResetBeginning();
+    }
+
+    public interface IBuff<in T> : IBuff, IContextful<T> where T : IContext
+    {
+    }
+
+    public class Buff<T> : IBuff<T>, ITagged where T : class, IContext
     {
         /// <summary>
         /// Name of this Buff.
@@ -20,11 +120,8 @@ namespace Quark.Buffs
         /// This field stores the interval of calling the Tick method in seconds.
         /// </summary>
         protected float Interval;
-        
-        /// <summary>
-        /// This field stores the total duration of this Buff instance.
-        /// </summary>
-        protected float Duration;
+
+        public float Duration { get; set; }
 
         /// <summary>
         /// This flag determines whether the Tick method should be called every frame or not.
@@ -36,9 +133,6 @@ namespace Quark.Buffs
         /// </summary>
         protected bool TicksWhileSuspended;
 
-        /// <summary>
-        /// This field determines whether this Buff should be hidden or not.
-        /// </summary>
         public bool Hidden { get; protected set; }
 
         /// <summary>
@@ -46,90 +140,25 @@ namespace Quark.Buffs
         /// </summary>
         protected Character Possessor { get; private set; }
 
-        /// <summary>
-        /// The context this Buff resides in.
-        /// </summary>
-        public Cast Context { get; private set; }
+        public int MaximumStacks { get; protected set; }
 
-        /// <summary>
-        /// This field stores the maximum stack count of this Buff.
-        /// </summary>
-        public int MaxStacks = 1;
-
-        /// <summary>
-        /// This field stores the current stack count of this Buff.
-        /// </summary>
-        public int CurrentStacks = 1;
+        public int CurrentStacks { get; set; }
 
         /// <summary>
         /// This field stores the stacking behavior of this Buff.
         /// See <see cref="Buffs.StackBehavior"/>
         /// </summary>
-        public StackBehavior StackBehavior = StackBehavior.Nothing;
-
-        public void Dispose()
-        {
-            Terminate();
-        }
-
-#if DEBUG
-        public Buff()
-        {
-            Logger.GC("Buff::ctor");
-        }
-#endif
-        ~Buff()
-        {
-#if DEBUG
-            Logger.GC("Buff::dtor");
-#endif
-        }
+        public StackBehavior StackBehavior { get; set; }
 
         /// <summary>
-        /// Returns this Buffs identifier
+        /// This flag stores whether this Buff is ready to be garbage collected
         /// </summary>
-        public string Identifier
-        {
-            get { return MakeID(this, Context); }
-        }
-
-        /// <summary>
-        /// Makes an Identifier from a Buff and Cast instances
-        /// </summary>
-        /// <param name="buff">The Buff instance</param>
-        /// <param name="context">The Cast instance</param>
-        /// <returns>Buff identifier</returns>
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public static string MakeID(Buff buff, Cast context)
-        {
-            return buff.Name + "@" + (buff.Context == null ? "NaC" : buff.Context.Identifier);
-        }
-
-        /// <summary>
-        /// Makes an Identifier from a Buff and an identifier for a Cast context
-        /// </summary>
-        /// <param name="buff">The Buff instance</param>
-        /// <param name="contextID">A context identifier</param>
-        /// <returns>Buff identifier</returns>
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public static string MakeID(Buff buff, string contextID)
-        {
-            return buff.Name + "@" + contextID;
-        }
-
-        /// <summary>
-        /// Sets the Cast context where this Buff runs in
-        /// </summary>
-        /// <param name="context">The Cast context</param>
-        public void SetContext(Cast context)
-        {
-            Context = context;
-        }
+        public bool CleanedUp { get; protected set; }
 
         /// <summary>
         /// This ratio indicates the rate of its alive time to its total duration 
         /// </summary>
-        public virtual float LifeRatio
+        public float LifeRatio
         {
             get
             {
@@ -159,28 +188,35 @@ namespace Quark.Buffs
         private float _lastTick;
 
         /// <summary>
-        /// This flag stores whether this Buff is ready to be garbage collected
-        /// </summary>
-        public bool CleanedUp { get; protected set; }
-
-        /// <summary>
         /// This flag stores whether this Buff got terminated in the last Tick
         /// </summary>
-        bool _terminated;
+        private bool _terminated;
 
-        /// <summary>
-        /// Immediately terminates this Buff.
-        /// Termination assures no other Tick will take place in this instance.
-        /// </summary>
+        public void Dispose()
+        {
+            Terminate();
+        }
+
+        public Buff()
+        {
+#if DEBUG
+            Logger.GC("Buff::ctor");
+#endif
+        }
+
+        ~Buff()
+        {
+#if DEBUG
+            Logger.GC("Buff::dtor");
+#endif
+        }
+
         public void Terminate()
         {
             _terminated = true;
             _lastTick = Mathf.Infinity;
         }
 
-        /// <summary>
-        /// Resets the possession time of this Buff, practically resetting its lifetime
-        /// </summary>
         public void ResetBeginning()
         {
             _posessionTime = Time.timeSinceLevelLoad;
@@ -228,7 +264,7 @@ namespace Quark.Buffs
                 }
             }
 
-            ConditionCollection collection = DoneConditions;
+            ConditionCollection<T> collection = DoneConditions;
             bool isDone = false;
             collection.SetContext(Context);
             if (collection.Check(Possessor))
@@ -252,33 +288,18 @@ namespace Quark.Buffs
         /// This method determines whether this Buff instance should get disposed in the current frame.
         /// </summary>
         /// <returns>Whether this buff should get disposed.</returns>
-        internal bool ShouldDispose()
+        public bool ShouldDispose()
         {
             return (LifeRatio >= 1 || _terminated) && CleanedUp;
         }
 
-        /// <summary>
-        /// Register proper events to the Messenger.
-        /// This method should <b>not</b> contain any gameplay related logic
-        /// Refer to the <c>OnPossess()</c> for gameplay logic on possession
-        /// </summary>
-        protected virtual void Register()
+        public T Context { get; private set; }
+
+        public virtual void SetContext(IContext context)
         {
-            Messenger.AddListener("Update", Tick);
+            Context = (T)context;
         }
 
-        /// <summary>
-        /// Deregister pre registered events from the messenger.
-        /// </summary>
-        protected virtual void Deregister()
-        {
-            Messenger.RemoveListener("Update", Tick);
-        }
-
-        /// <summary>
-        /// Begin the posession logic of this Buff
-        /// </summary>
-        /// <param name="possessor"></param>
         public void Possess(Character possessor)
         {
             Possessor = possessor;
@@ -288,92 +309,78 @@ namespace Quark.Buffs
             OnPossess();
         }
 
-        /// <summary>
-        /// This event handler is called right after the owning <c>BuffContainer</c> possesses this buff
-        /// </summary>
+        public virtual void Register()
+        {
+            Messenger.AddListener("Update", Tick);
+        }
+
+        public virtual void Deregister()
+        {
+            Messenger.RemoveListener("Update", Tick);
+        }
+
         public virtual void OnPossess()
         {
-            Logger.Debug("Buff::OnPossess");
-
             PossessEffects.Run(Possessor, Context);
         }
 
-        /// <summary>
-        /// This event is raised when an existing Buff is attached again
-        /// </summary>
         public virtual void OnStack()
         {
-            Logger.Debug("Buff::OnStack");
-
             StackEffects.Run(Possessor, Context);
         }
 
-        /// <summary>
-        /// Handles the tick event
-        /// </summary>
-        protected virtual void OnTick()
+        public virtual void OnTick()
         {
-            Logger.Debug("Buff::OnTick");
-
             TickEffects.Run(Possessor, Context);
         }
 
-        /// <summary>
-        /// Executes the finalization logic of this buff
-        /// </summary>
-        protected virtual void OnDone()
+        public virtual void OnDone()
         {
-            Logger.Debug("Buff::OnDone");
-
             DoneEffects.Run(Possessor, Context);
             CleanedUp = true;
         }
 
-        /// <summary>
-        /// Executes the termination logic of this buff
-        /// </summary>
-        protected virtual void OnTerminate()
+        public virtual void OnTerminate()
         {
             Logger.Debug("Buff::OnTerminate");
-
-            TerminateEffects.Run(Possessor, Context);
             CleanedUp = true;
+            TerminateEffects.Run(Possessor, Context);
         }
 
         /// <summary>
         /// These effects are applied when this Buff is first possessed
         /// </summary>
-        protected virtual EffectCollection PossessEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<T> PossessEffects { get { return new EffectCollection<T>(); } }
 
         /// <summary>
         /// These effects are applied when another instance of this Buff is attached to the possessor
         /// </summary>
-        protected virtual EffectCollection StackEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<T> StackEffects { get { return new EffectCollection<T>(); } }
 
         /// <summary>
         /// These effects are applied on every interval
         /// </summary>
-        protected virtual EffectCollection TickEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<T> TickEffects { get { return new EffectCollection<T>(); } }
 
         /// <summary>
         /// These effects are applied when this Buff finishes its life time successfully
         /// </summary>
-        protected virtual EffectCollection DoneEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<T> DoneEffects { get { return new EffectCollection<T>(); } }
 
         /// <summary>
         /// These effeccts are applied when this Buff terminates (fails finish its life time)
         /// </summary>
-        protected virtual EffectCollection TerminateEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<T> TerminateEffects { get { return new EffectCollection<T>(); } }
 
         /// <summary>
         /// These conditions are checked to determine whether this Buff should be done
         /// </summary>
-        protected virtual ConditionCollection DoneConditions { get { return new ConditionCollection { new FalseCondition() }; } }
+        protected virtual ConditionCollection<T> DoneConditions { get { return new ConditionCollection<T> { new FalseCondition() }; } }
 
         /// <summary>
         /// These conditions are checked to determine whether this Buff should terminate
         /// </summary>
-        protected virtual ConditionCollection TerminateConditions { get { return new ConditionCollection { new FalseCondition() }; } }
+        protected virtual ConditionCollection<T> TerminateConditions { get { return new ConditionCollection<T> { new FalseCondition() }; } }
 
         #region Tagging
         /// <summary>
@@ -391,6 +398,14 @@ namespace Quark.Buffs
             return Tags.Has(tag);
         }
         #endregion
+
+        /// <summary>
+        /// Returns this Buffs identifier
+        /// </summary>
+        public string Identifier
+        {
+            get { return Name + "@" + Context.Identifier; }
+        }
     }
 
     /// <summary>

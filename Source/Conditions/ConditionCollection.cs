@@ -1,21 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections;
+using Quark.Conditions;
+using Quark.Contexts;
 using UnityEngine;
 using Quark.Utilities;
 
 namespace Quark
 {
-    public class ConditionCollection: Condition, IEnumerable<Condition>, IDeepCopiable<ConditionCollection>, IDisposable
+    public class ConditionCollection<T> : Condition<T>, IEnumerable<ICondition>, IDeepCopiable<ConditionCollection<T>>, IDisposable where T : class, IContext
     {
-        private List<Condition> _conditions;
+        private List<ICondition> _conditions;
 
         /// <summary>
         /// Initialize a new condition collection
         /// </summary>
         public ConditionCollection()
         {
-            _conditions = new List<Condition>();
+            _conditions = new List<ICondition>();
         }
 
         ~ConditionCollection()
@@ -25,16 +27,16 @@ namespace Quark
 
         public void Dispose()
         {
-            foreach (Condition condition in _conditions)
+            foreach (ICondition condition in _conditions)
                 condition.SetContext(null);
             _conditions.Clear();
             _conditions = null;
         }
 
-        public ConditionCollection DeepCopy()
+        public ConditionCollection<T> DeepCopy()
         {
-            ConditionCollection newCollection = new ConditionCollection();
-            newCollection._conditions = new List<Condition>(_conditions);
+            ConditionCollection<T> newCollection = new ConditionCollection<T>();
+            newCollection._conditions = new List<ICondition>(_conditions);
             return newCollection;
         }
 
@@ -47,12 +49,12 @@ namespace Quark
         /// Add a new condition to this collection
         /// </summary>
         /// <param name="condition">The condition to be added</param>
-        public void Add(Condition condition)
+        public void Add(ICondition<T> condition)
         {
             _conditions.Add(condition);
         }
 
-        public IEnumerator<Condition> GetEnumerator()
+        public IEnumerator<ICondition> GetEnumerator()
         {
             return _conditions.GetEnumerator();
         }
@@ -64,7 +66,7 @@ namespace Quark
 
         public override bool Check()
         {
-            foreach (Condition condition in _conditions)
+            foreach (ICondition condition in _conditions)
             {
                 condition.SetContext(Context);
                 if (!condition.Check())
@@ -75,7 +77,7 @@ namespace Quark
 
         public override bool Check(Character character)
         {
-            foreach (Condition condition in _conditions)
+            foreach (ICondition condition in _conditions)
             {
                 condition.SetContext(Context);
                 if (!condition.Check(character))
@@ -86,7 +88,7 @@ namespace Quark
 
         public override bool Check(Targetable target)
         {
-            foreach (Condition condition in _conditions)
+            foreach (ICondition condition in _conditions)
             {
                 condition.SetContext(Context);
                 if (!condition.Check(target))
@@ -97,7 +99,7 @@ namespace Quark
 
         public override bool Check(Vector3 point)
         {
-            foreach (Condition condition in _conditions)
+            foreach (ICondition condition in _conditions)
             {
                 condition.SetContext(Context);
                 if (!condition.Check(point))

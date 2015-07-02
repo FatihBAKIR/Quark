@@ -5,15 +5,13 @@ namespace Quark.Utilities
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public interface Identifiable
     {
+        /// <summary>
+        /// This property gets the identifier string for the object.
+        /// </summary>
         string Identifier
         {
             get;
         }
-    }
-
-    public interface IMessage
-    {
-        void Broadcast();
     }
 
     public interface IDeepCopiable

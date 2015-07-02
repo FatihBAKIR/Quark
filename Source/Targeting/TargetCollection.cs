@@ -27,6 +27,25 @@ namespace Quark
             _characters.Add(target);
         }
 
+        public void AddRange(TargetCollection targets)
+        {
+            foreach (TargetUnion target in targets)
+            {
+                switch (target.Type)
+                {
+                    case TargetType.Point:
+                        Add(target.Point);
+                        break;
+                    case TargetType.Targetable:
+                        Add(target.Targetable);
+                        break;
+                    case TargetType.Character:
+                        Add(target.Character);
+                        break;
+                }
+            }
+        }
+
         public Vector3 FirstPoint
         {
             get

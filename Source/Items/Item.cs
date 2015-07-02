@@ -1,4 +1,5 @@
 ﻿using Quark.Buffs;
+using Quark.Contexts;
 using Quark.Spells;
 using Quark.Utilities;
 
@@ -31,11 +32,12 @@ namespace Quark
             Carrier = carrier;
         }
 
-        protected Cast Context {
-            get { return Cast.PrepareCast(Carrier, this); }
+        protected IContext Context
+        {
+            get { return Carrier.Context; }
         }
 
-        public virtual void OnGrab()
+        /*public virtual void OnGrab()
         {
             GrabEffects.Run(Carrier, Context);
         }
@@ -87,7 +89,7 @@ namespace Quark
         protected virtual EffectCollection StackEffects { get { return new EffectCollection(); } }
         protected virtual EffectCollection EquipEffects { get { return new EffectCollection(); } }
         protected virtual EffectCollection UnequipEffects { get { return new EffectCollection(); } }
-        protected virtual EffectCollection DropEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection DropEffects { get { return new EffectCollection(); } }*/
         protected virtual Spell ActiveSpell { get { return null; } }
 
         public virtual string Identifier

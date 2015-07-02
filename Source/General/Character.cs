@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Quark.Attributes;
 using Quark.Buffs;
+using Quark.Contexts;
+using Quark.Effects;
 using Quark.Spells;
 using Quark.Utilities;
 // ReSharper disable ParameterHidesMember
@@ -10,12 +12,12 @@ namespace Quark
     public class Character : Targetable
     {
         AttributeCollection _attributes;
-        List<Cast> _casting;
+        List<ICastContext> _casting;
         BuffContainer _regularBuffs;
         BuffContainer _hiddenBuffs;
         ItemCollection _inventory;
 
-        ConditionCollection _interruptConditions;
+        ConditionCollection<ICastContext> _interruptConditions;
 
         /// <summary>
         /// This property stores whether this Character is suspended or not.
@@ -47,16 +49,17 @@ namespace Quark
             _attributes.SetCarrier(this);
             _regularBuffs = new BuffContainer(this);
             _hiddenBuffs = new BuffContainer(this);
-            _casting = new List<Cast>();
+            _casting = new List<ICastContext>();
             _interruptConditions = QuarkMain.GetInstance().Configuration.DefaultInterruption.DeepCopy();
+            Context = new Context(this);
 
             _attributes.StatManipulated += delegate(Character source, Stat stat, float change)
             {
                 Logger.Debug("Character::HandleStatManipulation");
                 OnStatManipulated(stat, change);
             };
-            _regularBuffs.BuffDetached += delegate(Character source, Buff buff) { OnBuffDetached(buff); };
-            _hiddenBuffs.BuffDetached += delegate(Character source, Buff buff) { OnBuffDetached(buff); };
+            _regularBuffs.BuffDetached += delegate(Character source, IBuff buff) { OnBuffDetached(buff); };
+            _hiddenBuffs.BuffDetached += delegate(Character source, IBuff buff) { OnBuffDetached(buff); };
 
             Configure();
         }
@@ -64,22 +67,22 @@ namespace Quark
         /// <summary>
         /// These effects are applied when this Character is instantiated.
         /// </summary>
-        protected virtual EffectCollection ConfigurationEffects
+        protected virtual EffectCollection<IContext> ConfigurationEffects
         {
             get
             {
-                return new EffectCollection();
+                return new EffectCollection<IContext>();
             }
         }
 
         /// <summary>
         /// These effects are applied when the GameObject this Character belongs is destroyed.
         /// </summary>
-        protected virtual EffectCollection DestructionEffects
+        protected virtual EffectCollection<IContext> DestructionEffects
         {
             get
             {
-                return new EffectCollection();
+                return new EffectCollection<IContext>();
             }
         }
 
@@ -88,7 +91,7 @@ namespace Quark
         /// </summary>
         protected virtual void Configure()
         {
-            ConfigurationEffects.Run(this);
+            ConfigurationEffects.Run(this, Context);
         }
 
         void OnDestroy()
@@ -108,15 +111,15 @@ namespace Quark
             _hiddenBuffs.Dispose();
             _hiddenBuffs = null;
 
-            List<Cast> casts = _casting;
+            List<ICastContext> casts = _casting;
 
             _casting.Clear();
             _casting = null;
 
-            foreach (Cast cast in casts)
+            foreach (ICastContext cast in casts)
             {
                 cast.Interrupt();
-                cast.Clear(Stages.Failed);
+                cast.Clear();
             }
             
             _interruptConditions.Dispose();
@@ -128,7 +131,7 @@ namespace Quark
         /// </summary>
         protected virtual void Destruction()
         {
-            DestructionEffects.Run(this);
+            DestructionEffects.Run(this, Context);
         }
 
 #if DEBUG
@@ -144,6 +147,10 @@ namespace Quark
             Logger.GC("Character::dtor");
         }
 #endif
+        /// <summary>
+        /// This property stores the Context of this Character.
+        /// </summary>
+        public IContext Context { get; private set; }
 
         /// <summary>
         /// Gets the <see cref="Attribute"/> belonging to this Character with the given tag
@@ -168,7 +175,7 @@ namespace Quark
         /// <summary>
         /// Returns a read-only collection of the casts this Character is casting
         /// </summary>
-        public IList<Cast> Casts
+        public IList<ICastContext> Casts
         {
             get
             {
@@ -198,7 +205,7 @@ namespace Quark
         /// Add the given <see cref="Cast"/> context to this character.
         /// </summary>
         /// <param name="cast">A <see cref="Cast"/> context.</param>
-        public void AddCast(Cast cast)
+        public void AddCast(ICastContext cast)
         {
             if (CanCast(cast.Spell))
             {
@@ -210,7 +217,7 @@ namespace Quark
         /// Removes the given <see cref="Cast"/> context from this character.
         /// </summary>
         /// <param name="cast"></param>
-        public void ClearCast(Cast cast)
+        public void ClearCast(ICastContext cast)
         {
             if (_casting != null)
                 _casting.Remove(cast);
@@ -241,7 +248,7 @@ namespace Quark
             get { return _inventory.Items(); }
         }
 
-        public void AttachBuff(Buff buff)
+        public void AttachBuff(IBuff buff)
         {
             if (buff.Hidden)
                 _hiddenBuffs.AttachBuff(buff);
@@ -254,7 +261,7 @@ namespace Quark
         /// Returns a readonly collection of the Buffs being carried by this Character
         /// </summary>
         /// <value>The buffs.</value>
-        public IList<Buff> Buffs
+        public IList<IBuff> Buffs
         {
             get
             {
@@ -267,12 +274,12 @@ namespace Quark
         /// </summary>
         /// <returns>The buff instance being carried by this Character.</returns>
         /// <param name="buff">Example of the Buff to find. Only types should match.</param>
-        public Buff GetBuff(Buff buff)
+        public IBuff GetBuff(IBuff buff)
         {
             return _regularBuffs.GetBuff(buff);
         }
 
-        public Buff GetHidden(Buff hidden)
+        public IBuff GetHidden(IBuff hidden)
         {
             return _hiddenBuffs.GetBuff(hidden);
         }
@@ -290,7 +297,7 @@ namespace Quark
             }
         }
 
-        public ConditionCollection InterruptConditions
+        public ConditionCollection<ICastContext> InterruptConditions
         {
             get
             {
@@ -298,15 +305,15 @@ namespace Quark
             }
         }
 
-        void OnBuffAttached(Buff buff)
+        void OnBuffAttached(IBuff buff)
         {
-            Messenger<Character, Buff>.Broadcast("BuffAttached", this, buff);
+            Messenger<Character, IBuff>.Broadcast("BuffAttached", this, buff);
             BuffAttached(this, buff);
         }
 
-        void OnBuffDetached(Buff buff)
+        void OnBuffDetached(IBuff buff)
         {
-            Messenger<Character, Buff>.Broadcast("BuffDetached", this, buff);
+            Messenger<Character, IBuff>.Broadcast("BuffDetached", this, buff);
             BuffDetached(this, buff);
         }
 

@@ -41,6 +41,9 @@ namespace Quark
 
         public bool AddItem(Item item)
         {
+            return false;
+            
+            /*
             if (!CanAdd())
                 return false;
 
@@ -62,6 +65,7 @@ namespace Quark
             item.OnGrab();
 
             return true;
+             */
         }
 
         public bool HasItem(Item item)

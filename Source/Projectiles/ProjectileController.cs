@@ -1,4 +1,5 @@
 ﻿using System;
+using Quark.Contexts;
 using Quark.Spells;
 using Quark.Utilities;
 using UnityEngine;
@@ -22,13 +23,14 @@ namespace Quark.Projectiles
         /// <summary>
         /// Context of this controller.
         /// </summary>
-        protected Cast Context { get; private set; }
+        //protected Cast Context { get; private set; }
+        protected IProjectileContext Context { get; private set; }
 
         /// <summary>
         /// This method sets the context this controller runs in.
         /// </summary>
         /// <param name="context">The controller.</param>
-        public virtual void SetContext(Cast context)
+        public virtual void SetContext(IProjectileContext context)
         {
             Context = context;
         }
@@ -40,8 +42,8 @@ namespace Quark.Projectiles
         /// <returns>Initial position of Projectile.</returns
         public virtual Vector3 InitialPoint(TargetUnion target)
         {
-            Vector3 point = Context.CastBeginPoint;
-            point += Utils.VectorOnPlane(Context.Caster.transform.forward, Planes.XZ) + new Vector3(0, 1, 0);
+            Vector3 point = Context.Source.transform.position + Context.Source.transform.forward;
+            point += new Vector3(0, Context.Source.HeightOffset, 0);
             return point;
         }
 
@@ -50,7 +52,7 @@ namespace Quark.Projectiles
         /// </summary>
         public virtual void Initialize()
         {
-            
+
         }
 
         protected ControlType Type;
@@ -73,7 +75,7 @@ namespace Quark.Projectiles
                     Projectile.transform.Translate(CalculateMovement);
                     break;
                 case ControlType.Absolute:
-                    Projectile.transform.position = Utils.AlignVector(CalculateAbsolute, Projectile.CastRotation) + Projectile.InitialPosition;
+                    Projectile.transform.position = Utils.AlignVector(CalculateAbsolute, Projectile.CastRotation) + Context.TravelBeginPosition;
                     break;
             }
         }
@@ -85,7 +87,7 @@ namespace Quark.Projectiles
         /// </summary>
         protected virtual Vector3 CalculateMovement
         {
-            get { throw new NotImplementedException();}
+            get { throw new NotImplementedException(); }
         }
 
         /// <summary>
@@ -104,9 +106,9 @@ namespace Quark.Projectiles
         /// <param name="hitObject">The hit object.</param>
         /// <returns>Whether the hit is valid or not.</returns
         public virtual bool Validate(Targetable hitObject)
-        {            
+        {
             // By default, we don't let projectiles hit the caster.
-            return !hitObject.Equals(Context.Caster);
+            return !hitObject.Equals(Context.Source);
         }
 
         /// <summary>
@@ -129,7 +131,7 @@ namespace Quark.Projectiles
         /// </summary>
         protected Vector3 TargetPoint
         {
-            get { return Projectile.Target.AsPoint() + Projectile.TargetOffset; }
+            get { return Context.Target.AsPoint() + Context.TargetOffset; }
         }
 
         /// <summary>
@@ -138,7 +140,7 @@ namespace Quark.Projectiles
         /// <param name="newTarget">The new target.</param>
         public virtual void ChangeTarget(TargetUnion newTarget)
         {
-            Projectile.SetTarget(newTarget);
+            Context.Target = newTarget;
         }
 
         /// <summary>
@@ -158,7 +160,7 @@ namespace Quark.Projectiles
         /// <value>Travel time in seconds.</value>
         protected float TravelTime
         {
-            get { return Time.timeSinceLevelLoad - Projectile.InitialTime; }
+            get { return Context.TravelTime; }
         }
 
         /// <summary>
@@ -167,10 +169,10 @@ namespace Quark.Projectiles
         /// <value>The distance.</value>
         protected float TravelDistance
         {
-            get { return Vector3.Distance(Projectile.transform.position, Projectile.InitialPosition); }
+            get { return Context.TravelDistance; }
         }
     }
-    
+
     /// <summary>
     /// This enumeration represents how a ProjectileController calculates motion of a Projectile.
     /// </summary>

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Quark.Spells;
+using Quark.Contexts;
 using UnityEngine;
 
-namespace Quark
+namespace Quark.Effects
 {
     /// <summary>
     /// This class is designed for containing, mutating and running some effects
@@ -12,16 +12,16 @@ namespace Quark
     /// The family of Run functions return the instance itself so the running of the effects on multiple target types can be serialized like:
     /// Container.Run().Run(character).Run(point)... etc.
     /// </summary>
-    public class EffectCollection : Effect, IEnumerable<Effect>, IDisposable
+    public class EffectCollection<T> : Effect<T>, IEnumerable<IEffect>, IDisposable where T : class, IContext
     {
-        private List<Effect> _effects;
+        private List<IEffect> _effects;
 
         /// <summary>
         /// Initialize a new effect collection
         /// </summary>
         public EffectCollection()
         {
-            _effects = new List<Effect>();
+            _effects = new List<IEffect>();
         }
 
         ~EffectCollection()
@@ -31,7 +31,7 @@ namespace Quark
 
         public void Dispose()
         {
-            foreach (Effect effect in _effects)
+            foreach (IEffect effect in _effects)
                 effect.SetContext(null);
             _effects.Clear();
             _effects = null;
@@ -41,7 +41,7 @@ namespace Quark
         /// Add a new effect to this collection
         /// </summary>
         /// <param name="effect">The effect to be added</param>
-        public void Add(Effect effect)
+        public void Add(IEffect<T> effect)
         {
             _effects.Add(effect);
         }
@@ -50,13 +50,13 @@ namespace Quark
         /// Add multiple effects from another collection.
         /// </summary>
         /// <param name="range">Other collection.</param>
-        public void AddRange(EffectCollection range)
+        public void AddRange(EffectCollection<T> range)
         {
-            foreach (Effect effect in range._effects)
+            foreach (IEffect<T> effect in range._effects)
                 Add(effect);
         }
 
-        public IEnumerator<Effect> GetEnumerator()
+        public IEnumerator<IEffect> GetEnumerator()
         {
             return _effects.GetEnumerator();
         }
@@ -79,9 +79,9 @@ namespace Quark
         /// </summary>
         /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
-        public EffectCollection Run(Cast context = null)
+        public EffectCollection<T> Run(T context = null)
         {
-            foreach (Effect effect in _effects)
+            foreach (IEffect effect in _effects)
             {
                 effect.SetContext(context);
                 effect.Apply();
@@ -96,9 +96,9 @@ namespace Quark
         /// <param name="target">The target vector</param>
         /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
-        public EffectCollection Run(Vector3 target, Cast context = null)
+        public EffectCollection<T> Run(Vector3 target, T context = null)
         {
-            foreach (Effect effect in _effects)
+            foreach (IEffect effect in _effects)
             {
                 effect.SetContext(context);
                 effect.Apply(target);
@@ -113,9 +113,9 @@ namespace Quark
         /// <param name="target">The target character</param>
         /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
-        public EffectCollection Run(Character target, Cast context = null)
+        public EffectCollection<T> Run(Character target, T context = null)
         {
-            foreach (Effect effect in _effects)
+            foreach (IEffect effect in _effects)
             {
                 effect.SetContext(context);
                 effect.Apply(target);
@@ -130,9 +130,9 @@ namespace Quark
         /// <param name="target">The target targetable</param>
         /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
-        public EffectCollection Run(Targetable target, Cast context = null)
+        public EffectCollection<T> Run(Targetable target, T context = null)
         {
-            foreach (Effect effect in _effects)
+            foreach (IEffect effect in _effects)
             {
                 effect.SetContext(context);
                 effect.Apply(target);
@@ -147,7 +147,7 @@ namespace Quark
         /// <param name="targets">The target vectors</param>
         /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
-        public EffectCollection Run(Vector3[] targets, Cast context = null)
+        public EffectCollection<T> Run(Vector3[] targets, T context = null)
         {
             foreach (Vector3 target in targets)
                 Run(target, context);
@@ -161,7 +161,7 @@ namespace Quark
         /// <param name="targets">The target characters</param>
         /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
-        public EffectCollection Run(Character[] targets, Cast context = null)
+        public EffectCollection<T> Run(Character[] targets, T context = null)
         {
             foreach (Character target in targets)
                 Run(target, context);
@@ -175,7 +175,7 @@ namespace Quark
         /// <param name="targets">The target targetables</param>
         /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
-        public EffectCollection Run(Targetable[] targets, Cast context = null)
+        public EffectCollection<T> Run(Targetable[] targets, T context = null)
         {
             foreach (Targetable target in targets)
                 Run(target, context);
@@ -190,10 +190,9 @@ namespace Quark
         /// <param name="targets">The targets</param>
         /// <param name="context">The Cast context for the Effects to run</param>
         /// <returns>This collection itself</returns>
-        public EffectCollection Run(TargetCollection targets, Cast context = null)
+        public EffectCollection<T> Run(TargetCollection targets, T context = null)
         {
-            return this
-                .Run(context)
+            return Run(context)
                 .Run(targets.Points, context)
                 .Run(targets.Targetables, context)
                 .Run(targets.Characters, context);
@@ -229,7 +228,7 @@ namespace Quark
         /// <param name="lhs">Collection to add to.</param>
         /// <param name="rhs">Collection to add from.</param>
         /// <returns>The left hand side collection.</returns>
-        public static EffectCollection operator +(EffectCollection lhs, EffectCollection rhs)
+        public static EffectCollection<T> operator +(EffectCollection<T> lhs, EffectCollection<T> rhs)
         {
             lhs.AddRange(rhs);
             return lhs;

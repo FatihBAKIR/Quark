@@ -7,9 +7,10 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Quark</RootNamespace>
     <AssemblyName>Quark</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <ProductVersion>12.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -23,6 +24,7 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <DocumentationFile>..\Binaries\Debug\Quark.XML</DocumentationFile>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -33,6 +35,7 @@
     <ConsolePause>False</ConsolePause>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <DocumentationFile>..\Binaries\Release\Quark.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -45,10 +48,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Exceptions\Targeting.cs" />
+    <Compile Include="Contexts\BuffContext.cs" />
+    <Compile Include="Contexts\CastContext.cs" />
+    <Compile Include="Contexts\Context.cs" />
+    <Compile Include="Contexts\HitContext.cs" />
+    <Compile Include="Contexts\ProjectileContext.cs" />
     <Compile Include="General\Targetable.cs" />
     <Compile Include="Projectiles\ProjectileController.cs" />
-    <Compile Include="Spells\CastError.cs" />
     <Compile Include="Targeting\TargetMacro.cs" />
     <Compile Include="Utilities\AssemblyInfo.cs" />
     <Compile Include="Utilities\Delegates.cs" />
@@ -65,7 +71,6 @@
     <Compile Include="Spells\Spell.cs" />
     <Compile Include="Utilities\Interfaces.cs" />
     <Compile Include="Utilities\EventDictionary.cs" />
-    <Compile Include="Spells\Cast.cs" />
     <Compile Include="Utilities\MetaData.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\ItemCollection.cs" />

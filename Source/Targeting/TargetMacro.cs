@@ -1,4 +1,5 @@
-﻿using Quark.Spells;
+﻿using Quark.Contexts;
+using Quark.Spells;
 using Quark.Utilities;
 using UnityEngine;
 
@@ -42,7 +43,7 @@ namespace Quark.Targeting
         /// <summary>
         /// The context this TargetMacro resides in.
         /// </summary>
-        protected Cast Context { get; private set; }
+        protected IContext Context { get; private set; }
 
 #if DEBUG
         public TargetMacro()
@@ -57,7 +58,7 @@ namespace Quark.Targeting
 #endif
 
         /// <summary>
-        /// Begins the targeting procedure for this macro
+        /// This method should start the targeting logic for this target macro.
         /// </summary>
         public virtual void Run()
         {
@@ -89,17 +90,9 @@ namespace Quark.Targeting
         /// This method sets the context for this TargetMacro to run in.
         /// </summary>
         /// <param name="context">The context.</param>
-        /// <param name="withoutCallbacks">If this flag is set, callbacks to the context will not be registered.</param>
-        public virtual void SetContext(Cast context, bool withoutCallbacks = false)
+        public virtual void SetContext(IContext context)
         {
             Context = context;
-            if (withoutCallbacks)
-                return;
-            TargetingSuccess += context.TargetingDone;
-            TargetingFailed += context.TargetingFail;
-            TargetSelected += context.AddTarget;
-            CharacterSelected += context.AddTarget;
-            PointSelected += context.AddTarget;
         }
 
         /// <summary>
@@ -109,8 +102,7 @@ namespace Quark.Targeting
         {
             get
             {
-                Logger.Assert(Context != null);
-                return Context.Caster;
+                return Context.Source;
             }
         }
 

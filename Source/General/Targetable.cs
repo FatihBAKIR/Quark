@@ -94,7 +94,7 @@ namespace Quark
         public Targetable Other { get; private set; }
 
         /// <summary>
-        /// Source Targetable's position
+        /// Origin Targetable's position
         /// </summary>
         public Vector3 SourcePosition { get { return Source.transform.position; } }
 

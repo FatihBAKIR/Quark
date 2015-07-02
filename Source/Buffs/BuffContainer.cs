@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Quark.Contexts;
 using Quark.Utilities;
 
 namespace Quark.Buffs
@@ -7,18 +8,18 @@ namespace Quark.Buffs
     public class BuffContainer : IDisposable
     {
         Character _owner;
-        private Dictionary<string, Buff> _buffs;
+        private Dictionary<string, IBuff> _buffs;
 
         public BuffContainer(Character owner)
         {
             _owner = owner;
-            _buffs = new Dictionary<string, Buff>();
+            _buffs = new Dictionary<string, IBuff>();
             Messenger.AddListener("Update", Update);
         }
 
-        public IList<Buff> Buffs
+        public IList<IBuff> Buffs
         {
-            get { return new List<Buff>(_buffs.Values); }
+            get { return new List<IBuff>(_buffs.Values); }
         }
 
         public void Dispose()
@@ -26,7 +27,7 @@ namespace Quark.Buffs
             Messenger.RemoveListener("Update", Update);
             _owner = null;
 
-            foreach (Buff buff in _buffs.Values)
+            foreach (IBuff buff in _buffs.Values)
             {
                 buff.Dispose();
             }
@@ -35,9 +36,9 @@ namespace Quark.Buffs
             _buffs = null;
         }
 
-        public void AttachBuff(Buff buff)
+        public void AttachBuff(IBuff buff)
         {
-            Buff existing;
+            IBuff existing;
             if ((existing = GetBuff(buff)) != null)
             {
                 StackBuff(existing);
@@ -47,13 +48,13 @@ namespace Quark.Buffs
             buff.Possess(_owner);
         }
 
-        void StackBuff(Buff buff)
+        void StackBuff(IBuff buff)
         {
             if (buff.StackBehavior == StackBehavior.Nothing)
                 return;
             if (Utils.Checkflag(buff.StackBehavior, StackBehavior.IncreaseStacks))
             {
-                if (buff.CurrentStacks < buff.MaxStacks)
+                if (buff.CurrentStacks < buff.MaximumStacks)
                 {
                     buff.CurrentStacks++;
                     buff.OnStack();
@@ -66,7 +67,7 @@ namespace Quark.Buffs
         }
 
 
-        public T HasBuff<T>() where T : Buff
+        public T HasBuff<T>() where T : class, IBuff
         {
             /*
             foreach (Buff buff in _buffs)
@@ -81,7 +82,7 @@ namespace Quark.Buffs
         /// </summary>
         /// <param name="buff">Buff to find by Identifier.</param>
         /// <returns>Buff instance in the container.</returns>
-        public Buff GetBuff(Buff buff)
+        public IBuff GetBuff(IBuff buff)
         {
             string id = buff.Identifier;
             return _buffs.ContainsKey(id) ? _buffs[id] : null;
@@ -97,7 +98,7 @@ namespace Quark.Buffs
         void Update()
         {
             _toDispose = new List<string>();
-            foreach (Buff buff in _buffs.Values)
+            foreach (IBuff buff in _buffs.Values)
             {
                 if (buff.ShouldDispose())
                 {
@@ -107,7 +108,7 @@ namespace Quark.Buffs
 
             foreach (string id in _toDispose)
             {
-                Buff toDetach = _buffs[id];
+                IBuff toDetach = _buffs[id];
                 _buffs.Remove(id);
                 BuffDetached(_owner, toDetach);
             }

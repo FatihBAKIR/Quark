@@ -18,7 +18,7 @@ namespace Quark
     /// </summary>
     /// <param name="source">Character that possesses the Buff</param>
     /// <param name="buff">The Buff.</param>
-    public delegate void BuffDel(Character source, Buff buff);
+    public delegate void BuffDel(Character source, IBuff buff);
 
     /// <summary>
     /// This delegate is used for events related with collisions.

@@ -99,7 +99,7 @@ namespace Quark
         /// <summary>
         /// Adds an attribute interaction to this expression.
         /// </summary>
-        /// <param name="source">Source character.</param>
+        /// <param name="source">Origin character.</param>
         /// <param name="tag">Attribute or stat tag.</param>
         /// <param name="multiplier">Multiplier.</param>
         public void Add(Source source, string tag, float multiplier)

@@ -1,23 +1,52 @@
-﻿using Quark.Spells;
-using Quark.Utilities;
+﻿using Quark.Contexts;
 using UnityEngine;
 
-namespace Quark
+namespace Quark.Effects
 {
-    public class Effect : ITagged
+    public interface IEffect : IContextful
+    {
+        /// <summary>
+        /// Applies this effect without a target.
+        /// </summary>
+        void Apply();
+
+        /// <summary>
+        /// Applies this effect on the specified target Character.
+        /// </summary>
+        /// <param name='target'>
+        /// Target Character.
+        /// </param>
+        void Apply(Character target);
+
+        /// <summary>
+        /// Applies this effect on the specified target Vector3.
+        /// </summary>
+        /// <param name='point'>  
+        /// Target Point.
+        /// </param>
+        void Apply(Vector3 point);
+
+        /// <summary>
+        /// Applies this effect on the specified non character targetable
+        /// </summary>
+        /// <param name="target">Targetable.</param>
+        void Apply(Targetable target);
+    }
+
+    public interface IEffect<in T> : IEffect, IContextful<T> where T : IContext
+    {
+    }
+
+    public abstract class Effect<T> : IEffect<T>, ITagged where T : IContext
     {
         /// <summary>
         /// The context this Effect should apply in.
         /// </summary>
-        public Cast Context { get; private set; }
+        public T Context { get; private set; }
 
-        /// <summary>
-        /// Sets the context of this Effect.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        public void SetContext(Cast context)
+        public virtual void SetContext(IContext context)
         {
-            Context = context;
+            Context = (T)context;
         }
 
         /// <summary>
@@ -71,87 +100,5 @@ namespace Quark
             return Tags.Has(tag);
         }
         #endregion
-    }
-
-    public enum EffectSource
-    {
-        Spell,
-        Custom
-    }
-
-    public class EffectArgs : IMessage
-    {
-        public Effect Effect
-        {
-            get;
-            protected set;
-        }
-
-        public TargetUnion Target
-        {
-            get;
-            protected set;
-        }
-
-        public EffectSource Source
-        {
-            get
-            {
-                return Effect.Context != null ? EffectSource.Spell : EffectSource.Custom;
-            }
-        }
-
-        public Cast Context
-        {
-            get
-            {
-                return Effect.Context;
-            }
-        }
-
-        public Character Caster
-        {
-            get
-            {
-                return Context.Caster;
-            }
-        }
-
-        public Spell Spell
-        {
-            get
-            {
-                return Context.Spell;
-            }
-        }
-
-        public EffectArgs(Effect effect)
-        {
-            Effect = effect;
-            Target = new TargetUnion();
-        }
-
-        public EffectArgs(Effect effect, Vector3 target)
-        {
-            Effect = effect;
-            Target = new TargetUnion(target);
-        }
-
-        public EffectArgs(Effect effect, Targetable target)
-        {
-            Effect = effect;
-            Target = new TargetUnion(target);
-        }
-
-        public EffectArgs(Effect effect, Character target)
-        {
-            Effect = effect;
-            Target = new TargetUnion(target);
-        }
-
-        public virtual void Broadcast()
-        {
-            Messenger<EffectArgs>.Broadcast("EffectApplied", this);
-        }
     }
 }

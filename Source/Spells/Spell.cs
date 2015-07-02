@@ -1,4 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using Quark.Conditions;
+using Quark.Contexts;
+using Quark.Effects;
 using Quark.Projectiles;
 using Quark.Targeting;
 using Quark.Utilities;
@@ -55,36 +58,12 @@ namespace Quark.Spells
             }
         }
 
-        /// <summary>
+        /// <summary>s
         /// Identifier of this Spell
         /// </summary>
         public string Identifier
         {
-            get { return MakeID(this, Context); }
-        }
-
-        /// <summary>
-        /// Generates an identifier for a given Spell in a given Context.
-        /// </summary>
-        /// <param name="spell">The Spell</param>
-        /// <param name="context">The Context</param>
-        /// <returns>Identifier</returns>
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public static string MakeID(Spell spell, Cast context)
-        {
-            return spell.Name + "@" + context.Caster.Identifier;
-        }
-
-        /// <summary>
-        /// Generates an identifier for a given Spell casted by a given Character.
-        /// </summary>
-        /// <param name="spell">The Spell</param>
-        /// <param name="caster">The Caster</param>
-        /// <returns>Identifier</returns>
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public static string MakeID(Spell spell, Character caster)
-        {
-            return spell.Name + "@" + caster.Identifier;
+            get { return Name; }
         }
 
         /// <summary>
@@ -160,15 +139,15 @@ namespace Quark.Spells
         }
 
         /// <summary>
-        /// The context this Spell instance resides in.
+        /// The CastContext this Spell is being casetd in.
         /// </summary>
-        protected Cast Context { get; private set; }
+        protected CastContext Context { get; private set; }
 
         /// <summary>
-        /// Introduce the Cast context which is invoking this Spell instance.
+        /// Sets the CastContext this Spell is being casted in.
         /// </summary>
-        /// <param name="context">The Cast</param>
-        public void SetContext(Cast context)
+        /// <param name="context">The CastContext.</param>
+        public void SetContext(CastContext context)
         {
             Context = context;
         }
@@ -181,17 +160,17 @@ namespace Quark.Spells
         ///     + Caster Character 
         /// 
         /// </summary>
-        protected virtual Condition InvokeCondition { get { return new Condition(); } }
+        protected virtual ConditionCollection<ICastContext> InvokeConditions { get { return new ConditionCollection<ICastContext>(); } }
 
         /// <summary>
-        /// This method determines whether this Spell can be casted in the current Context.
+        /// This method determines whether this Spell can be casted in the current CastContext.
         /// </summary>
         /// <returns>Whether this Spell can be casted.</returns>
         public virtual bool CanInvoke()
         {
-            Condition invokeCondition = InvokeCondition;
+            Condition<ICastContext> invokeCondition = InvokeConditions;
             invokeCondition.SetContext(Context);
-            return invokeCondition.Check(Context.Caster);
+            return invokeCondition.Check(Context.Source);
         }
 
         #region Effect Collections
@@ -204,7 +183,7 @@ namespace Quark.Spells
         ///     + Void
         /// 
         /// </summary>
-        protected virtual EffectCollection InvokeEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<ICastContext> InvokeEffects { get { return new EffectCollection<ICastContext>(); } }
 
         /// <summary>
         /// The targeting done effects.
@@ -217,7 +196,7 @@ namespace Quark.Spells
         ///     + Void
         /// 
         /// </summary>
-        protected virtual EffectCollection TargetingDoneEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<ICastContext> TargetingDoneEffects { get { return new EffectCollection<ICastContext>(); } }
 
         /// <summary>
         /// The casting began effects
@@ -227,7 +206,7 @@ namespace Quark.Spells
         ///     + Void
         /// 
         /// </summary>
-        protected virtual EffectCollection CastingBeginEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<ICastContext> CastingBeginEffects { get { return new EffectCollection<ICastContext>(); } }
 
         /// <summary>
         /// The casting effects
@@ -237,11 +216,11 @@ namespace Quark.Spells
         ///     + Void
         /// 
         /// </summary>
-        protected virtual EffectCollection CastingEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<ICastContext> CastingEffects { get { return new EffectCollection<ICastContext>(); } }
 
         /// <summary>
         /// The casting done effects
-        /// Effects within this list are applied when the casting successfully finishe
+        /// Effects within this list are applied when the casting successfully finishes
         /// 
         /// Possible Targets:
         ///     + Target Characters
@@ -250,7 +229,7 @@ namespace Quark.Spells
         ///     + Void
         /// 
         /// </summary>
-        protected virtual EffectCollection CastDoneEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<ICastContext> CastDoneEffects { get { return new EffectCollection<ICastContext>(); } }
 
         /// <summary>
         /// The interruption effects
@@ -260,7 +239,7 @@ namespace Quark.Spells
         ///     + Void
         /// 
         /// </summary>
-        protected virtual EffectCollection InterruptEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<ICastContext> InterruptEffects { get { return new EffectCollection<ICastContext>(); } }
 
         /// <summary>
         /// The traveling effects
@@ -270,7 +249,7 @@ namespace Quark.Spells
         ///     + Points the projectiles pass from while travelling.
         ///       
         /// </summary>
-        protected virtual EffectCollection TravelEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<ProjectileContext> TravelEffects { get { return new EffectCollection<ProjectileContext>(); } }
 
         /// <summary>
         /// The on-hit effects
@@ -283,7 +262,7 @@ namespace Quark.Spells
         ///     + Void
         /// 
         /// </summary>
-        protected virtual EffectCollection HitEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<IHitContext> HitEffects { get { return new EffectCollection<IHitContext>(); } }
 
         /// <summary>
         /// The spell miss effects
@@ -293,7 +272,7 @@ namespace Quark.Spells
         ///     + Void
         /// 
         /// </summary>
-        protected virtual EffectCollection MissEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<IProjectileContext> MissEffects { get { return new EffectCollection<IProjectileContext>(); } }
 
         /// <summary>
         /// The finalizing effects
@@ -303,7 +282,7 @@ namespace Quark.Spells
         ///     + Void
         /// 
         /// </summary>
-        protected virtual EffectCollection ClearEffects { get { return new EffectCollection(); } }
+        protected virtual EffectCollection<ICastContext> ClearEffects { get { return new EffectCollection<ICastContext>(); } }
 
         #endregion
 
@@ -383,49 +362,52 @@ namespace Quark.Spells
         /// Executes the Travel logic on thge position of the projectile this stage was triggered from. 
         /// </summary>
         /// <param name="position">Target of the hit.</param>
-        public virtual void OnTravel(Vector3 position)
+        public virtual void OnTravel(Vector3 position, ProjectileContext context)
         {
             Logger.Debug("Spell.OnTravel");
-            TravelEffects.Run(position, Context);
+            TravelEffects.Run(position, context);
         }
 
         /// <summary>
         /// Executes the Hit logic on the given point for this Spell.
         /// </summary>
         /// <param name="position">Target of the hit.</param>>
-        public virtual void OnHit(Vector3 position)
+        /// <param name="context">The context for this hit.</param>
+        public virtual void OnHit(Vector3 position, HitContext context)
         {
             Logger.Debug("Spell.OnHit");
-            HitEffects.Run(position, Context);
+            HitEffects.Run(position, context);
         }
 
         /// <summary>
         /// Executes the Hit logic on the given Character for this Spell.
         /// </summary>
         /// <param name="character">Target of the hit.</param>>
-        public virtual void OnHit(Character character)
+        /// <param name="context">The context for this hit.</param>
+        public virtual void OnHit(Character character, HitContext context)
         {
             Logger.Debug("Spell.OnHit");
-            HitEffects.Run(character, Context);
+            HitEffects.Run(character, context);
         }
 
         /// <summary>
         /// Executes the Hit logic on the given Targetable for this Spell.
         /// </summary>
         /// <param name="targetable">Target of the hit.</param>
-        public virtual void OnHit(Targetable targetable)
+        /// <param name="context">The context for this hit.</param>
+        public virtual void OnHit(Targetable targetable, HitContext context)
         {
             Logger.Debug("Spell.OnHit");
-            HitEffects.Run(targetable, Context);
+            HitEffects.Run(targetable, context);
         }
 
         /// <summary>
         /// Executes the Miss logic for this Spell.
         /// </summary>
-        public virtual void OnMiss()
+        public virtual void OnMiss(ProjectileContext context)
         {
             Logger.Debug("Spell.OnMiss");
-            MissEffects.Run(Context);
+            MissEffects.Run(context);
         }
 
         /// <summary>
@@ -436,7 +418,7 @@ namespace Quark.Spells
             Logger.Debug("Spell.OnFinal");
             ClearEffects.Run(Context);
 
-            Context.Clear(Stages.Done);
+            Context.Clear();
             Context = null;
         }
 

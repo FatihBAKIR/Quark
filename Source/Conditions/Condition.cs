@@ -1,58 +1,73 @@
-﻿using System;
-using Quark.Spells;
+﻿using Quark.Contexts;
 using UnityEngine;
 
-namespace Quark
+namespace Quark.Conditions
 {
-    public class Condition
+    public interface ICondition : IContextful
     {
-        protected Cast Context { get; private set; }
-        public Condition()
-        {
-        }
-
-        public virtual void SetContext(Cast context)
-        {
-            Context = context;
-        }
-
         /// <summary>
         /// Checks whether a condition is met in the context
         /// </summary>
-        public virtual bool Check()
-        {
-            return true;
-        }
+        bool Check();
 
         /// <summary>
         /// Check whether a condition is met in the context with the specified point.
         /// </summary>
         /// <param name="point">The Point.</param>
-        public virtual bool Check(Vector3 point)
-        {
-            return true;
-        }
+        bool Check(Vector3 point);
 
         /// <summary>
         /// Check whether a condition is met in the context with the specified character.
         /// </summary>
         /// <param name="character">The Character.</param>
-        public virtual bool Check(Character character)
-        {
-            return true;
-        }
+        bool Check(Character character);
 
         /// <summary>
         /// Check whether a condition is met in the context with the specified target.
         /// </summary>
         /// <param name="target">The Targetable.</param>
+        bool Check(Targetable target);
+        
+    }
+
+    public interface ICondition<in T> : ICondition where T : IContext
+    {
+    }
+
+    public class Condition<T> : ICondition<T> where T : IContext
+    {
+        /// <summary>
+        /// The Context of this Condition.
+        /// </summary>
+        protected T Context { get; private set; }
+
+        public virtual void SetContext(IContext context)
+        {
+            Context = (T)context;
+        }
+
+        public virtual bool Check()
+        {
+            return true;
+        }
+
+        public virtual bool Check(Vector3 point)
+        {
+            return true;
+        }
+
+        public virtual bool Check(Character character)
+        {
+            return true;
+        }
+
         public virtual bool Check(Targetable target)
         {
             return true;
         }
     }
 
-    class FalseCondition : Condition
+    class FalseCondition : Condition<IContext>
     {
         public override bool Check()
         {

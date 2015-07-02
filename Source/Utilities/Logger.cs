@@ -12,6 +12,7 @@ namespace Quark.Utilities
         {
             if (level > Level)
                 return;
+
             if ((Type & LogType.Unity) == LogType.Unity)
             {
                 if (Level >= LogLevel.Debug || Level == LogLevel.GC)
@@ -68,17 +69,7 @@ namespace Quark.Utilities
 
         public static void Assert(bool condition, string message = "")
         {
-#if DEBUG
-            if (!condition)
-            {
-                string Format = "Assertion failed at {0}!\n{1}";
-                StackTrace stackTrace = new StackTrace();
-                StackFrame callingFrame = stackTrace.GetFrame(1);
-                string caller = callingFrame.GetMethod().DeclaringType.Name + "::" + callingFrame.GetMethod().Name + " in " + callingFrame.GetFileName() + " (" + callingFrame.GetFileLineNumber() + ")";
-
-                Error(String.Format(Format, caller, message));
-            }
-#endif
+            System.Diagnostics.Debug.Assert(true);
         }
     }
 
