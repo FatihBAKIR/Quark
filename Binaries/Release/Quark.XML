@@ -209,6 +209,17 @@
             This interface provides the basis properties of a context for a projectile.
             </summary>
         </member>
+        <member name="M:Quark.Contexts.IProjectileContext.OnHit(Quark.TargetUnion)">
+            <summary>
+            This method handles hitting event of its projectile. 
+            </summary>
+            <param name="target">The hit object.</param>
+        </member>
+        <member name="M:Quark.Contexts.IProjectileContext.OnTravel">
+            <summary>
+            This method handles the travel event of its projectile.
+            </summary>
+        </member>
         <member name="P:Quark.Contexts.IProjectileContext.Projectile">
             <summary>
             The projectile object of this context.
@@ -271,7 +282,7 @@
             <param name="parent">The parent context.</param>
             <param name="hitPosition">Position of the hit.</param>
         </member>
-        <member name="M:Quark.Contexts.ProjectileContext.#ctor(Quark.Contexts.CastContext,Quark.Projectiles.Projectile,Quark.TargetUnion)">
+        <member name="M:Quark.Contexts.ProjectileContext.#ctor(Quark.Contexts.ICastContext,Quark.Projectiles.Projectile,Quark.TargetUnion)">
             <summary>
             Creates a new ProjectileContext from a cast context and a projectile object.
             </summary>

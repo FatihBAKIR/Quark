@@ -35,7 +35,7 @@ namespace Quark.Contexts
 
         public Spell Spell
         {
-            get { return ((ProjectileContext) Parent).Spell; }
+            get { return ((ProjectileContext)Parent).Spell; }
         }
 
         public CastStages Stage
@@ -109,10 +109,20 @@ namespace Quark.Contexts
             get { return ((ProjectileContext)Parent).TargetOffset; }
         }
 
+        public void OnHit(TargetUnion target)
+        {
+            ((ProjectileContext)Parent).OnHit(target);
+        }
+
+        public void OnTravel()
+        {
+            ((ProjectileContext)Parent).OnTravel();
+        }
+
         public int HitCount
         {
             get { return ((ProjectileContext)Parent).HitCount; }
-            set { ((ProjectileContext) Parent).HitCount = value; }
+            set { ((ProjectileContext)Parent).HitCount = value; }
         }
 
         public void Interrupt()

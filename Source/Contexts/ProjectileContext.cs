@@ -51,6 +51,17 @@ namespace Quark.Contexts
         Vector3 TargetOffset { get; }
 
         /// <summary>
+        /// This method handles hitting event of its projectile. 
+        /// </summary>
+        /// <param name="target">The hit object.</param>
+        void OnHit(TargetUnion target);
+
+        /// <summary>
+        /// This method handles the travel event of its projectile.
+        /// </summary>
+        void OnTravel();
+
+        /// <summary>
         /// This property stores the count of successful hits in this context.
         /// </summary>
         int HitCount { get; set; }
@@ -63,7 +74,7 @@ namespace Quark.Contexts
         /// </summary>
         /// <param name="parent">Parent cast context.</param>
         /// <param name="projectile">The projectile object.</param>
-        public ProjectileContext(CastContext parent, Projectile projectile, TargetUnion target)
+        public ProjectileContext(ICastContext parent, Projectile projectile, TargetUnion target)
             : base(parent)
         {
             Parent = parent;
@@ -122,6 +133,61 @@ namespace Quark.Contexts
         public float TravelBeginTime { get; protected set; }
 
         public Vector3 TargetOffset { get; protected set; }
+
+        public void OnHit(TargetUnion target)
+        {
+            switch (target.Type)
+            {
+                case TargetType.Point:
+                    Spell.OnHit(target.Point, new HitContext(this, Projectile.transform.position));
+                    break;
+                case TargetType.Targetable:
+                    Spell.OnHit(target.Targetable, new HitContext(this, Projectile.transform.position));
+                    break;
+                case TargetType.Character:
+                    Spell.OnHit(target.Character, new HitContext(this, Projectile.transform.position));
+                    break;
+            }
+
+            if (target.Type != TargetType.Point)
+            {
+                if (IsHitValid(target))
+                {
+                    if ((Target.Type != TargetType.Point &&
+                         target.AsTargetable().Equals(Target.AsTargetable())) ||
+                        (Spell.TargetForm == TargetForm.Singular))
+                    {
+                        if (HitCount == 0)
+                            Spell.OnMiss(this);
+
+                        Spell.CollectProjectile(Projectile);
+                        Object.Destroy(Projectile.gameObject);
+                    }
+                }
+            }
+            else
+            {
+                Spell.CollectProjectile(Projectile);
+                Object.Destroy(Projectile.gameObject);
+            }
+        }
+
+        public void OnTravel()
+        {
+            Spell.OnTravel(Projectile.transform.position, this);     
+        }
+
+        bool IsHitValid(TargetUnion target)
+        {
+            Targetable hitObject = target.AsTargetable();
+
+            bool result = target.Type != TargetType.None && hitObject.IsTargetable && Projectile.Controller.Validate(hitObject);
+
+            if (result)
+                HitCount++;
+
+            return result;
+        }
 
         public int HitCount { get; set; }
 

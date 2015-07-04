@@ -1,5 +1,4 @@
 using Quark.Contexts;
-using Quark.Spells;
 using Quark.Targeting;
 using Quark.Utilities;
 using UnityEngine;
@@ -31,7 +30,7 @@ namespace Quark.Projectiles
         /// <summary>
         /// The Context of this projectile.
         /// </summary>
-        public ProjectileContext Context { get; set; }
+        public IProjectileContext Context { get; set; }
 
 
         bool HasReached
@@ -73,35 +72,15 @@ namespace Quark.Projectiles
         void OnTriggerEnter(Collider c)
         {
             Targetable hit = c.gameObject.GetComponent<Targetable>();
-
-            if (IsHitValid(hit))
-            {
-                if (hit is Character)
-                    Context.Spell.OnHit(hit as Character, new HitContext(Context, transform.position));
+            
+            if (hit is Character)
+                    Context.OnHit(new TargetUnion(hit as Character));
                 else
-                    Context.Spell.OnHit(hit, new HitContext(Context, transform.position));
+                    Context.OnHit(new TargetUnion(hit));
 
-                if ((Context.Target.Type != TargetType.Point && hit.Equals(Context.Target.AsTargetable())) || (Context.Spell.TargetForm == TargetForm.Singular))
-                {
-                    if (Context.HitCount == 0)
-                        Context.Spell.OnMiss(Context);
-
-                    Context.Spell.CollectProjectile(this);
-                    Destroy(gameObject);
-                }
-            }
             Logger.Debug("Collision: " + c.gameObject.name + "\nTarget Was" + (hit == null ? " Not" : "") + " A Targetable");
         }
 
-        bool IsHitValid(Targetable hit)
-        {
-            bool result = hit != null && hit.IsTargetable && Controller.Validate(hit);
-
-            if (result)
-                Context.HitCount++;
-
-            return result;
-        }
 
         private Vector3 _lastTravel;
         void Update()
@@ -110,16 +89,14 @@ namespace Quark.Projectiles
 
             if (Context.Target.Type == TargetType.Point && HasReached)
             {
-                Context.Spell.OnHit(Context.Target.AsPoint(), new HitContext(Context, transform.position));
-                Context.Spell.CollectProjectile(this);
-                Destroy(gameObject);
+                Context.OnHit(Context.Target);
                 return;
             }
 
             if (Utils.Distance2(transform.position, _lastTravel) >= Context.Spell.TravelingInterval)
             {
                 _lastTravel = transform.position;
-                Context.Spell.OnTravel(transform.position, Context);
+                Context.OnTravel();
             }
         }
     }
