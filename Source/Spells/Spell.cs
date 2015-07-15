@@ -39,7 +39,7 @@ namespace Quark.Spells
         public float CastingInterval { get; protected set; }
 
         /// <summary>
-        /// This field determines the interval of the OnTravel logic to run while a projectile belonging to this Spell is   traveling.
+        /// This field determines the interval of the OnTravel logic to run while a projectile belonging to this Spell is traveling.
         /// </summary>
         /// <value>
         /// Interval in distance units.
@@ -161,6 +161,27 @@ namespace Quark.Spells
         /// 
         /// </summary>
         protected virtual ConditionCollection<ICastContext> InvokeConditions { get { return new ConditionCollection<ICastContext>(); } }
+
+        /// <summary>
+        /// The interrupt conditions.
+        /// Conditions in this collection are checked to determine whether this cast should be interrupted or not.
+        /// 
+        /// Possible Targets:
+        ///     + Caster Character 
+        /// 
+        /// </summary>
+        protected virtual ConditionCollection<ICastContext> InterruptConditions { get { return new ConditionCollection<ICastContext> { new FalseCondition() }; } }
+
+        /// <summary>
+        /// This method should determine whether the cast for this Spell should be interrupted or not.
+        /// </summary>
+        /// <returns>Whether this Spell cast should be interrupted.</returns>
+        public virtual bool CheckInterrupt()
+        {
+            ConditionCollection<ICastContext> interruptConditions = InterruptConditions;
+            interruptConditions.SetContext(Context);
+            return interruptConditions.Check(Context.Source);
+        }
 
         /// <summary>
         /// This method determines whether this Spell can be casted in the current CastContext.
@@ -373,7 +394,7 @@ namespace Quark.Spells
         /// </summary>
         /// <param name="position">Target of the hit.</param>>
         /// <param name="context">The context for this hit.</param>
-        public virtual void OnHit(Vector3 position, HitContext context)
+        public virtual void OnHit(Vector3 position, IHitContext context)
         {
             Logger.Debug("Spell.OnHit");
             HitEffects.Run(position, context);
@@ -384,7 +405,7 @@ namespace Quark.Spells
         /// </summary>
         /// <param name="character">Target of the hit.</param>>
         /// <param name="context">The context for this hit.</param>
-        public virtual void OnHit(Character character, HitContext context)
+        public virtual void OnHit(Character character, IHitContext context)
         {
             Logger.Debug("Spell.OnHit");
             HitEffects.Run(character, context);
@@ -395,7 +416,7 @@ namespace Quark.Spells
         /// </summary>
         /// <param name="targetable">Target of the hit.</param>
         /// <param name="context">The context for this hit.</param>
-        public virtual void OnHit(Targetable targetable, HitContext context)
+        public virtual void OnHit(Targetable targetable, IHitContext context)
         {
             Logger.Debug("Spell.OnHit");
             HitEffects.Run(targetable, context);

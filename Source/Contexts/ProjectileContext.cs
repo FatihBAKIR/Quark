@@ -136,23 +136,24 @@ namespace Quark.Contexts
 
         public void OnHit(TargetUnion target)
         {
-            switch (target.Type)
-            {
-                case TargetType.Point:
-                    Spell.OnHit(target.Point, new HitContext(this, Projectile.transform.position));
-                    break;
-                case TargetType.Targetable:
-                    Spell.OnHit(target.Targetable, new HitContext(this, Projectile.transform.position));
-                    break;
-                case TargetType.Character:
-                    Spell.OnHit(target.Character, new HitContext(this, Projectile.transform.position));
-                    break;
-            }
-
             if (target.Type != TargetType.Point)
             {
-                if (IsHitValid(target))
+                IHitContext hit = new HitContext(this, target, Projectile.transform.position);
+                if (hit.Validate())
                 {
+                    switch (target.Type)
+                    {
+                        case TargetType.Point:
+                            Spell.OnHit(target.Point, hit);
+                            break;
+                        case TargetType.Targetable:
+                            Spell.OnHit(target.Targetable, hit);
+                            break;
+                        case TargetType.Character:
+                            Spell.OnHit(target.Character, hit);
+                            break;
+                    }
+
                     if ((Target.Type != TargetType.Point &&
                          target.AsTargetable().Equals(Target.AsTargetable())) ||
                         (Spell.TargetForm == TargetForm.Singular))
@@ -163,6 +164,8 @@ namespace Quark.Contexts
                         Spell.CollectProjectile(Projectile);
                         Object.Destroy(Projectile.gameObject);
                     }
+
+                    HitCount++;
                 }
             }
             else
@@ -175,18 +178,6 @@ namespace Quark.Contexts
         public void OnTravel()
         {
             Spell.OnTravel(Projectile.transform.position, this);     
-        }
-
-        bool IsHitValid(TargetUnion target)
-        {
-            Targetable hitObject = target.AsTargetable();
-
-            bool result = target.Type != TargetType.None && hitObject.IsTargetable && Projectile.Controller.Validate(hitObject);
-
-            if (result)
-                HitCount++;
-
-            return result;
         }
 
         public int HitCount { get; set; }

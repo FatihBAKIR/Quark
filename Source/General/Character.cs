@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Quark.Attributes;
 using Quark.Buffs;
@@ -5,10 +6,15 @@ using Quark.Contexts;
 using Quark.Effects;
 using Quark.Spells;
 using Quark.Utilities;
+using UnityEngine;
+using Attribute = Quark.Attributes.Attribute;
+
 // ReSharper disable ParameterHidesMember
 
 namespace Quark
 {
+    public delegate void HitValidateDelegate(IHitContext hit, out bool result);
+
     public class Character : Targetable
     {
         AttributeCollection _attributes;
@@ -18,6 +24,7 @@ namespace Quark
         ItemCollection _inventory;
 
         ConditionCollection<ICastContext> _interruptConditions;
+
 
         /// <summary>
         /// This property stores whether this Character is suspended or not.
@@ -153,7 +160,7 @@ namespace Quark
         public IContext Context { get; private set; }
 
         /// <summary>
-        /// Gets the <see cref="Attribute"/> belonging to this Character with the given tag
+        /// Gets the <see cref="Attributes.Attribute"/> belonging to this Character with the given tag
         /// </summary>
         /// <param name="tag">Tag of the attribute</param>
         /// <returns>Attribute with the given tag</returns>
@@ -350,5 +357,28 @@ namespace Quark
         /// This event is raised when a Stat of this Character is manipulated
         /// </summary>
         public event StatDel StatManipulated = delegate { };
+
+        /// <summary>
+        /// This event is raised when this Character is hit by a projectile.
+        /// Handlers of this event may invalidate the event.
+        /// </summary>
+        public event HitValidateDelegate ProjectileHit = delegate(IHitContext hit, out bool result) { result = true; };
+
+        /// <summary>
+        /// This method validates a projectile hit on this Character.
+        /// </summary>
+        /// <returns>Whether the hit was valid or not.</returns>
+        public bool ValidateHit(IHitContext hit)
+        {
+            foreach (Delegate del in ProjectileHit.GetInvocationList())
+            {
+                bool validation;
+                HitValidateDelegate validator = del as HitValidateDelegate;
+                validator(hit, out validation);
+                if (!validation)
+                    return false;
+            }
+            return true;
+        }
     }
 }

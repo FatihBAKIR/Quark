@@ -1,5 +1,6 @@
 ﻿using Quark.Projectiles;
 using Quark.Spells;
+using Quark.Targeting;
 using UnityEngine;
 
 namespace Quark.Contexts
@@ -10,9 +11,20 @@ namespace Quark.Contexts
     public interface IHitContext : IProjectileContext
     {
         /// <summary>
-        /// This property stores the point which the collision occured.
+        /// This property stores the target the hit occured.
+        /// </summary>
+        TargetUnion HitTarget { get; }
+
+        /// <summary>
+        /// This property stores the point which the hit occured.
         /// </summary>
         Vector3 HitPosition { get; }
+
+        /// <summary>
+        /// This method should validate whether the context represents a valid hit.
+        /// </summary>
+        /// <returns>Whether the hit is valid or not.</returns>
+        bool Validate();
     }
 
     /// <summary>
@@ -23,15 +35,32 @@ namespace Quark.Contexts
         /// <summary>
         /// Creates a new HitContext from a parent projectile context and the position of the hit.
         /// </summary>
-        /// <param name="parent">The parent context.</param>
+        /// <param name="parent">The parent context.</param
+        /// <param name="target">The hit target.</param>>
         /// <param name="hitPosition">Position of the hit.</param>
-        public HitContext(ProjectileContext parent, Vector3 hitPosition)
+        public HitContext(ProjectileContext parent, TargetUnion target, Vector3 hitPosition)
             : base(parent)
         {
             HitPosition = hitPosition;
+            HitTarget = target;
         }
 
+        public TargetUnion HitTarget { get; private set; }
+
         public Vector3 HitPosition { get; private set; }
+
+        public bool Validate()
+        {
+            Targetable hitObject = HitTarget.AsTargetable();
+
+            bool result = 
+                HitTarget.Type != TargetType.None && 
+                hitObject.IsTargetable && 
+                Projectile.Controller.Validate(hitObject) &&
+                (!(hitObject is Character) || (hitObject as Character).ValidateHit(this));
+
+            return result;
+        }
 
         public Spell Spell
         {

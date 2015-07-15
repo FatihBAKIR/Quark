@@ -52,8 +52,8 @@ namespace Quark.Effects
         /// <param name="range">Other collection.</param>
         public void AddRange(EffectCollection<T> range)
         {
-            foreach (IEffect<T> effect in range._effects)
-                Add(effect);
+            foreach (IEffect effect in range._effects)
+                _effects.Add(effect);
         }
 
         public IEnumerator<IEffect> GetEnumerator()

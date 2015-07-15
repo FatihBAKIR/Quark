@@ -32,7 +32,6 @@ namespace Quark.Projectiles
         /// </summary>
         public IProjectileContext Context { get; set; }
 
-
         bool HasReached
         {
             get { return Controller.Finished; }

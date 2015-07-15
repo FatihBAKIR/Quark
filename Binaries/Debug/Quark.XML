@@ -4,6 +4,291 @@
         <name>Quark</name>
     </assembly>
     <members>
+        <member name="T:Quark.Contexts.Context">
+            <summary>
+            Contexts provide states for the various behaviors in Quark pattern.
+            This is the most basic Context. 
+            Since every Context must originate from a Character this Context only stores a source Character state.
+            </summary>
+        </member>
+        <member name="T:Quark.Contexts.IContext">
+            <summary>
+            This interface provides the basic properties of a Context class.
+            </summary>
+        </member>
+        <member name="P:Quark.Utilities.Identifiable.Identifier">
+            <summary>
+            This property gets the identifier string for the object.
+            </summary>
+        </member>
+        <member name="M:Quark.Contexts.IContext.AddChild(Quark.Contexts.IContext)">
+            <summary>
+            This method adds the given context as this Context instances child.
+            </summary>
+            <param name="child">The child context.</param>
+        </member>
+        <member name="P:Quark.Contexts.IContext.Source">
+            <summary>
+            Source of this Context.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.IContext.Parent">
+            <summary>
+            This property stores the parent Context of this Context instance.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.IContext.Children">
+            <summary>
+            This property gets the children Contexts of this context.
+            </summary>
+        </member>
+        <member name="M:Quark.Contexts.Context.#ctor(Quark.Character)">
+            <summary>
+            Creates a new Context instance from a given Character source.
+            </summary>
+            <param name="source">The source Character.</param>
+        </member>
+        <member name="M:Quark.Contexts.Context.#ctor(Quark.Contexts.IContext)">
+            <summary>
+            Creates a new Context instance from a given parent Context.
+            </summary>
+            <param name="parent">Parent context.</param>
+        </member>
+        <member name="F:Quark.Contexts.Context._children">
+            <summary>
+            This field stores the children Contexts of this Context instance.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.Context.Identifier">
+            <summary>
+            Identifier of this Context.
+            </summary>
+        </member>
+        <member name="T:Quark.Contexts.ICastContext">
+            <summary>
+            This interface provides basic getters for CastContext compatible classes.
+            </summary>
+        </member>
+        <member name="M:Quark.Contexts.ICastContext.Interrupt">
+            <summary>
+            Interrupts this cast context.
+            Can only cancel the casts in the Casting stage.
+            </summary>
+        </member>
+        <member name="M:Quark.Contexts.ICastContext.Clear">
+            <summary>
+            Executes the clearing logic for this context.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.ICastContext.Spell">
+            <summary>
+            The Spell object being casted in this Cast Context.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.ICastContext.Stage">
+            <summary>
+            This property stores the current stage of this CastContext.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.ICastContext.Targets">
+            <summary>
+            This property stores all of the Targets acquired by this CastContext.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.ICastContext.CastPercentage">
+            <summary>
+            Gets the cast done percentage.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.ICastContext.CastTime">
+            <summary>
+            This property gets the time spent casting up to now.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.ICastContext.CastBeginTime">
+            <summary>
+            This property stores the time this CastContext has transitioned to the Casting stage.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.ICastContext.CastBeginPosition">
+            <summary>
+            This property stores the position this CastContext has transitioned to the Casting stage.
+            </summary>
+        </member>
+        <member name="T:Quark.Contexts.CastContext">
+            <summary>
+            CastContexts provide state for a Spell cast.
+            </summary>
+        </member>
+        <member name="M:Quark.Contexts.CastContext.#ctor(Quark.Character,Quark.Spells.Spell)">
+            <summary>
+            Creates a new CastContext instance from a caster Character and a Spell to be casted.
+            </summary>
+            <param name="caster">The caster Character object.</param>
+            <param name="spell">The Spell object to be casted.</param>
+        </member>
+        <member name="M:Quark.Contexts.CastContext.Initialize">
+            <summary>
+            This method executes the initialization logic of this CastContext and the Spell being casted.
+            </summary>
+        </member>
+        <member name="M:Quark.Contexts.CastContext.BeginTargeting">
+            <summary>
+            Begin targeting logic
+            </summary>
+        </member>
+        <member name="T:Quark.Contexts.CastStages">
+            <summary>
+            This enumeration represents the state of a CastContext.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.CastStages.Null">
+            <summary>
+            The cast is invalid.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.CastStages.Initialization">
+            <summary>
+            The cast is in initialization stage.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.CastStages.Targeting">
+            <summary>
+            The cast is in targeting stage.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.CastStages.TargetingFailed">
+            <summary>
+            The cast has failed due to targeting.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.CastStages.PreCasting">
+            <summary>
+            The cast is in the precasting stage.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.CastStages.Casting">
+            <summary>
+            The cast is in the casting stage.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.CastStages.CastFail">
+            <summary>
+            The cast is in the interruption stage.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.CastStages.CastSuccess">
+            <summary>
+            The cast has succeeded.
+            </summary>
+        </member>
+        <member name="T:Quark.Contexts.IContextful">
+            <summary>
+            This interface provides an abstract way of setting the context of a contextful behaviors.
+            </summary>
+        </member>
+        <member name="M:Quark.Contexts.IContextful.SetContext(Quark.Contexts.IContext)">
+            <summary>
+            Sets the context of this Effect.
+            </summary>
+            <param name="context">The context.</param>
+        </member>
+        <member name="T:Quark.Contexts.IContextful`1">
+            <summary>
+            This interface provides an abstract way of setting the context of a contextful behaviors.
+            </summary>
+            <typeparam name="T">Context type.</typeparam>
+        </member>
+        <member name="T:Quark.Contexts.IHitContext">
+            <summary>
+            This interface provides basic properties of a hit context.
+            </summary>
+        </member>
+        <member name="T:Quark.Contexts.IProjectileContext">
+            <summary>
+            This interface provides the basis properties of a context for a projectile.
+            </summary>
+        </member>
+        <member name="M:Quark.Contexts.IProjectileContext.OnHit(Quark.TargetUnion)">
+            <summary>
+            This method handles hitting event of its projectile. 
+            </summary>
+            <param name="target">The hit object.</param>
+        </member>
+        <member name="M:Quark.Contexts.IProjectileContext.OnTravel">
+            <summary>
+            This method handles the travel event of its projectile.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.IProjectileContext.Projectile">
+            <summary>
+            The projectile object of this context.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.IProjectileContext.TravelTime">
+            <summary>
+            This property stores the time spent travelling by this context.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.IProjectileContext.TravelDistance">
+            <summary>
+            This property stores the -approximate- distance travelled by this context.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.IProjectileContext.Target">
+            <summary>
+            This property stores the actual target of this context.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.IProjectileContext.TravelBeginRotation">
+            <summary>
+            This property stores the source's initial rotation at the time of this context's creation.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.IProjectileContext.TravelBeginPosition">
+            <summary>
+            This property stores the source's initial position at the time of this context's creation.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.IProjectileContext.TravelBeginTime">
+            <summary>
+            This property stores the seconds since level load at the time of this context's creation.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.IProjectileContext.TargetOffset">
+            <summary>
+            This field stores the Y axis (ie. height) offset to properly hit the target in a proper point.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.IProjectileContext.HitCount">
+            <summary>
+            This property stores the count of successful hits in this context.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.IHitContext.HitPosition">
+            <summary>
+            This property stores the point which the collision occured.
+            </summary>
+        </member>
+        <member name="T:Quark.Contexts.HitContext">
+            <summary>
+            The HitContext is the concrete context for any projectile hit occurence.
+            </summary>
+        </member>
+        <member name="M:Quark.Contexts.HitContext.#ctor(Quark.Contexts.ProjectileContext,UnityEngine.Vector3)">
+            <summary>
+            Creates a new HitContext from a parent projectile context and the position of the hit.
+            </summary>
+            <param name="parent">The parent context.</param>
+            <param name="hitPosition">Position of the hit.</param>
+        </member>
+        <member name="M:Quark.Contexts.ProjectileContext.#ctor(Quark.Contexts.ICastContext,Quark.Projectiles.Projectile,Quark.TargetUnion)">
+            <summary>
+            Creates a new ProjectileContext from a cast context and a projectile object.
+            </summary>
+            <param name="parent">Parent cast context.</param>
+            <param name="projectile">The projectile object.</param>
+        </member>
         <member name="E:Quark.Targetable.QuarkCollision">
             <summary>
             This event is raised when this Character collides with another Targetable
@@ -21,7 +306,7 @@
         </member>
         <member name="P:Quark.QuarkCollision.SourcePosition">
             <summary>
-            Source Targetable's position
+            Origin Targetable's position
             </summary>
         </member>
         <member name="P:Quark.QuarkCollision.OtherPosition">
@@ -43,7 +328,7 @@
             the physical existance of a Projectile and the logic that controls it seperated.
             </summary>
         </member>
-        <member name="M:Quark.Projectiles.ProjectileController.SetContext(Quark.Spells.Cast)">
+        <member name="M:Quark.Projectiles.ProjectileController.SetContext(Quark.Contexts.IProjectileContext)">
             <summary>
             This method sets the context this controller runs in.
             </summary>
@@ -143,7 +428,7 @@
         </member>
         <member name="M:Quark.Targeting.TargetMacro.Run">
             <summary>
-            Begins the targeting procedure for this macro
+            This method should start the targeting logic for this target macro.
             </summary>
         </member>
         <member name="M:Quark.Targeting.TargetMacro.Cancel">
@@ -156,12 +441,11 @@
             Clear this TargetMacro from its context.
             </summary>
         </member>
-        <member name="M:Quark.Targeting.TargetMacro.SetContext(Quark.Spells.Cast,System.Boolean)">
+        <member name="M:Quark.Targeting.TargetMacro.SetContext(Quark.Contexts.IContext)">
             <summary>
             This method sets the context for this TargetMacro to run in.
             </summary>
             <param name="context">The context.</param>
-            <param name="withoutCallbacks">If this flag is set, callbacks to the context will not be registered.</param>
         </member>
         <member name="M:Quark.Targeting.TargetMacro.OnTargetSelected(Quark.Character)">
             <summary>
@@ -588,12 +872,7 @@
             Rotation of the caster Character when the projectile stage began.
             </summary>
         </member>
-        <member name="F:Quark.Projectiles.Projectile.TargetOffset">
-            <summary>
-            This field stores the Y axis (ie. height) offset to properly hit the target in a proper point.
-            </summary>
-        </member>
-        <member name="M:Quark.Projectiles.Projectile.Make(UnityEngine.GameObject,Quark.Projectiles.ProjectileController,Quark.Spells.Cast,Quark.TargetUnion)">
+        <member name="M:Quark.Projectiles.Projectile.Make(UnityEngine.GameObject,Quark.Projectiles.ProjectileController,Quark.Contexts.CastContext,Quark.TargetUnion)">
             <summary>
             This function creates a new projectile object from a prefab and a controller in a context towards a target.
             
@@ -612,250 +891,221 @@
         </member>
         <member name="P:Quark.Projectiles.Projectile.Context">
             <summary>
-            The context this Projectile travels in.
+            The Context of this projectile.
             </summary>
         </member>
-        <member name="P:Quark.Projectiles.Projectile.InitialPosition">
+        <member name="M:Quark.Buffs.IBuff.ShouldDispose">
             <summary>
-            Gets the initial position for this missile.
+            This method determines whether this buff is ready for disposal.
             </summary>
-            <value>The initial position.</value>
+            <returns>Whether this buff is ready for disposal.</returns>
         </member>
-        <member name="P:Quark.Projectiles.Projectile.Target">
-            <summary>
-            Current target point of this Projectile instance.
-            
-            <remarks>The target may change over time.</remarks>
-            </summary>
-        </member>
-        <member name="P:Quark.Projectiles.Projectile.InitialTime">
-            <summary>
-            The time in seconds that this Projectile instance was created.
-            </summary>
-        </member>
-        <member name="F:Quark.Buffs.Buff.Interval">
-            <summary>
-            This field stores the interval of calling the Tick method in seconds.
-            </summary>
-        </member>
-        <member name="F:Quark.Buffs.Buff.Duration">
-            <summary>
-            This field stores the total duration of this Buff instance.
-            </summary>
-        </member>
-        <member name="F:Quark.Buffs.Buff.Continuous">
-            <summary>
-            This flag determines whether the Tick method should be called every frame or not.
-            </summary>
-        </member>
-        <member name="F:Quark.Buffs.Buff.TicksWhileSuspended">
-            <summary>
-            This flag determines whether this Buff ticks while its Possessor Character is suspended or not.
-            </summary>
-        </member>
-        <member name="F:Quark.Buffs.Buff.MaxStacks">
-            <summary>
-            This field stores the maximum stack count of this Buff.
-            </summary>
-        </member>
-        <member name="F:Quark.Buffs.Buff.CurrentStacks">
-            <summary>
-            This field stores the current stack count of this Buff.
-            </summary>
-        </member>
-        <member name="F:Quark.Buffs.Buff.StackBehavior">
-            <summary>
-            This field stores the stacking behavior of this Buff.
-            See <see cref="T:Quark.Buffs.StackBehavior"/>
-            </summary>
-        </member>
-        <member name="M:Quark.Buffs.Buff.MakeID(Quark.Buffs.Buff,Quark.Spells.Cast)">
-            <summary>
-            Makes an Identifier from a Buff and Cast instances
-            </summary>
-            <param name="buff">The Buff instance</param>
-            <param name="context">The Cast instance</param>
-            <returns>Buff identifier</returns>
-        </member>
-        <member name="M:Quark.Buffs.Buff.MakeID(Quark.Buffs.Buff,System.String)">
-            <summary>
-            Makes an Identifier from a Buff and an identifier for a Cast context
-            </summary>
-            <param name="buff">The Buff instance</param>
-            <param name="contextID">A context identifier</param>
-            <returns>Buff identifier</returns>
-        </member>
-        <member name="M:Quark.Buffs.Buff.SetContext(Quark.Spells.Cast)">
-            <summary>
-            Sets the Cast context where this Buff runs in
-            </summary>
-            <param name="context">The Cast context</param>
-        </member>
-        <member name="F:Quark.Buffs.Buff._posessionTime">
-            <summary>
-            This variable is stored for calculating the alive time of the Buff instances
-            </summary>
-        </member>
-        <member name="F:Quark.Buffs.Buff._lastTick">
-            <summary>
-            This variable is stored for checking whether the Tick method should be called or not in a given frame
-            </summary>
-        </member>
-        <member name="F:Quark.Buffs.Buff._terminated">
-            <summary>
-            This flag stores whether this Buff got terminated in the last Tick
-            </summary>
-        </member>
-        <member name="M:Quark.Buffs.Buff.Terminate">
-            <summary>
-            Immediately terminates this Buff.
-            Termination assures no other Tick will take place in this instance.
-            </summary>
-        </member>
-        <member name="M:Quark.Buffs.Buff.ResetBeginning">
-            <summary>
-            Resets the possession time of this Buff, practically resetting its lifetime
-            </summary>
-        </member>
-        <member name="M:Quark.Buffs.Buff.Tick">
-            <summary>
-            This function controls the state of the buff for whether it should call the OnTick function in this frame or not and also it checks if it has completed its lifespan or not
-            </summary>
-        </member>
-        <member name="M:Quark.Buffs.Buff.ShouldDispose">
-            <summary>
-            This method determines whether this Buff instance should get disposed in the current frame.
-            </summary>
-            <returns>Whether this buff should get disposed.</returns>
-        </member>
-        <member name="M:Quark.Buffs.Buff.Register">
+        <member name="M:Quark.Buffs.IBuff.Register">
             <summary>
             Register proper events to the Messenger.
             This method should <b>not</b> contain any gameplay related logic
             Refer to the <c>OnPossess()</c> for gameplay logic on possession
             </summary>
         </member>
-        <member name="M:Quark.Buffs.Buff.Deregister">
+        <member name="M:Quark.Buffs.IBuff.Deregister">
             <summary>
             Deregister pre registered events from the messenger.
             </summary>
         </member>
-        <member name="M:Quark.Buffs.Buff.Possess(Quark.Character)">
+        <member name="M:Quark.Buffs.IBuff.OnPossess">
+            <summary>
+            This event handler is called right after the owning <c>BuffContainer</c> possesses this buff
+            </summary>
+        </member>
+        <member name="M:Quark.Buffs.IBuff.OnStack">
+            <summary>
+            This event is raised when an existing Buff is attached again
+            </summary>
+        </member>
+        <member name="M:Quark.Buffs.IBuff.OnDone">
+            <summary>
+            Executes the finalization logic of this buff
+            </summary>
+        </member>
+        <member name="M:Quark.Buffs.IBuff.OnTerminate">
+            <summary>
+            Executes the termination logic of this buff
+            </summary>
+        </member>
+        <member name="M:Quark.Buffs.IBuff.OnTick">
+            <summary>
+            Handles the tick event
+            </summary>
+        </member>
+        <member name="M:Quark.Buffs.IBuff.Possess(Quark.Character)">
             <summary>
             Begin the posession logic of this Buff
             </summary>
             <param name="possessor"></param>
         </member>
-        <member name="M:Quark.Buffs.Buff.OnPossess">
+        <member name="M:Quark.Buffs.IBuff.Terminate">
             <summary>
-            This event handler is called right after the owning <c>BuffContainer</c> possesses this buff
+            Immediately terminates this Buff.
+            Termination assures no other Tick will take place in this instance.
             </summary>
         </member>
-        <member name="M:Quark.Buffs.Buff.OnStack">
+        <member name="M:Quark.Buffs.IBuff.ResetBeginning">
             <summary>
-            This event is raised when an existing Buff is attached again
+            Resets the possession time of this Buff, practically resetting its lifetime
             </summary>
         </member>
-        <member name="M:Quark.Buffs.Buff.OnTick">
+        <member name="P:Quark.Buffs.IBuff.LifeRatio">
             <summary>
-            Handles the tick event
+            Life ratio of this buff.
             </summary>
         </member>
-        <member name="M:Quark.Buffs.Buff.OnDone">
+        <member name="P:Quark.Buffs.IBuff.Duration">
             <summary>
-            Executes the finalization logic of this buff
+            Total duration of this buff.
             </summary>
         </member>
-        <member name="M:Quark.Buffs.Buff.OnTerminate">
+        <member name="P:Quark.Buffs.IBuff.StackBehavior">
             <summary>
-            Executes the termination logic of this buff
+            This property stores how this buff should respond to stacking.
             </summary>
         </member>
-        <member name="M:Quark.Buffs.Buff.IsTagged(System.String)">
+        <member name="P:Quark.Buffs.IBuff.CurrentStacks">
+            <summary>
+            This field stores the current stack count of this Buff.
+            </summary>
+        </member>
+        <member name="P:Quark.Buffs.IBuff.MaximumStacks">
+            <summary>
+            This field stores the maximum stack count of this Buff.
+            </summary>
+        </member>
+        <member name="P:Quark.Buffs.IBuff.Hidden">
+            <summary>
+            This property determines whether this Buff should be hidden or not.
+            </summary>
+        </member>
+        <member name="F:Quark.Buffs.Buff`1.Interval">
+            <summary>
+            This field stores the interval of calling the Tick method in seconds.
+            </summary>
+        </member>
+        <member name="F:Quark.Buffs.Buff`1.Continuous">
+            <summary>
+            This flag determines whether the Tick method should be called every frame or not.
+            </summary>
+        </member>
+        <member name="F:Quark.Buffs.Buff`1.TicksWhileSuspended">
+            <summary>
+            This flag determines whether this Buff ticks while its Possessor Character is suspended or not.
+            </summary>
+        </member>
+        <member name="F:Quark.Buffs.Buff`1._posessionTime">
+            <summary>
+            This variable is stored for calculating the alive time of the Buff instances
+            </summary>
+        </member>
+        <member name="F:Quark.Buffs.Buff`1._lastTick">
+            <summary>
+            This variable is stored for checking whether the Tick method should be called or not in a given frame
+            </summary>
+        </member>
+        <member name="F:Quark.Buffs.Buff`1._terminated">
+            <summary>
+            This flag stores whether this Buff got terminated in the last Tick
+            </summary>
+        </member>
+        <member name="M:Quark.Buffs.Buff`1.Tick">
+            <summary>
+            This function controls the state of the buff for whether it should call the OnTick function in this frame or not and also it checks if it has completed its lifespan or not
+            </summary>
+        </member>
+        <member name="M:Quark.Buffs.Buff`1.ShouldDispose">
+            <summary>
+            This method determines whether this Buff instance should get disposed in the current frame.
+            </summary>
+            <returns>Whether this buff should get disposed.</returns>
+        </member>
+        <member name="M:Quark.Buffs.Buff`1.IsTagged(System.String)">
             <summary>
             Checks whether this Buff is tagged with the given string or not.
             </summary>
             <param name="tag">Tag to check.</param>
             <returns>Whether the buff is tagged.</returns>
         </member>
-        <member name="P:Quark.Buffs.Buff.Name">
+        <member name="P:Quark.Buffs.Buff`1.Name">
             <summary>
             Name of this Buff.
             </summary>
         </member>
-        <member name="P:Quark.Buffs.Buff.Hidden">
-            <summary>
-            This field determines whether this Buff should be hidden or not.
-            </summary>
-        </member>
-        <member name="P:Quark.Buffs.Buff.Possessor">
+        <member name="P:Quark.Buffs.Buff`1.Possessor">
             <summary>
             This property stores the possessor of this Buff instance.
             </summary>
         </member>
-        <member name="P:Quark.Buffs.Buff.Context">
+        <member name="P:Quark.Buffs.Buff`1.StackBehavior">
             <summary>
-            The context this Buff resides in.
+            This field stores the stacking behavior of this Buff.
+            See <see cref="T:Quark.Buffs.StackBehavior"/>
             </summary>
         </member>
-        <member name="P:Quark.Buffs.Buff.Identifier">
-            <summary>
-            Returns this Buffs identifier
-            </summary>
-        </member>
-        <member name="P:Quark.Buffs.Buff.LifeRatio">
-            <summary>
-            This ratio indicates the rate of its alive time to its total duration 
-            </summary>
-        </member>
-        <member name="P:Quark.Buffs.Buff.Alive">
-            <summary>
-            The time span in seconds where this Buff was running 
-            </summary>
-        </member>
-        <member name="P:Quark.Buffs.Buff.CleanedUp">
+        <member name="P:Quark.Buffs.Buff`1.CleanedUp">
             <summary>
             This flag stores whether this Buff is ready to be garbage collected
             </summary>
         </member>
-        <member name="P:Quark.Buffs.Buff.PossessEffects">
+        <member name="P:Quark.Buffs.Buff`1.LifeRatio">
+            <summary>
+            This ratio indicates the rate of its alive time to its total duration 
+            </summary>
+        </member>
+        <member name="P:Quark.Buffs.Buff`1.Alive">
+            <summary>
+            The time span in seconds where this Buff was running 
+            </summary>
+        </member>
+        <member name="P:Quark.Buffs.Buff`1.PossessEffects">
             <summary>
             These effects are applied when this Buff is first possessed
             </summary>
         </member>
-        <member name="P:Quark.Buffs.Buff.StackEffects">
+        <member name="P:Quark.Buffs.Buff`1.StackEffects">
             <summary>
             These effects are applied when another instance of this Buff is attached to the possessor
             </summary>
         </member>
-        <member name="P:Quark.Buffs.Buff.TickEffects">
+        <member name="P:Quark.Buffs.Buff`1.TickEffects">
             <summary>
             These effects are applied on every interval
             </summary>
         </member>
-        <member name="P:Quark.Buffs.Buff.DoneEffects">
+        <member name="P:Quark.Buffs.Buff`1.DoneEffects">
             <summary>
             These effects are applied when this Buff finishes its life time successfully
             </summary>
         </member>
-        <member name="P:Quark.Buffs.Buff.TerminateEffects">
+        <member name="P:Quark.Buffs.Buff`1.TerminateEffects">
             <summary>
             These effeccts are applied when this Buff terminates (fails finish its life time)
             </summary>
         </member>
-        <member name="P:Quark.Buffs.Buff.DoneConditions">
+        <member name="P:Quark.Buffs.Buff`1.DoneConditions">
             <summary>
             These conditions are checked to determine whether this Buff should be done
             </summary>
         </member>
-        <member name="P:Quark.Buffs.Buff.TerminateConditions">
+        <member name="P:Quark.Buffs.Buff`1.TerminateConditions">
             <summary>
             These conditions are checked to determine whether this Buff should terminate
             </summary>
         </member>
-        <member name="P:Quark.Buffs.Buff.Tags">
+        <member name="P:Quark.Buffs.Buff`1.Tags">
             <summary>
             Stores the static tags of this buff.
+            </summary>
+        </member>
+        <member name="P:Quark.Buffs.Buff`1.Identifier">
+            <summary>
+            Returns this Buffs identifier
             </summary>
         </member>
         <member name="T:Quark.Buffs.StackBehavior">
@@ -866,7 +1116,7 @@
         <member name="F:Quark.Buffs.StackBehavior.ResetBeginning">
             <summary>
             In the case of stacking, the Buff should reset its possession time.
-            <see cref="M:Quark.Buffs.Buff.ResetBeginning"/>
+            <see cref="!:Buff.ResetBeginning()"/>
             </summary>
         </member>
         <member name="F:Quark.Buffs.StackBehavior.IncreaseStacks">
@@ -879,7 +1129,7 @@
             In the case of stacking, the Buff shouldn't respond.
             </summary>
         </member>
-        <member name="M:Quark.Buffs.BuffContainer.GetBuff(Quark.Buffs.Buff)">
+        <member name="M:Quark.Buffs.BuffContainer.GetBuff(Quark.Buffs.IBuff)">
             <summary>
             This method finds the given Buff in this container by its Identifier.
             </summary>
@@ -891,31 +1141,15 @@
             This event is raised whenever a Buff was detached from this container.
             </summary>
         </member>
-        <member name="M:Quark.Spells.Spell.MakeID(Quark.Spells.Spell,Quark.Spells.Cast)">
+        <member name="M:Quark.Spells.Spell.SetContext(Quark.Contexts.CastContext)">
             <summary>
-            Generates an identifier for a given Spell in a given Context.
+            Sets the CastContext this Spell is being casted in.
             </summary>
-            <param name="spell">The Spell</param>
-            <param name="context">The Context</param>
-            <returns>Identifier</returns>
-        </member>
-        <member name="M:Quark.Spells.Spell.MakeID(Quark.Spells.Spell,Quark.Character)">
-            <summary>
-            Generates an identifier for a given Spell casted by a given Character.
-            </summary>
-            <param name="spell">The Spell</param>
-            <param name="caster">The Caster</param>
-            <returns>Identifier</returns>
-        </member>
-        <member name="M:Quark.Spells.Spell.SetContext(Quark.Spells.Cast)">
-            <summary>
-            Introduce the Cast context which is invoking this Spell instance.
-            </summary>
-            <param name="context">The Cast</param>
+            <param name="context">The CastContext.</param>
         </member>
         <member name="M:Quark.Spells.Spell.CanInvoke">
             <summary>
-            This method determines whether this Spell can be casted in the current Context.
+            This method determines whether this Spell can be casted in the current CastContext.
             </summary>
             <returns>Whether this Spell can be casted.</returns>
         </member>
@@ -950,31 +1184,34 @@
             Executes the Interruption logic of this Spell without a target.
             </summary>
         </member>
-        <member name="M:Quark.Spells.Spell.OnTravel(UnityEngine.Vector3)">
+        <member name="M:Quark.Spells.Spell.OnTravel(UnityEngine.Vector3,Quark.Contexts.ProjectileContext)">
             <summary>
             Executes the Travel logic on thge position of the projectile this stage was triggered from. 
             </summary>
             <param name="position">Target of the hit.</param>
         </member>
-        <member name="M:Quark.Spells.Spell.OnHit(UnityEngine.Vector3)">
+        <member name="M:Quark.Spells.Spell.OnHit(UnityEngine.Vector3,Quark.Contexts.HitContext)">
             <summary>
             Executes the Hit logic on the given point for this Spell.
             </summary>
             <param name="position">Target of the hit.</param>>
+            <param name="context">The context for this hit.</param>
         </member>
-        <member name="M:Quark.Spells.Spell.OnHit(Quark.Character)">
+        <member name="M:Quark.Spells.Spell.OnHit(Quark.Character,Quark.Contexts.HitContext)">
             <summary>
             Executes the Hit logic on the given Character for this Spell.
             </summary>
             <param name="character">Target of the hit.</param>>
+            <param name="context">The context for this hit.</param>
         </member>
-        <member name="M:Quark.Spells.Spell.OnHit(Quark.Targetable)">
+        <member name="M:Quark.Spells.Spell.OnHit(Quark.Targetable,Quark.Contexts.HitContext)">
             <summary>
             Executes the Hit logic on the given Targetable for this Spell.
             </summary>
             <param name="targetable">Target of the hit.</param>
+            <param name="context">The context for this hit.</param>
         </member>
-        <member name="M:Quark.Spells.Spell.OnMiss">
+        <member name="M:Quark.Spells.Spell.OnMiss(Quark.Contexts.ProjectileContext)">
             <summary>
             Executes the Miss logic for this Spell.
             </summary>
@@ -1025,7 +1262,7 @@
         </member>
         <member name="P:Quark.Spells.Spell.TravelingInterval">
             <summary>
-            This field determines the interval of the OnTravel logic to run while a projectile belonging to this Spell is   traveling.
+            This field determines the interval of the OnTravel logic to run while a projectile belonging to this Spell is traveling.
             </summary>
             <value>
             Interval in distance units.
@@ -1038,7 +1275,7 @@
             <value>The name.</value>
         </member>
         <member name="P:Quark.Spells.Spell.Identifier">
-            <summary>
+            <summary>s
             Identifier of this Spell
             </summary>
         </member>
@@ -1080,10 +1317,10 @@
         </member>
         <member name="P:Quark.Spells.Spell.Context">
             <summary>
-            The context this Spell instance resides in.
+            The CastContext this Spell is being casetd in.
             </summary>
         </member>
-        <member name="P:Quark.Spells.Spell.InvokeCondition">
+        <member name="P:Quark.Spells.Spell.InvokeConditions">
             <summary>
             The invoke conditions.
             Conditions in this collection are checked to determine whether this Spell can be casted.
@@ -1139,7 +1376,7 @@
         <member name="P:Quark.Spells.Spell.CastDoneEffects">
             <summary>
             The casting done effects
-            Effects within this list are applied when the casting successfully finishe
+            Effects within this list are applied when the casting successfully finishes
             
             Possible Targets:
                 + Target Characters
@@ -1207,132 +1444,6 @@
             This property stores the static tags of this Spell.
             </summary>
         </member>
-        <member name="F:Quark.Spells.Cast.HitCount">
-            <summary>
-            The total hit count in this context.
-            </summary>
-        </member>
-        <member name="M:Quark.Spells.Cast.PrepareCast(Quark.Character,Quark.Spells.Spell)">
-            <summary>
-            Prepares a new instance of <see cref="T:Quark.Spells.Cast"/> with the specified caster and spell.
-            </summary>
-            <returns>
-            A began CastData object.
-            </returns>
-            <param name="caster">
-            Caster Character.
-            </param>
-            <param name="spell">
-            The instance of the spell to be cast.
-            </param>
-        </member>
-        <member name="M:Quark.Spells.Cast.Invoke">
-            <summary>
-            Begin the casting logic.
-            </summary>
-        </member>
-        <member name="M:Quark.Spells.Cast.BeginTargeting">
-            <summary>
-            Begin targeting logic
-            </summary>
-        </member>
-        <member name="M:Quark.Spells.Cast.TargetingFail(Quark.Targeting.TargetingError)">
-            <summary>
-            Notice this context for an error in targeting.
-            </summary>
-            <param name="error">The reason of the error.</param>
-        </member>
-        <member name="M:Quark.Spells.Cast.TargetingDone(Quark.TargetCollection)">
-            <summary>
-            BeginTargeting done logic.
-            </summary>
-        </member>
-        <member name="F:Quark.Spells.Cast._interrupted">
-            <summary>
-            This flag stores whether the current Cast instance has been interrupted or not
-            </summary>
-        </member>
-        <member name="F:Quark.Spells.Cast._lastCast">
-            <summary>
-            This field stores the last time the Casting logic of the spell being casted was executed
-            </summary>
-        </member>
-        <member name="M:Quark.Spells.Cast.Interrupt">
-            <summary>
-            Interrupt this Cast instance.
-            </summary>
-        </member>
-        <member name="M:Quark.Spells.Cast.Clear(Quark.Spells.Stages)">
-            <summary>
-            Clears this contexts internal references.
-            </summary>
-            <param name="step">Stage to go after clearing.</param>
-        </member>
-        <member name="P:Quark.Spells.Cast.NonSpell">
-            <summary>
-            Gets or sets a value indicating whether this <see cref="T:Quark.Spells.Cast"/> context is Item sourced.
-            </summary>
-            <value><c>true</c> if non Spell; otherwise, <c>false</c>.</value>
-        </member>
-        <member name="P:Quark.Spells.Cast.Caster">
-            <summary>
-            Gets the caster.
-            </summary>
-            <value>
-            The caster of the spell.
-            </value>
-        </member>
-        <member name="P:Quark.Spells.Cast.CastTime">
-            <summary>
-            Gets the cast time.
-            </summary>
-            <value>
-            The time past since the beginning of the cast.
-            </value>
-        </member>
-        <member name="P:Quark.Spells.Cast.CastPercentage">
-            <summary>
-            Gets the cast percentage.
-            </summary>
-            <value>
-            The cast done percentage.
-            </value>
-        </member>
-        <member name="T:Quark.Spells.Stages">
-            <summary>
-            This enumeration represents the stages of a cast.
-            </summary>
-        </member>
-        <member name="F:Quark.Spells.Stages.Null">
-            <summary>
-            Null stage.
-            </summary>
-        </member>
-        <member name="F:Quark.Spells.Stages.Invoke">
-            <summary>
-            Configuration stage.
-            </summary>
-        </member>
-        <member name="F:Quark.Spells.Stages.Targeting">
-            <summary>
-            Targeting stage.
-            </summary>
-        </member>
-        <member name="F:Quark.Spells.Stages.Casting">
-            <summary>
-            Casting stage.
-            </summary>
-        </member>
-        <member name="F:Quark.Spells.Stages.Done">
-            <summary>
-            Cast has successfully finalized.
-            </summary>
-        </member>
-        <member name="F:Quark.Spells.Stages.Failed">
-            <summary>
-            Cast has failed.
-            </summary>
-        </member>
         <member name="T:Quark.ItemCollection">
             TODO: let items carry other items in form of a bag
         </member>
@@ -1347,52 +1458,51 @@
             </summary>
             <param name="item">The item to be added</param>
         </member>
-        <member name="M:Quark.Condition.Check">
+        <member name="M:Quark.Conditions.ICondition.Check">
             <summary>
             Checks whether a condition is met in the context
             </summary>
         </member>
-        <member name="M:Quark.Condition.Check(UnityEngine.Vector3)">
+        <member name="M:Quark.Conditions.ICondition.Check(UnityEngine.Vector3)">
             <summary>
             Check whether a condition is met in the context with the specified point.
             </summary>
             <param name="point">The Point.</param>
         </member>
-        <member name="M:Quark.Condition.Check(Quark.Character)">
+        <member name="M:Quark.Conditions.ICondition.Check(Quark.Character)">
             <summary>
             Check whether a condition is met in the context with the specified character.
             </summary>
             <param name="character">The Character.</param>
         </member>
-        <member name="M:Quark.Condition.Check(Quark.Targetable)">
+        <member name="M:Quark.Conditions.ICondition.Check(Quark.Targetable)">
             <summary>
             Check whether a condition is met in the context with the specified target.
             </summary>
             <param name="target">The Targetable.</param>
         </member>
-        <member name="M:Quark.ConditionCollection.#ctor">
+        <member name="P:Quark.Conditions.Condition`1.Context">
+            <summary>
+            The Context of this Condition.
+            </summary>
+        </member>
+        <member name="M:Quark.ConditionCollection`1.#ctor">
             <summary>
             Initialize a new condition collection
             </summary>
         </member>
-        <member name="M:Quark.ConditionCollection.Add(Quark.Condition)">
+        <member name="M:Quark.ConditionCollection`1.Add(Quark.Conditions.ICondition{`0})">
             <summary>
             Add a new condition to this collection
             </summary>
             <param name="condition">The condition to be added</param>
         </member>
-        <member name="M:Quark.Effect.SetContext(Quark.Spells.Cast)">
-            <summary>
-            Sets the context of this Effect.
-            </summary>
-            <param name="context">The context.</param>
-        </member>
-        <member name="M:Quark.Effect.Apply">
+        <member name="M:Quark.Effects.IEffect.Apply">
             <summary>
             Applies this effect without a target.
             </summary>
         </member>
-        <member name="M:Quark.Effect.Apply(Quark.Character)">
+        <member name="M:Quark.Effects.IEffect.Apply(Quark.Character)">
             <summary>
             Applies this effect on the specified target Character.
             </summary>
@@ -1400,7 +1510,7 @@
             Target Character.
             </param>
         </member>
-        <member name="M:Quark.Effect.Apply(UnityEngine.Vector3)">
+        <member name="M:Quark.Effects.IEffect.Apply(UnityEngine.Vector3)">
             <summary>
             Applies this effect on the specified target Vector3.
             </summary>
@@ -1408,30 +1518,57 @@
             Target Point.
             </param>
         </member>
-        <member name="M:Quark.Effect.Apply(Quark.Targetable)">
+        <member name="M:Quark.Effects.IEffect.Apply(Quark.Targetable)">
             <summary>
             Applies this effect on the specified non character targetable
             </summary>
             <param name="target">Targetable.</param>
         </member>
-        <member name="M:Quark.Effect.IsTagged(System.String)">
+        <member name="M:Quark.Effects.Effect`1.Apply">
+            <summary>
+            Applies this effect without a target.
+            </summary>
+        </member>
+        <member name="M:Quark.Effects.Effect`1.Apply(Quark.Character)">
+            <summary>
+            Applies this effect on the specified target Character.
+            </summary>
+            <param name='target'>
+            Target Character.
+            </param>
+        </member>
+        <member name="M:Quark.Effects.Effect`1.Apply(UnityEngine.Vector3)">
+            <summary>
+            Applies this effect on the specified target Vector3.
+            </summary>
+            <param name='point'>  
+            Target Point.
+            </param>
+        </member>
+        <member name="M:Quark.Effects.Effect`1.Apply(Quark.Targetable)">
+            <summary>
+            Applies this effect on the specified non character targetable
+            </summary>
+            <param name="target">Targetable.</param>
+        </member>
+        <member name="M:Quark.Effects.Effect`1.IsTagged(System.String)">
             <summary>
             Checks whether this Effect is tagged with a particular string or not.
             </summary>
             <param name="tag">The string to check.</param>
             <returns>Whether this Effect is tagged or not.</returns>
         </member>
-        <member name="P:Quark.Effect.Context">
+        <member name="P:Quark.Effects.Effect`1.Context">
             <summary>
             The context this Effect should apply in.
             </summary>
         </member>
-        <member name="P:Quark.Effect.Tags">
+        <member name="P:Quark.Effects.Effect`1.Tags">
             <summary>
             The tags of this Effect.
             </summary>
         </member>
-        <member name="T:Quark.EffectCollection">
+        <member name="T:Quark.Effects.EffectCollection`1">
             <summary>
             This class is designed for containing, mutating and running some effects
             It is useful for storing event handling effects
@@ -1439,31 +1576,31 @@
             Container.Run().Run(character).Run(point)... etc.
             </summary>
         </member>
-        <member name="M:Quark.EffectCollection.#ctor">
+        <member name="M:Quark.Effects.EffectCollection`1.#ctor">
             <summary>
             Initialize a new effect collection
             </summary>
         </member>
-        <member name="M:Quark.EffectCollection.Add(Quark.Effect)">
+        <member name="M:Quark.Effects.EffectCollection`1.Add(Quark.Effects.IEffect{`0})">
             <summary>
             Add a new effect to this collection
             </summary>
             <param name="effect">The effect to be added</param>
         </member>
-        <member name="M:Quark.EffectCollection.AddRange(Quark.EffectCollection)">
+        <member name="M:Quark.Effects.EffectCollection`1.AddRange(Quark.Effects.EffectCollection{`0})">
             <summary>
             Add multiple effects from another collection.
             </summary>
             <param name="range">Other collection.</param>
         </member>
-        <member name="M:Quark.EffectCollection.Run(Quark.Spells.Cast)">
+        <member name="M:Quark.Effects.EffectCollection`1.Run(`0)">
             <summary>
             Run the effects contained in this collection with no target
             </summary>
             <param name="context">The Cast context for the Effects to run</param>
             <returns>This collection itself</returns>
         </member>
-        <member name="M:Quark.EffectCollection.Run(UnityEngine.Vector3,Quark.Spells.Cast)">
+        <member name="M:Quark.Effects.EffectCollection`1.Run(UnityEngine.Vector3,`0)">
             <summary>
             Apply the effects contained in this collection with a single Point target
             </summary>
@@ -1471,7 +1608,7 @@
             <param name="context">The Cast context for the Effects to run</param>
             <returns>This collection itself</returns>
         </member>
-        <member name="M:Quark.EffectCollection.Run(Quark.Character,Quark.Spells.Cast)">
+        <member name="M:Quark.Effects.EffectCollection`1.Run(Quark.Character,`0)">
             <summary>
             Apply the effects contained in this collection with a single Character target
             </summary>
@@ -1479,7 +1616,7 @@
             <param name="context">The Cast context for the Effects to run</param>
             <returns>This collection itself</returns>
         </member>
-        <member name="M:Quark.EffectCollection.Run(Quark.Targetable,Quark.Spells.Cast)">
+        <member name="M:Quark.Effects.EffectCollection`1.Run(Quark.Targetable,`0)">
             <summary>
             Apply the effects contained in this collection with a single Targetable target
             </summary>
@@ -1487,7 +1624,7 @@
             <param name="context">The Cast context for the Effects to run</param>
             <returns>This collection itself</returns>
         </member>
-        <member name="M:Quark.EffectCollection.Run(UnityEngine.Vector3[],Quark.Spells.Cast)">
+        <member name="M:Quark.Effects.EffectCollection`1.Run(UnityEngine.Vector3[],`0)">
             <summary>
             Apply the effects contained in this collection with a collection of Point targets
             </summary>
@@ -1495,7 +1632,7 @@
             <param name="context">The Cast context for the Effects to run</param>
             <returns>This collection itself</returns>
         </member>
-        <member name="M:Quark.EffectCollection.Run(Quark.Character[],Quark.Spells.Cast)">
+        <member name="M:Quark.Effects.EffectCollection`1.Run(Quark.Character[],`0)">
             <summary>
             Apply the effects contained in this collection with a collection of Character targets
             </summary>
@@ -1503,7 +1640,7 @@
             <param name="context">The Cast context for the Effects to run</param>
             <returns>This collection itself</returns>
         </member>
-        <member name="M:Quark.EffectCollection.Run(Quark.Targetable[],Quark.Spells.Cast)">
+        <member name="M:Quark.Effects.EffectCollection`1.Run(Quark.Targetable[],`0)">
             <summary>
             Apply the effects contained in this collection with a collection of Targetable targets
             </summary>
@@ -1511,7 +1648,7 @@
             <param name="context">The Cast context for the Effects to run</param>
             <returns>This collection itself</returns>
         </member>
-        <member name="M:Quark.EffectCollection.Run(Quark.TargetCollection,Quark.Spells.Cast)">
+        <member name="M:Quark.Effects.EffectCollection`1.Run(Quark.TargetCollection,`0)">
             <summary>
             Apply the effects contained in this collection with a collection of targets
             </summary>
@@ -1519,7 +1656,7 @@
             <param name="context">The Cast context for the Effects to run</param>
             <returns>This collection itself</returns>
         </member>
-        <member name="M:Quark.EffectCollection.op_Addition(Quark.EffectCollection,Quark.EffectCollection)">
+        <member name="M:Quark.Effects.EffectCollection`1.op_Addition(Quark.Effects.EffectCollection{`0},Quark.Effects.EffectCollection{`0})">
             <summary>
             This operator adds 2 EffectCollection instances by adding the Effects in the right hand side operand to the left hand side operand.
             </summary>
@@ -1527,7 +1664,7 @@
             <param name="rhs">Collection to add from.</param>
             <returns>The left hand side collection.</returns>
         </member>
-        <member name="P:Quark.EffectCollection.Count">
+        <member name="P:Quark.Effects.EffectCollection`1.Count">
             <summary>
             The count of the Effects in this collection.
             </summary>
@@ -1628,19 +1765,19 @@
             <param name="spell"></param>
             <returns>Boolean representing whether this Character can cast the given Spell or not.</returns>
         </member>
-        <member name="M:Quark.Character.AddCast(Quark.Spells.Cast)">
+        <member name="M:Quark.Character.AddCast(Quark.Contexts.ICastContext)">
             <summary>
-            Add the given <see cref="T:Quark.Spells.Cast"/> context to this character.
+            Add the given <see cref="!:Cast"/> context to this character.
             </summary>
-            <param name="cast">A <see cref="T:Quark.Spells.Cast"/> context.</param>
+            <param name="cast">A <see cref="!:Cast"/> context.</param>
         </member>
-        <member name="M:Quark.Character.ClearCast(Quark.Spells.Cast)">
+        <member name="M:Quark.Character.ClearCast(Quark.Contexts.ICastContext)">
             <summary>
-            Removes the given <see cref="T:Quark.Spells.Cast"/> context from this character.
+            Removes the given <see cref="!:Cast"/> context from this character.
             </summary>
             <param name="cast"></param>
         </member>
-        <member name="M:Quark.Character.GetBuff(Quark.Buffs.Buff)">
+        <member name="M:Quark.Character.GetBuff(Quark.Buffs.IBuff)">
             <summary>
             If a buff with the given type exists on this Character, it will return the correct instance on the Character, otherwise it will return null.
             </summary>
@@ -1660,6 +1797,11 @@
         <member name="P:Quark.Character.DestructionEffects">
             <summary>
             These effects are applied when the GameObject this Character belongs is destroyed.
+            </summary>
+        </member>
+        <member name="P:Quark.Character.Context">
+            <summary>
+            This property stores the Context of this Character.
             </summary>
         </member>
         <member name="P:Quark.Character.Casts">
@@ -1828,7 +1970,7 @@
             <summary>
             Adds an attribute interaction to this expression.
             </summary>
-            <param name="source">Source character.</param>
+            <param name="source">Origin character.</param>
             <param name="tag">Attribute or stat tag.</param>
             <param name="multiplier">Multiplier.</param>
         </member>

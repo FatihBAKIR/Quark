@@ -141,6 +141,7 @@ namespace Quark.Contexts
                 return;
             }
 
+            Source.AddCast(this);
             Source.Context.AddChild(this); // Add this CastContext to the children of the Caster's Context.
 
             Spell.OnInvoke();
@@ -174,6 +175,7 @@ namespace Quark.Contexts
                 if (error == TargetingError.NotFound)
                     Messenger<CastContext>.Broadcast("TargetingFailed", this);
                 macro = null;
+                Clear();
             };
 
             macro.Run();
@@ -198,7 +200,7 @@ namespace Quark.Contexts
         {
             Stage = CastStages.PreCasting;
             Spell.OnCastingBegan();
-            _interruptConditions = Source.InterruptConditions.DeepCopy();  // Store the interrupt conditions on a member field.
+            _interruptConditions = Source.InterruptConditions.DeepCopy();  // Store the interrupt conditions on a member field...
 
             CastBeginTime = Time.timeSinceLevelLoad;
             CastBeginPosition = Source.transform.position;
@@ -230,7 +232,7 @@ namespace Quark.Contexts
         bool CheckInterrupt()
         {
             _interruptConditions.SetContext(this);
-            return _interruptConditions.Check();
+            return _interruptConditions.Check() || Spell.CheckInterrupt();
         }
 
         void CastSuccess()
@@ -249,6 +251,7 @@ namespace Quark.Contexts
 
         public void Clear()
         {
+            Source.ClearCast(this);
             _interruptConditions = null;
             if (!Spell.IsInstant)
                 Messenger.RemoveListener("Update", Casting);
