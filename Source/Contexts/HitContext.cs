@@ -6,6 +6,41 @@ using UnityEngine;
 namespace Quark.Contexts
 {
     /// <summary>
+    /// This enumeration stores possible results of a hit validation
+    /// </summary>
+    public enum HitValidationResult
+    {
+        /// <summary>
+        /// The hit was validated.
+        /// </summary>
+        Valid,
+
+        /// <summary>
+        /// The hit contains no target.
+        /// This value indicates a possible bug. 
+        /// Be Cautious when depending on this.
+        /// </summary>
+        NoTarget,
+
+        /// <summary>
+        /// Hit target wasn't targetable.
+        /// </summary>
+        NotTargetable,
+
+        /// <summary>
+        /// The Projectile Controller invalidated the hit.
+        /// Projectile should continue its movement.
+        /// </summary>
+        ProjectileInvalidated,
+
+        /// <summary>
+        /// Target Character invalidated the hit.
+        /// Projectile shouldn't continue moving.
+        /// </summary>
+        CharacterInvalidated
+    }
+
+    /// <summary>
     /// This interface provides basic properties of a hit context.
     /// </summary>
     public interface IHitContext : IProjectileContext
@@ -24,7 +59,7 @@ namespace Quark.Contexts
         /// This method should validate whether the context represents a valid hit.
         /// </summary>
         /// <returns>Whether the hit is valid or not.</returns>
-        bool Validate();
+        HitValidationResult Validate();
     }
 
     /// <summary>
@@ -49,17 +84,23 @@ namespace Quark.Contexts
 
         public Vector3 HitPosition { get; private set; }
 
-        public bool Validate()
+        public HitValidationResult Validate()
         {
             Targetable hitObject = HitTarget.AsTargetable();
 
-            bool result = 
-                HitTarget.Type != TargetType.None && 
-                hitObject.IsTargetable && 
-                Projectile.Controller.Validate(hitObject) &&
-                (!(hitObject is Character) || (hitObject as Character).ValidateHit(this));
+            if (HitTarget.Type == TargetType.None)
+                return HitValidationResult.NoTarget;
 
-            return result;
+            if (!hitObject.IsTargetable)
+                return HitValidationResult.NotTargetable;
+
+            if (!Projectile.Controller.Validate(hitObject))
+                return HitValidationResult.ProjectileInvalidated;
+
+            if (hitObject is Character && !(hitObject as Character).ValidateHit(this))
+                return HitValidationResult.CharacterInvalidated;
+
+            return HitValidationResult.Valid;
         }
 
         public Spell Spell

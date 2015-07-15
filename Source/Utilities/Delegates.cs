@@ -1,5 +1,6 @@
 ﻿using Quark.Attributes;
 using Quark.Buffs;
+using Quark.Contexts;
 using Quark.Targeting;
 using UnityEngine;
 
@@ -60,4 +61,11 @@ namespace Quark
     /// </summary>
     /// <param name="target">The Point.</param>>
     public delegate void PointDel(Vector3 target);
+
+    /// <summary>
+    /// This delegate is used with hit validation events.
+    /// </summary>
+    /// <param name="hit">Hit object</param>
+    /// <param name="isValid">Out param for validation</param>
+    public delegate void HitValidateDelegate(IHitContext hit, out bool isValid);
 }

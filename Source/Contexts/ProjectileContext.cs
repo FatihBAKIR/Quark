@@ -139,7 +139,8 @@ namespace Quark.Contexts
             if (target.Type != TargetType.Point)
             {
                 IHitContext hit = new HitContext(this, target, Projectile.transform.position);
-                if (hit.Validate())
+                HitValidationResult validation = hit.Validate();
+                if (validation == HitValidationResult.Valid)
                 {
                     switch (target.Type)
                     {
@@ -166,6 +167,11 @@ namespace Quark.Contexts
                     }
 
                     HitCount++;
+                }
+                else if (validation == HitValidationResult.CharacterInvalidated)
+                {
+                    Spell.CollectProjectile(Projectile);
+                    Object.Destroy(Projectile.gameObject);
                 }
             }
             else

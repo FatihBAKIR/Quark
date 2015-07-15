@@ -199,6 +199,40 @@
             </summary>
             <typeparam name="T">Context type.</typeparam>
         </member>
+        <member name="T:Quark.Contexts.HitValidationResult">
+            <summary>
+            This enumeration stores possible results of a hit validation
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.HitValidationResult.Valid">
+            <summary>
+            The hit was validated.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.HitValidationResult.NoTarget">
+            <summary>
+            The hit contains no target.
+            This value indicates a possible bug. 
+            Be Cautious when depending on this.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.HitValidationResult.NotTargetable">
+            <summary>
+            Hit target wasn't targetable.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.HitValidationResult.ProjectileInvalidated">
+            <summary>
+            The Projectile Controller invalidated the hit.
+            Projectile should continue its movement.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.HitValidationResult.CharacterInvalidated">
+            <summary>
+            Target Character invalidated the hit.
+            Projectile shouldn't continue moving.
+            </summary>
+        </member>
         <member name="T:Quark.Contexts.IHitContext">
             <summary>
             This interface provides basic properties of a hit context.
@@ -631,6 +665,13 @@
             This delegate is used with events related with a Point. 
             </summary>
             <param name="target">The Point.</param>>
+        </member>
+        <member name="T:Quark.HitValidateDelegate">
+            <summary>
+            This delegate is used with hit validation events.
+            </summary>
+            <param name="hit">Hit object</param>
+            <param name="isValid">Out param for validation</param>
         </member>
         <member name="T:Quark.Utilities.Planes">
             <summary>

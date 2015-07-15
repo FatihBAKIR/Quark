@@ -13,7 +13,6 @@ using Attribute = Quark.Attributes.Attribute;
 
 namespace Quark
 {
-    public delegate void HitValidateDelegate(IHitContext hit, out bool result);
 
     public class Character : Targetable
     {
