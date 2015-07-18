@@ -199,6 +199,40 @@
             </summary>
             <typeparam name="T">Context type.</typeparam>
         </member>
+        <member name="T:Quark.Contexts.HitValidationResult">
+            <summary>
+            This enumeration stores possible results of a hit validation
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.HitValidationResult.Valid">
+            <summary>
+            The hit was validated.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.HitValidationResult.NoTarget">
+            <summary>
+            The hit contains no target.
+            This value indicates a possible bug. 
+            Be Cautious when depending on this.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.HitValidationResult.NotTargetable">
+            <summary>
+            Hit target wasn't targetable.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.HitValidationResult.ProjectileInvalidated">
+            <summary>
+            The Projectile Controller invalidated the hit.
+            Projectile should continue its movement.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.HitValidationResult.CharacterInvalidated">
+            <summary>
+            Target Character invalidated the hit.
+            Projectile shouldn't continue moving.
+            </summary>
+        </member>
         <member name="T:Quark.Contexts.IHitContext">
             <summary>
             This interface provides basic properties of a hit context.
@@ -265,9 +299,20 @@
             This property stores the count of successful hits in this context.
             </summary>
         </member>
+        <member name="M:Quark.Contexts.IHitContext.Validate">
+            <summary>
+            This method should validate whether the context represents a valid hit.
+            </summary>
+            <returns>Whether the hit is valid or not.</returns>
+        </member>
+        <member name="P:Quark.Contexts.IHitContext.HitTarget">
+            <summary>
+            This property stores the target the hit occured.
+            </summary>
+        </member>
         <member name="P:Quark.Contexts.IHitContext.HitPosition">
             <summary>
-            This property stores the point which the collision occured.
+            This property stores the point which the hit occured.
             </summary>
         </member>
         <member name="T:Quark.Contexts.HitContext">
@@ -275,13 +320,7 @@
             The HitContext is the concrete context for any projectile hit occurence.
             </summary>
         </member>
-        <member name="M:Quark.Contexts.HitContext.#ctor(Quark.Contexts.ProjectileContext,UnityEngine.Vector3)">
-            <summary>
-            Creates a new HitContext from a parent projectile context and the position of the hit.
-            </summary>
-            <param name="parent">The parent context.</param>
-            <param name="hitPosition">Position of the hit.</param>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:Quark.Contexts.HitContext.#ctor(Quark.Contexts.ProjectileContext,Quark.TargetUnion,UnityEngine.Vector3)" -->
         <member name="M:Quark.Contexts.ProjectileContext.#ctor(Quark.Contexts.ICastContext,Quark.Projectiles.Projectile,Quark.TargetUnion)">
             <summary>
             Creates a new ProjectileContext from a cast context and a projectile object.
@@ -626,6 +665,13 @@
             This delegate is used with events related with a Point. 
             </summary>
             <param name="target">The Point.</param>>
+        </member>
+        <member name="T:Quark.HitValidateDelegate">
+            <summary>
+            This delegate is used with hit validation events.
+            </summary>
+            <param name="hit">Hit object</param>
+            <param name="isValid">Out param for validation</param>
         </member>
         <member name="T:Quark.Utilities.Planes">
             <summary>
@@ -1147,6 +1193,12 @@
             </summary>
             <param name="context">The CastContext.</param>
         </member>
+        <member name="M:Quark.Spells.Spell.CheckInterrupt">
+            <summary>
+            This method should determine whether the cast for this Spell should be interrupted or not.
+            </summary>
+            <returns>Whether this Spell cast should be interrupted.</returns>
+        </member>
         <member name="M:Quark.Spells.Spell.CanInvoke">
             <summary>
             This method determines whether this Spell can be casted in the current CastContext.
@@ -1190,21 +1242,21 @@
             </summary>
             <param name="position">Target of the hit.</param>
         </member>
-        <member name="M:Quark.Spells.Spell.OnHit(UnityEngine.Vector3,Quark.Contexts.HitContext)">
+        <member name="M:Quark.Spells.Spell.OnHit(UnityEngine.Vector3,Quark.Contexts.IHitContext)">
             <summary>
             Executes the Hit logic on the given point for this Spell.
             </summary>
             <param name="position">Target of the hit.</param>>
             <param name="context">The context for this hit.</param>
         </member>
-        <member name="M:Quark.Spells.Spell.OnHit(Quark.Character,Quark.Contexts.HitContext)">
+        <member name="M:Quark.Spells.Spell.OnHit(Quark.Character,Quark.Contexts.IHitContext)">
             <summary>
             Executes the Hit logic on the given Character for this Spell.
             </summary>
             <param name="character">Target of the hit.</param>>
             <param name="context">The context for this hit.</param>
         </member>
-        <member name="M:Quark.Spells.Spell.OnHit(Quark.Targetable,Quark.Contexts.HitContext)">
+        <member name="M:Quark.Spells.Spell.OnHit(Quark.Targetable,Quark.Contexts.IHitContext)">
             <summary>
             Executes the Hit logic on the given Targetable for this Spell.
             </summary>
@@ -1324,6 +1376,16 @@
             <summary>
             The invoke conditions.
             Conditions in this collection are checked to determine whether this Spell can be casted.
+            
+            Possible Targets:
+                + Caster Character 
+            
+            </summary>
+        </member>
+        <member name="P:Quark.Spells.Spell.InterruptConditions">
+            <summary>
+            The interrupt conditions.
+            Conditions in this collection are checked to determine whether this cast should be interrupted or not.
             
             Possible Targets:
                 + Caster Character 
@@ -1784,6 +1846,12 @@
             <returns>The buff instance being carried by this Character.</returns>
             <param name="buff">Example of the Buff to find. Only types should match.</param>
         </member>
+        <member name="M:Quark.Character.ValidateHit(Quark.Contexts.IHitContext)">
+            <summary>
+            This method validates a projectile hit on this Character.
+            </summary>
+            <returns>Whether the hit was valid or not.</returns>
+        </member>
         <member name="P:Quark.Character.IsSuspended">
             <summary>
             This property stores whether this Character is suspended or not.
@@ -1838,6 +1906,12 @@
         <member name="E:Quark.Character.StatManipulated">
             <summary>
             This event is raised when a Stat of this Character is manipulated
+            </summary>
+        </member>
+        <member name="E:Quark.Character.ProjectileHit">
+            <summary>
+            This event is raised when this Character is hit by a projectile.
+            Handlers of this event may invalidate the event.
             </summary>
         </member>
         <member name="T:Quark.QuarkConfig">

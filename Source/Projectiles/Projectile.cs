@@ -71,15 +71,15 @@ namespace Quark.Projectiles
         void OnTriggerEnter(Collider c)
         {
             Targetable hit = c.gameObject.GetComponent<Targetable>();
-            
+
+            if (hit == null)
+                return;
+
             if (hit is Character)
-                    Context.OnHit(new TargetUnion(hit as Character));
-                else
-                    Context.OnHit(new TargetUnion(hit));
-
-            Logger.Debug("Collision: " + c.gameObject.name + "\nTarget Was" + (hit == null ? " Not" : "") + " A Targetable");
+                Context.OnHit(new TargetUnion(hit as Character));
+            else
+                Context.OnHit(new TargetUnion(hit));
         }
-
 
         private Vector3 _lastTravel;
         void Update()
