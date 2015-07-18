@@ -118,6 +118,7 @@ namespace Quark.Contexts
         {
             get
             {
+                if (Spell.MinCastDuration <= 0) return 100;
                 return (int)(CastTime * 100 / Spell.MinCastDuration);
             }
         }
