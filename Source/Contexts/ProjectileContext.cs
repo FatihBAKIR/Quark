@@ -156,7 +156,7 @@ namespace Quark.Contexts
                     }
 
                     if ((Target.Type != TargetType.Point &&
-                         target.AsTargetable().Equals(Target.AsTargetable())) ||
+                        target.AsTargetable().Equals(Target.AsTargetable())) ||
                         (Spell.TargetForm == TargetForm.Singular))
                     {
                         if (HitCount == 0)
@@ -167,11 +167,6 @@ namespace Quark.Contexts
                     }
 
                     HitCount++;
-                }
-                else if (validation == HitValidationResult.CharacterInvalidated)
-                {
-                    Spell.CollectProjectile(Projectile);
-                    Object.Destroy(Projectile.gameObject);
                 }
             }
             else

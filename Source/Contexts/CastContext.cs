@@ -26,7 +26,7 @@ namespace Quark.Contexts
         TargetCollection Targets { get; }
 
         /// <summary>
-        /// Gets the cast done percentage.
+        /// Gets the cast done percentage, respective to the minimum casting time.
         /// </summary>
         int CastPercentage { get; }
 
@@ -84,7 +84,7 @@ namespace Quark.Contexts
 
         public CastStages Stage
         {
-            get; 
+            get;
             private set;
         }
 
@@ -118,7 +118,7 @@ namespace Quark.Contexts
         {
             get
             {
-                return (int)(CastTime * 100 / Spell.CastDuration);
+                return (int)(CastTime * 100 / Spell.MinCastDuration);
             }
         }
 
@@ -146,7 +146,11 @@ namespace Quark.Contexts
 
             Spell.OnInvoke();
 
-            BeginTargeting();
+
+            if (Spell.CastOrder == CastOrder.TargetFirst)
+                BeginTargeting();
+            else
+                PreCasting();
         }
 
         /// <summary>
@@ -184,14 +188,11 @@ namespace Quark.Contexts
         void PostTargeting()
         {
             Spell.OnTargetingDone();
-            if (Spell.IsInstant)
-            {
-                CastSuccess();
-            }
-            else
-            {
+            
+            if(Spell.CastOrder == CastOrder.TargetFirst)
                 PreCasting();
-            }
+            else
+                BeginProjectiles();
         }
 
         private ConditionCollection<ICastContext> _interruptConditions;
@@ -199,26 +200,27 @@ namespace Quark.Contexts
         void PreCasting()
         {
             Stage = CastStages.PreCasting;
-            Spell.OnCastingBegan();
-            _interruptConditions = Source.InterruptConditions.DeepCopy();  // Store the interrupt conditions on a member field...
 
             CastBeginTime = Time.timeSinceLevelLoad;
             CastBeginPosition = Source.transform.position;
+
+            if (Spell.IsInstant)
+            {
+                CastSuccess();
+                return;
+            }
+
+            Spell.OnCastingBegan();
+            _interruptConditions = Source.InterruptConditions.DeepCopy();  // Store the interrupt conditions on a member field...
 
             Messenger.AddListener("Update", Casting);
         }
 
         void Casting()
         {
-            if (CheckInterrupt())
+            if (CheckInterrupt() || CastTime >= Spell.MaxCastDuration)
             {
-                Interrupt();
-                return;
-            }
-
-            if (CastPercentage >= 100)
-            {
-                CastSuccess();
+                PostCasting();
                 return;
             }
 
@@ -235,18 +237,43 @@ namespace Quark.Contexts
             return _interruptConditions.Check() || Spell.CheckInterrupt();
         }
 
+        void PostCasting()
+        {
+            if (CastPercentage >= 100)
+            {
+                // Cast is successful, run the cast success event.
+                CastSuccess();
+            }
+            else
+            {
+                // Cast got interrupted somehow. Run the interruption event.
+                Interrupt();
+            }
+
+            if (Spell.CastOrder == CastOrder.TargetFirst)
+                BeginProjectiles();
+            else 
+                BeginTargeting();
+        }
+
         void CastSuccess()
         {
             Stage = CastStages.CastSuccess;
             Spell.OnCastDone();
-            Clear();
         }
 
         public void Interrupt()
         {
             Stage = CastStages.CastFail;
             Spell.OnInterrupt();
-            Clear();
+        }
+
+        void BeginProjectiles()
+        {
+            if (Spell.IsProjectiled)
+                Spell.CreateProjectiles();
+            else 
+                Spell.OnFinal();
         }
 
         public void Clear()
@@ -296,5 +323,21 @@ namespace Quark.Contexts
         /// The cast has succeeded.
         /// </summary>
         CastSuccess
+    }
+
+    /// <summary>
+    /// This enumeration represents the order of casting of a Spell.
+    /// </summary>
+    public enum CastOrder
+    {
+        /// <summary>
+        /// In this ordering, casting will occur after targeting is done.
+        /// </summary>
+        TargetFirst,
+
+        /// <summary>
+        /// In this ordering, casting will occur right after initialization.
+        /// </summary>
+        CastFirst,
     }
 }

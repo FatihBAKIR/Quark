@@ -29,13 +29,11 @@ namespace Quark.Contexts
 
         /// <summary>
         /// The Projectile Controller invalidated the hit.
-        /// Projectile should continue its movement.
         /// </summary>
         ProjectileInvalidated,
 
         /// <summary>
         /// Target Character invalidated the hit.
-        /// Projectile shouldn't continue moving.
         /// </summary>
         CharacterInvalidated
     }

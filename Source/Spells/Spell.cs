@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+using System;
 using Quark.Conditions;
 using Quark.Contexts;
 using Quark.Effects;
@@ -24,7 +24,35 @@ namespace Quark.Spells
         /// <value>
         /// The duration of the cast.
         /// </value>
+        [Obsolete("CastDuration is deprecated. Use MaxCastDuration or MinCastDuration instead.", true)]
         public virtual float CastDuration
+        {
+            get { return MaxCastDuration; }
+            set { MaxCastDuration = value; }
+        }
+
+        /// <summary>
+        /// This property stores the cast order type of this Spell.
+        /// </summary>
+        public virtual CastOrder CastOrder { get; set; }
+
+        private float _minCastDuration = -1;
+
+        /// <summary>
+        /// This property stores the least amount of time in seconds for a cast of this Spell to be considered successful.
+        /// </summary>
+        public virtual float MinCastDuration
+        {
+            get { return _minCastDuration < 0 ? MaxCastDuration : _minCastDuration; }
+            set { _minCastDuration = value; }
+        }
+
+        /// <summary>
+        /// This property stores the maximum amount of casting time in seconds for this Spell.
+        /// 
+        /// <remarks>Setting this property to 0 makes this spell a variable casted Spell.</remarks>
+        /// </summary>
+        public virtual float MaxCastDuration
         {
             get;
             set;
@@ -36,7 +64,7 @@ namespace Quark.Spells
         /// <value>
         /// Interval in seconds.
         /// </value>
-        public float CastingInterval { get; protected set; }
+        public virtual float CastingInterval { get; protected set; }
 
         /// <summary>
         /// This field determines the interval of the OnTravel logic to run while a projectile belonging to this Spell is traveling.
@@ -122,7 +150,7 @@ namespace Quark.Spells
         {
             get
             {
-                return CastDuration <= 0;
+                return MaxCastDuration <= 0;
             }
         }
 
@@ -249,6 +277,9 @@ namespace Quark.Spells
         ///     + Target Points
         ///     + Void
         /// 
+        /// Notice:
+        ///     In the CastFirst ordering, only the void overload of Apply will be called.
+        /// 
         /// </summary>
         protected virtual EffectCollection<ICastContext> CastDoneEffects { get { return new EffectCollection<ICastContext>(); } }
 
@@ -362,11 +393,6 @@ namespace Quark.Spells
                 .Run(Context.Targets.Points, Context)
                 .Run(Context.Targets.Characters, Context)
                 .Run(Context.Targets.Targetables, Context);
-
-            if (IsProjectiled)
-                CreateProjectiles();
-            else
-                OnFinal();
         }
 
         /// <summary>
@@ -439,7 +465,6 @@ namespace Quark.Spells
             Logger.Debug("Spell.OnFinal");
             ClearEffects.Run(Context);
 
-            Context.Clear();
             Context = null;
         }
 
@@ -463,9 +488,9 @@ namespace Quark.Spells
         uint _onAirMissileCount;
 
         /// <summary>
-        /// Invokes necessary projectiles for this spell
+        /// Creates necessary projectiles for this spell
         /// </summary>
-        protected void CreateProjectiles()
+        public void CreateProjectiles()
         {
             foreach (TargetUnion target in Context.Targets)
             {
