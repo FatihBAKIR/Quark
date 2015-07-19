@@ -134,7 +134,7 @@ namespace Quark.Contexts
 
         public Vector3 TargetOffset { get; protected set; }
 
-        public void OnHit(TargetUnion target)
+        public virtual void OnHit(TargetUnion target)
         {
             if (target.Type != TargetType.Point)
             {
@@ -162,21 +162,23 @@ namespace Quark.Contexts
                         if (HitCount == 0)
                             Spell.OnMiss(this);
 
-                        Spell.CollectProjectile(Projectile);
-                        Object.Destroy(Projectile.gameObject);
+                        Collect();
                     }
 
                     HitCount++;
                 }
             }
             else
-            {
-                Spell.CollectProjectile(Projectile);
-                Object.Destroy(Projectile.gameObject);
-            }
+                Collect();
         }
 
-        public void OnTravel()
+        void Collect()
+        {
+            Spell.CollectProjectile(Projectile);
+            Object.Destroy(Projectile.gameObject);
+        }
+
+        public virtual void OnTravel()
         {
             Spell.OnTravel(Projectile.transform.position, this);     
         }

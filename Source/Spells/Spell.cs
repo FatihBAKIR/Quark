@@ -169,13 +169,13 @@ namespace Quark.Spells
         /// <summary>
         /// The CastContext this Spell is being casetd in.
         /// </summary>
-        protected CastContext Context { get; private set; }
+        protected ICastContext Context { get; private set; }
 
         /// <summary>
         /// Sets the CastContext this Spell is being casted in.
         /// </summary>
         /// <param name="context">The CastContext.</param>
-        public void SetContext(CastContext context)
+        public virtual void SetContext(ICastContext context)
         {
             Context = context;
         }
@@ -451,7 +451,7 @@ namespace Quark.Spells
         /// <summary>
         /// Executes the Miss logic for this Spell.
         /// </summary>
-        public virtual void OnMiss(ProjectileContext context)
+        public virtual void OnMiss(IProjectileContext context)
         {
             Logger.Debug("Spell.OnMiss");
             MissEffects.Run(context);
@@ -465,7 +465,7 @@ namespace Quark.Spells
             Logger.Debug("Spell.OnFinal");
             ClearEffects.Run(Context);
 
-            Context = null;
+            SetContext(null);
         }
 
         #endregion
@@ -490,7 +490,7 @@ namespace Quark.Spells
         /// <summary>
         /// Creates necessary projectiles for this spell
         /// </summary>
-        public void CreateProjectiles()
+        public virtual void CreateProjectiles()
         {
             foreach (TargetUnion target in Context.Targets)
             {

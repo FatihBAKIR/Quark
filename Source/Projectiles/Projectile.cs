@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Quark.Contexts;
 using Quark.Targeting;
 using Quark.Utilities;
@@ -49,7 +50,7 @@ namespace Quark.Projectiles
         /// <param name="context">Context to create the Projectile instance in.</param>
         /// <param name="target">Target of the Projectile instance.</param>
         /// <returns>The new Projectile instance.</returns>
-        public static Projectile Make(GameObject prefab, ProjectileController controller, CastContext context, TargetUnion target)
+        public static Projectile Make(GameObject prefab, ProjectileController controller, ICastContext context, TargetUnion target)
         {
             GameObject instantiatedObject = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity);
             Projectile projectileComponent = instantiatedObject.AddComponent<Projectile>();
@@ -68,8 +69,18 @@ namespace Quark.Projectiles
 
         #endregion
 
+        private Dictionary<int, bool> _collided;
+
+        void FixedUpdate()
+        {
+            _collided = new Dictionary<int, bool>();
+        }
+
         void OnTriggerEnter(Collider c)
         {
+            if (_collided.ContainsKey(c.gameObject.GetInstanceID()))
+                return;
+
             Targetable hit = c.gameObject.GetComponent<Targetable>();
 
             if (hit == null)
@@ -79,6 +90,8 @@ namespace Quark.Projectiles
                 Context.OnHit(new TargetUnion(hit as Character));
             else
                 Context.OnHit(new TargetUnion(hit));
+
+            _collided.Add(c.gameObject.GetInstanceID(), true);
         }
 
         private Vector3 _lastTravel;

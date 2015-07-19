@@ -333,7 +333,7 @@
             The HitContext is the concrete context for any projectile hit occurence.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Quark.Contexts.HitContext.#ctor(Quark.Contexts.ProjectileContext,Quark.TargetUnion,UnityEngine.Vector3)" -->
+        <!-- Badly formed XML comment ignored for member "M:Quark.Contexts.HitContext.#ctor(Quark.Contexts.IProjectileContext,Quark.TargetUnion,UnityEngine.Vector3)" -->
         <member name="M:Quark.Contexts.ProjectileContext.#ctor(Quark.Contexts.ICastContext,Quark.Projectiles.Projectile,Quark.TargetUnion)">
             <summary>
             Creates a new ProjectileContext from a cast context and a projectile object.
@@ -931,7 +931,7 @@
             Rotation of the caster Character when the projectile stage began.
             </summary>
         </member>
-        <member name="M:Quark.Projectiles.Projectile.Make(UnityEngine.GameObject,Quark.Projectiles.ProjectileController,Quark.Contexts.CastContext,Quark.TargetUnion)">
+        <member name="M:Quark.Projectiles.Projectile.Make(UnityEngine.GameObject,Quark.Projectiles.ProjectileController,Quark.Contexts.ICastContext,Quark.TargetUnion)">
             <summary>
             This function creates a new projectile object from a prefab and a controller in a context towards a target.
             
@@ -1200,7 +1200,7 @@
             This event is raised whenever a Buff was detached from this container.
             </summary>
         </member>
-        <member name="M:Quark.Spells.Spell.SetContext(Quark.Contexts.CastContext)">
+        <member name="M:Quark.Spells.Spell.SetContext(Quark.Contexts.ICastContext)">
             <summary>
             Sets the CastContext this Spell is being casted in.
             </summary>
@@ -1276,7 +1276,7 @@
             <param name="targetable">Target of the hit.</param>
             <param name="context">The context for this hit.</param>
         </member>
-        <member name="M:Quark.Spells.Spell.OnMiss(Quark.Contexts.ProjectileContext)">
+        <member name="M:Quark.Spells.Spell.OnMiss(Quark.Contexts.IProjectileContext)">
             <summary>
             Executes the Miss logic for this Spell.
             </summary>

@@ -110,7 +110,7 @@ namespace Quark.Contexts
         {
             get
             {
-                return Time.timeSinceLevelLoad - CastBeginTime;
+                return _lastCast - CastBeginTime;
             }
         }
 
@@ -147,6 +147,7 @@ namespace Quark.Contexts
 
             Spell.OnInvoke();
 
+            Targets = new TargetCollection();
 
             if (Spell.CastOrder == CastOrder.TargetFirst)
                 BeginTargeting();
@@ -160,8 +161,6 @@ namespace Quark.Contexts
         void BeginTargeting()
         {
             Stage = CastStages.Targeting;
-
-            Targets = new TargetCollection();
 
             TargetMacro macro = Spell.TargetMacro;
 
@@ -189,8 +188,8 @@ namespace Quark.Contexts
         void PostTargeting()
         {
             Spell.OnTargetingDone();
-            
-            if(Spell.CastOrder == CastOrder.TargetFirst)
+
+            if (Spell.CastOrder == CastOrder.TargetFirst)
                 PreCasting();
             else
                 BeginProjectiles();
@@ -204,10 +203,11 @@ namespace Quark.Contexts
 
             CastBeginTime = Time.timeSinceLevelLoad;
             CastBeginPosition = Source.transform.position;
+            _lastCast = Time.timeSinceLevelLoad;
 
             if (Spell.IsInstant)
             {
-                CastSuccess();
+                PostCasting();
                 return;
             }
 
@@ -240,10 +240,18 @@ namespace Quark.Contexts
 
         void PostCasting()
         {
+            if (!Spell.IsInstant)
+                Messenger.RemoveListener("Update", Casting);
+
             if (CastPercentage >= 100)
             {
                 // Cast is successful, run the cast success event.
                 CastSuccess();
+
+                if (Spell.CastOrder == CastOrder.TargetFirst)
+                    BeginProjectiles();
+                else
+                    BeginTargeting();
             }
             else
             {
@@ -251,10 +259,7 @@ namespace Quark.Contexts
                 Interrupt();
             }
 
-            if (Spell.CastOrder == CastOrder.TargetFirst)
-                BeginProjectiles();
-            else 
-                BeginTargeting();
+            Clear();
         }
 
         void CastSuccess()
@@ -267,22 +272,24 @@ namespace Quark.Contexts
         {
             Stage = CastStages.CastFail;
             Spell.OnInterrupt();
+
+            Messenger<CastContext>.Broadcast("Interrupt", this);
         }
 
         void BeginProjectiles()
         {
             if (Spell.IsProjectiled)
                 Spell.CreateProjectiles();
-            else 
+            else
                 Spell.OnFinal();
+
+            Clear();
         }
 
         public void Clear()
         {
             Source.ClearCast(this);
             _interruptConditions = null;
-            if (!Spell.IsInstant)
-                Messenger.RemoveListener("Update", Casting);
         }
     }
 

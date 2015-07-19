@@ -71,7 +71,7 @@ namespace Quark.Contexts
         /// <param name="parent">The parent context.</param
         /// <param name="target">The hit target.</param>>
         /// <param name="hitPosition">Position of the hit.</param>
-        public HitContext(ProjectileContext parent, TargetUnion target, Vector3 hitPosition)
+        public HitContext(IProjectileContext parent, TargetUnion target, Vector3 hitPosition)
             : base(parent)
         {
             HitPosition = hitPosition;
