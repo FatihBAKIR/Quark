@@ -943,6 +943,18 @@
             <param name="target">Target of the Projectile instance.</param>
             <returns>The new Projectile instance.</returns>
         </member>
+        <member name="F:Quark.Projectiles.Projectile._lastTravel">
+            <summary>
+            This field stores the position of the Projectile when the OnTravel event was raised the last time.
+            </summary>
+        </member>
+        <member name="F:Quark.Projectiles.Projectile._previousPosition">
+            <summary>
+            This field stores the position of the Projectile before the controller is called this frame.
+            
+            Used for determining the last movement vector upon hitting.
+            </summary>
+        </member>
         <member name="P:Quark.Projectiles.Projectile.Controller">
             <summary>
             The Controller of this projectile object.
@@ -951,6 +963,11 @@
         <member name="P:Quark.Projectiles.Projectile.Context">
             <summary>
             The Context of this projectile.
+            </summary>
+        </member>
+        <member name="P:Quark.Projectiles.Projectile.LastMovement">
+            <summary>
+            This property calculates the latest position change of this Projectile.
             </summary>
         </member>
         <member name="M:Quark.Buffs.IBuff.ShouldDispose">

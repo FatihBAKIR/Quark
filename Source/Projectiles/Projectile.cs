@@ -33,9 +33,12 @@ namespace Quark.Projectiles
         /// </summary>
         public IProjectileContext Context { get; set; }
 
-        bool HasReached
+        /// <summary>
+        /// This property calculates the latest position change of this Projectile.
+        /// </summary>
+        public Vector3 LastMovement
         {
-            get { return Controller.Finished; }
+            get { return transform.position - _previousPosition; }
         }
 
         #region Initialization
@@ -78,12 +81,15 @@ namespace Quark.Projectiles
 
         void OnTriggerEnter(Collider c)
         {
+            // Unity calls OnTriggerEnter for every collider on the hit object.
+            // We store the hit objects in a dictionary every frame to 
+            // mistakenly processing one hit more than once.
             if (_collided.ContainsKey(c.gameObject.GetInstanceID()))
                 return;
 
             Targetable hit = c.gameObject.GetComponent<Targetable>();
 
-            if (hit == null)
+            if (hit == null) // Hit object wasn't a Quark object.
                 return;
 
             if (hit is Character)
@@ -94,12 +100,25 @@ namespace Quark.Projectiles
             _collided.Add(c.gameObject.GetInstanceID(), true);
         }
 
+        /// <summary>
+        /// This field stores the position of the Projectile when the OnTravel event was raised the last time.
+        /// </summary>
         private Vector3 _lastTravel;
+
+        /// <summary>
+        /// This field stores the position of the Projectile before the controller is called this frame.
+        /// 
+        /// Used for determining the last movement vector upon hitting.
+        /// </summary>
+        private Vector3 _previousPosition;
+
         void Update()
         {
+            _previousPosition = transform.position;
+
             Controller.Control();
 
-            if (Context.Target.Type == TargetType.Point && HasReached)
+            if (Context.Target.Type == TargetType.Point && Controller.Finished)
             {
                 Context.OnHit(Context.Target);
                 return;

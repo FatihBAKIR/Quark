@@ -52,6 +52,11 @@ namespace Quark.Contexts
         /// This property stores the point which the hit occured.
         /// </summary>
         Vector3 HitPosition { get; }
+        
+        /// <summary>
+        /// This property stores the orientation of the Projectile when the hit occured.
+        /// </summary>
+        Vector3 HitOrientation { get; }
 
         /// <summary>
         /// This method should validate whether the context represents a valid hit.
@@ -76,11 +81,14 @@ namespace Quark.Contexts
         {
             HitPosition = hitPosition;
             HitTarget = target;
+            HitOrientation = parent.Projectile.LastMovement.normalized;
         }
 
         public TargetUnion HitTarget { get; private set; }
 
         public Vector3 HitPosition { get; private set; }
+
+        public Vector3 HitOrientation { get; private set; }
 
         public HitValidationResult Validate()
         {
