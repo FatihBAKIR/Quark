@@ -328,6 +328,11 @@
             This property stores the point which the hit occured.
             </summary>
         </member>
+        <member name="P:Quark.Contexts.IHitContext.HitOrientation">
+            <summary>
+            This property stores the orientation of the Projectile when the hit occured.
+            </summary>
+        </member>
         <member name="T:Quark.Contexts.HitContext">
             <summary>
             The HitContext is the concrete context for any projectile hit occurence.

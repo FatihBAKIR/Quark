@@ -132,13 +132,13 @@ namespace Quark.Contexts
 
             if (!Source.CanCast(Spell))
             {
-                Messenger<CastContext>.Broadcast("CasterBusy", this);
+                Messenger<ICastContext>.Broadcast("CasterBusy", this);
                 return;
             }
 
             if (!Spell.CanInvoke())
             {
-                Messenger<CastContext>.Broadcast("CannotCast", this);
+                Messenger<ICastContext>.Broadcast("CannotCast", this);
                 return;
             }
 
@@ -148,6 +148,8 @@ namespace Quark.Contexts
             Spell.OnInvoke();
 
             Targets = new TargetCollection();
+
+            Messenger<ICastContext>.Broadcast("Cast.Initialize", this);
 
             if (Spell.CastOrder == CastOrder.TargetFirst)
                 BeginTargeting();
@@ -169,6 +171,7 @@ namespace Quark.Contexts
             macro.TargetingSuccess += delegate(TargetCollection targets)
             {
                 Targets.AddRange(targets);
+                Messenger<ICastContext>.Broadcast("Cast.TargetingSuccess", this);
                 PostTargeting();
                 macro = null;
             };
@@ -176,11 +179,12 @@ namespace Quark.Contexts
             macro.TargetingFailed += delegate(TargetingError error)
             {
                 Stage = CastStages.TargetingFailed;
-                if (error == TargetingError.NotFound)
-                    Messenger<CastContext>.Broadcast("TargetingFailed", this);
+                Messenger<ICastContext, TargetingError>.Broadcast("Cast.TargetingFailed", this, error);
                 macro = null;
                 Clear();
             };
+
+            Messenger<ICastContext>.Broadcast("Cast.BeginTargeting", this);
 
             macro.Run();
         }
@@ -211,6 +215,8 @@ namespace Quark.Contexts
                 return;
             }
 
+            Messenger<ICastContext>.Broadcast("Cast.CastingBegin", this);
+
             Spell.OnCastingBegan();
             _interruptConditions = Source.InterruptConditions.DeepCopy();  // Store the interrupt conditions on a member field...
 
@@ -224,6 +230,8 @@ namespace Quark.Contexts
                 PostCasting();
                 return;
             }
+
+            Messenger<ICastContext>.Broadcast("Cast.CastingTick", this);
 
             if (Time.timeSinceLevelLoad > _lastCast + Spell.CastingInterval)
             {
@@ -245,6 +253,8 @@ namespace Quark.Contexts
 
             if (CastPercentage >= 100)
             {
+                Messenger<ICastContext>.Broadcast("Cast.CastSuccess", this);
+
                 // Cast is successful, run the cast success event.
                 CastSuccess();
 
@@ -255,6 +265,8 @@ namespace Quark.Contexts
             }
             else
             {
+                Messenger<ICastContext>.Broadcast("Cast.CastInterrupt", this);
+
                 // Cast got interrupted somehow. Run the interruption event.
                 Interrupt();
             }
@@ -272,8 +284,6 @@ namespace Quark.Contexts
         {
             Stage = CastStages.CastFail;
             Spell.OnInterrupt();
-
-            Messenger<CastContext>.Broadcast("Interrupt", this);
         }
 
         void BeginProjectiles()
