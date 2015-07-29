@@ -73,8 +73,6 @@
     <Compile Include="Buffs\BuffContainer.cs" />
     <Compile Include="Spells\Spell.cs" />
     <Compile Include="Utilities\Interfaces.cs" />
-    <Compile Include="Utilities\EventDictionary.cs" />
-    <Compile Include="Utilities\MetaData.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\ItemCollection.cs" />
     <Compile Include="Conditions\Condition.cs" />
