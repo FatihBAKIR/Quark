@@ -83,6 +83,7 @@ namespace Quark.Contexts
             TravelBeginRotation = Source.transform.rotation.eulerAngles;
             TravelBeginPosition = Source.transform.position;
             TravelBeginTime = Time.timeSinceLevelLoad;
+            Identifier = "projectile@" + parent.Identifier;
         }
 
         public Projectile Projectile { get; protected set; }

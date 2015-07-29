@@ -82,6 +82,7 @@ namespace Quark.Contexts
             HitPosition = hitPosition;
             HitTarget = target;
             HitOrientation = parent.Projectile.LastMovement.normalized;
+            Identifier = "hit@" + parent.Identifier;
         }
 
         public TargetUnion HitTarget { get; private set; }

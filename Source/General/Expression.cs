@@ -5,6 +5,7 @@ using Quark.Attributes;
 
 namespace Quark
 {
+    /*
     public enum Source
     {
         Caster,
@@ -132,6 +133,6 @@ namespace Quark
             return _symbols.GetEnumerator();
         }
     }
-
+    */
 }
 

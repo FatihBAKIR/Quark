@@ -328,6 +328,11 @@
             This property stores the point which the hit occured.
             </summary>
         </member>
+        <member name="P:Quark.Contexts.IHitContext.HitOrientation">
+            <summary>
+            This property stores the orientation of the Projectile when the hit occured.
+            </summary>
+        </member>
         <member name="T:Quark.Contexts.HitContext">
             <summary>
             The HitContext is the concrete context for any projectile hit occurence.
@@ -340,6 +345,109 @@
             </summary>
             <param name="parent">Parent cast context.</param>
             <param name="projectile">The projectile object.</param>
+        </member>
+        <member name="T:Quark.Expressions.Arithmetic">
+            <summary>
+            This class provides basic operations on Quark expressions
+            </summary>
+        </member>
+        <member name="M:Quark.Expressions.Arithmetic.Add``1(Quark.Expressions.IExpression{``0},Quark.Expressions.IExpression{``0})">
+            <summary>
+            Returns an expression that adds the values of two expressions
+            </summary>
+            <typeparam name="T">Context requirement of the expression</typeparam>
+            <param name="exp1">First expression</param>
+            <param name="exp2">Second expression</param>
+            <returns>Summing expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.Arithmetic.Sub``1(Quark.Expressions.IExpression{``0},Quark.Expressions.IExpression{``0})">
+            <summary>
+            Returns an expression that subtracts the values of two expressions
+            </summary>
+            <typeparam name="T">Context requirement of the expression</typeparam>
+            <param name="exp1">First expression</param>
+            <param name="exp2">Second expression</param>
+            <returns>Subtracting expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.Arithmetic.Mul``1(Quark.Expressions.IExpression{``0},Quark.Expressions.IExpression{``0})">
+            <summary>
+            Returns an expression that multiplies the values of two expressions
+            </summary>
+            <typeparam name="T">Context requirement of the expression</typeparam>
+            <param name="exp1">First expression</param>
+            <param name="exp2">Second expression</param>
+            <returns>Multiplying expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.Arithmetic.Div``1(Quark.Expressions.IExpression{``0},Quark.Expressions.IExpression{``0})">
+            <summary>
+            Returns an expression that divides the values of two expressions
+            </summary>
+            <typeparam name="T">Context requirement of the expression</typeparam>
+            <param name="exp1">First expression</param>
+            <param name="exp2">Second expression</param>
+            <returns>Dividing expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.Arithmetic.Min``1(Quark.Expressions.IExpression{``0},Quark.Expressions.IExpression{``0})">
+            <summary>
+            Returns an expression that calculates the minimum of two expressions
+            </summary>
+            <typeparam name="T">Context requirement of the expression</typeparam>
+            <param name="exp1">First expression</param>
+            <param name="exp2">Second expression</param>
+            <returns>Minimum expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.Arithmetic.Max``1(Quark.Expressions.IExpression{``0},Quark.Expressions.IExpression{``0})">
+            <summary>
+            Returns an expression that calculates the maximum of two expressions
+            </summary>
+            <typeparam name="T">Context requirement of the expression</typeparam>
+            <param name="exp1">First expression</param>
+            <param name="exp2">Second expression</param>
+            <returns>Maximum expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.IExpression.Calculate">
+            <summary>
+            This method should calculate the expression's value without a target.
+            </summary>
+            <returns>Value of the expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.IExpression.Calculate(UnityEngine.Vector3)">
+            <summary>
+            This method should calculate the expression's value respective with a point target.
+            </summary>
+            <param name="point">The point</param>
+            <returns>Value of the expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.IExpression.Calculate(Quark.Targetable)">
+            <summary>
+            This method should calculate the expression's value respective with a targetable.
+            </summary>
+            <param name="target">The targetable</param>
+            <returns>Value of the expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.IExpression.Calculate(Quark.Character)">
+            <summary>
+            This method should calculate the expression's value respective with a character.
+            </summary>
+            <param name="target"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Quark.Expressions.Expression`1">
+            <summary>
+            This class should calculate a float value depending on the context and the given target.
+            </summary>
+            <typeparam name="T">Context requirement of the expression.</typeparam>
+        </member>
+        <member name="T:Quark.Expressions.Constant">
+            <summary>
+            A constant symbol for expressions
+            </summary>
+        </member>
+        <member name="M:Quark.Expressions.Constant.#ctor(System.Single)">
+            <summary>
+            Initializes a new constant expression instance
+            </summary>
+            <param name="constant">Constant value</param>
         </member>
         <member name="E:Quark.Targetable.QuarkCollision">
             <summary>
@@ -2056,54 +2164,6 @@
             <remarks>This function will not preserve any event listener or the current state of the states</remarks>
             </summary>
             <returns>A new collection</returns>
-        </member>
-        <member name="T:Quark.Symbol">
-            <summary>
-            This class is the building block of expressions.
-            
-            It can be an interaction, constant or other custom calculation such as another expression.
-            </summary>
-        </member>
-        <member name="T:Quark.ConstantSymbol">
-            <summary>
-            This class represents only a constant value.
-            </summary>
-        </member>
-        <member name="T:Quark.InteractionSymbol">
-            <summary>
-            This class represents an attribute interaction of a given source.
-            
-            It depends either on the caster or target depending on the source, 
-            and the value it yields is the interaction result.
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "T:Quark.Expression" -->
-        <member name="M:Quark.Expression.Add(System.Single)">
-            <summary>
-            Adds a constant symbol to this expression.
-            </summary>
-            <param name="constant">Constant.</param>
-        </member>
-        <member name="M:Quark.Expression.Add(Quark.Symbol)">
-            <summary>
-            Adds an arbitrary symbol to this expression.
-            </summary>
-            <param name="symbol">Symbol.</param>
-        </member>
-        <member name="M:Quark.Expression.Add(Quark.Source,System.String,System.Single)">
-            <summary>
-            Adds an attribute interaction to this expression.
-            </summary>
-            <param name="source">Origin character.</param>
-            <param name="tag">Attribute or stat tag.</param>
-            <param name="multiplier">Multiplier.</param>
-        </member>
-        <member name="M:Quark.Expression.Execute(Quark.Character,Quark.Character)">
-            <summary>
-            Executes the expression and returns the calculated value.
-            </summary>
-            <param name="caster">Caster.</param>
-            <param name="target">Target.</param>
         </member>
     </members>
 </doc>

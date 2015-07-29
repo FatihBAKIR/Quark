@@ -53,6 +53,9 @@
     <Compile Include="Contexts\Context.cs" />
     <Compile Include="Contexts\HitContext.cs" />
     <Compile Include="Contexts\ProjectileContext.cs" />
+    <Compile Include="Expressions\Arithmetic.cs" />
+    <Compile Include="Expressions\Expression.cs" />
+    <Compile Include="Expressions\Expressions.cs" />
     <Compile Include="General\Targetable.cs" />
     <Compile Include="Projectiles\ProjectileController.cs" />
     <Compile Include="Targeting\TargetMacro.cs" />

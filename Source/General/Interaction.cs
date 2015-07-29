@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Quark.Attributes;
 using System.Collections;
 using Quark.Utilities;
 
 namespace Quark
 {
+    //[Obsolete("Interactions are obsolete. Please use Expressions.", true)]
     public class Interaction : IEnumerable<AttributeModifier>, IDeepCopiable<Interaction>
     {
         readonly List<AttributeModifier> _modifiers;
