@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Quark.Contexts;
 using Quark.Utilities;
 
@@ -66,15 +67,9 @@ namespace Quark.Buffs
             }
         }
 
-
-        public T HasBuff<T>() where T : class, IBuff
+        public T GetBuff<T>() where T : class, IBuff
         {
-            /*
-            foreach (Buff buff in _buffs)
-                if (buff is T)
-                    return (T)buff;
-             */
-            return null;
+            return _buffs.Values.OfType<T>().FirstOrDefault();
         }
 
         /// <summary>

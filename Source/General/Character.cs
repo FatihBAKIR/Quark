@@ -285,6 +285,11 @@ namespace Quark
             return _regularBuffs.GetBuff(buff);
         }
 
+        public IBuff GetBuff<T>() where T : class, IBuff
+        {
+            return _regularBuffs.GetBuff<T>();
+        }
+
         public IBuff GetHidden(IBuff hidden)
         {
             return _hiddenBuffs.GetBuff(hidden);

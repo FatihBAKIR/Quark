@@ -23,7 +23,7 @@ namespace Quark.Utilities
     internal static class MessengerInternal
     {
         public static readonly Dictionary<string, Delegate> eventTable = new Dictionary<string, Delegate>();
-        public static readonly MessengerMode DEFAULT_MODE = MessengerMode.REQUIRE_LISTENER;
+        public static readonly MessengerMode DEFAULT_MODE = MessengerMode.DONT_REQUIRE_LISTENER;
 
         public static void AddListener(string eventType, Delegate callback)
         {
