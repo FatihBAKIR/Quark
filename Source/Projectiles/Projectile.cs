@@ -19,11 +19,6 @@ namespace Quark.Projectiles
         public static float NearEnough = 0.1F;
 
         /// <summary>
-        /// Rotation of the caster Character when the projectile stage began.
-        /// </summary>
-        public Vector3 CastRotation;
-
-        /// <summary>
         /// The Controller of this projectile object.
         /// </summary>
         public ProjectileController Controller { get; private set; }

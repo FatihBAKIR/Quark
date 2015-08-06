@@ -37,22 +37,51 @@ namespace Quark.Buffs
             _buffs = null;
         }
 
+        /// <summary>
+        /// This method attaches a given buff to this collection.
+        /// If the given buff already exists, then the stacking logic will take place for the buff.
+        /// </summary>
+        /// <param name="buff">Buff to attach</param>
         public void AttachBuff(IBuff buff)
         {
             IBuff existing;
+
             if ((existing = GetBuff(buff)) != null)
             {
-                StackBuff(existing);
-                return;
+                if (StackBuff(existing))
+                    return;
             }
+
+            buff.Terminated += BuffTerminated;
+
             _buffs.Add(buff.Identifier, buff);
             buff.Possess(_owner);
         }
 
-        void StackBuff(IBuff buff)
+        void BuffTerminated(Character source, IBuff buff)
         {
-            if (buff.StackBehavior == StackBehavior.Nothing)
+            buff.Terminated -= BuffTerminated;
+
+            if (_owner == null)
+            {
+                // The collection is disposing, don't remove it yet.
                 return;
+            }
+
+            Remove(buff.Identifier);
+        }
+
+        bool StackBuff(IBuff buff)
+        {
+            if (buff.StackBehavior == StackBehavior.Replace)
+            {
+                buff.Terminate(true);
+                return false;
+            }
+
+            if (buff.StackBehavior == StackBehavior.Nothing)
+                return true;
+
             if (Utils.Checkflag(buff.StackBehavior, StackBehavior.IncreaseStacks))
             {
                 if (buff.CurrentStacks < buff.MaximumStacks)
@@ -61,15 +90,33 @@ namespace Quark.Buffs
                     buff.OnStack();
                 }
             }
+
             if (Utils.Checkflag(buff.StackBehavior, StackBehavior.ResetBeginning))
             {
                 buff.ResetBeginning();
             }
+
+            return true;
         }
 
+        /// <summary>
+        /// This method returns the first instance of a buff type in this collection.
+        /// </summary>
+        /// <typeparam name="T">Type of the buff</typeparam>
+        /// <returns>The instance of the buff</returns>
         public T GetBuff<T>() where T : class, IBuff
         {
             return _buffs.Values.OfType<T>().FirstOrDefault();
+        }
+
+        /// <summary>
+        /// This method returns the collection of a buff type instances in this collection.
+        /// </summary>
+        /// <typeparam name="T">Type of the collection</typeparam>
+        /// <returns>All instances of the buff</returns>
+        public T[] GetBuffs<T>() where T : class, IBuff
+        {
+            return _buffs.Values.OfType<T>().ToArray();
         }
 
         /// <summary>
@@ -88,7 +135,20 @@ namespace Quark.Buffs
         /// <summary>
         /// This event is raised whenever a Buff was detached from this container.
         /// </summary>
-        public event BuffDel BuffDetached = delegate { }; 
+        public event BuffDel BuffDetached = delegate { };
+
+        /// <summary>
+        /// This method will remove a buff with a given ID from this collection.
+        /// 
+        /// <remarks>This method will not check whether the buff already exists or not!</remarks>
+        /// </summary>
+        /// <param name="id">Identifier of the buff</param>
+        void Remove(string id)
+        {
+            IBuff toDetach = _buffs[id];
+            _buffs.Remove(id);
+            BuffDetached(_owner, toDetach);
+        }
 
         void Update()
         {
@@ -103,9 +163,7 @@ namespace Quark.Buffs
 
             foreach (string id in _toDispose)
             {
-                IBuff toDetach = _buffs[id];
-                _buffs.Remove(id);
-                BuffDetached(_owner, toDetach);
+                Remove(id);
             }
 
             _toDispose.Clear();

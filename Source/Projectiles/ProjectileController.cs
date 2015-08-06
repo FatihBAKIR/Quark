@@ -75,7 +75,9 @@ namespace Quark.Projectiles
                     Projectile.transform.Translate(CalculateMovement);
                     break;
                 case ControlType.Absolute:
-                    Projectile.transform.position = Utils.AlignVector(CalculateAbsolute, Projectile.CastRotation) + Context.TravelBeginPosition;
+                    Projectile.transform.position = 
+                        Utils.Align2(CalculateAbsolute, Quaternion.Euler(Context.TravelBeginRotation) * Vector3.forward) 
+                        + Context.TravelBeginPosition;
                     break;
             }
         }

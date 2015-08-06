@@ -23,8 +23,6 @@ namespace Quark
         /// </summary>
         void Awake()
         {
-            Initialize();
-
             // This prevents a scene to have multiple QuarkMain objects.
             if (IsPresent)
             {
@@ -35,6 +33,8 @@ namespace Quark
 
             // Create a weak reference to this object.
             _headRef = new WeakReference(this);
+
+            Initialize();
 
             Logger.Debug("QuarkMain::Start");
         }

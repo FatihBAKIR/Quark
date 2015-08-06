@@ -91,13 +91,20 @@ namespace Quark.Buffs
         /// <summary>
         /// Immediately terminates this Buff.
         /// Termination assures no other Tick will take place in this instance.
+        /// 
+        /// <param name="immediate">If this flag is set, the buff will get removed from the character immediately</param>
         /// </summary>
-        void Terminate();
+        void Terminate(bool immediate = false);
 
         /// <summary>
         /// Resets the possession time of this Buff, practically resetting its lifetime
         /// </summary>
         void ResetBeginning();
+
+        /// <summary>
+        /// This event is called when this buff is terminated.
+        /// </summary>
+        event BuffDel Terminated;
     }
 
     public interface IBuff<in T> : IBuff, IContextful<T> where T : IContext
@@ -106,6 +113,8 @@ namespace Quark.Buffs
 
     public class Buff<T> : IBuff<T>, ITagged where T : class, IContext
     {
+        public event BuffDel Terminated = delegate {};
+
         /// <summary>
         /// Name of this Buff.
         /// </summary>
@@ -192,7 +201,7 @@ namespace Quark.Buffs
 
         public void Dispose()
         {
-            Terminate();
+            Terminate(true);
         }
 
         public Buff()
@@ -209,10 +218,18 @@ namespace Quark.Buffs
 #endif
         }
 
-        public void Terminate()
+        public void Terminate(bool immediate = false)
         {
             _terminated = true;
             _lastTick = Mathf.Infinity;
+
+            Terminated(Possessor, this);
+            Terminated = null;
+
+            if (!immediate) return;
+
+            Deregister();
+            OnTerminate();
         }
 
         public void ResetBeginning()
@@ -303,8 +320,8 @@ namespace Quark.Buffs
             Possessor = possessor;
             _posessionTime = Time.timeSinceLevelLoad;
             _lastTick = Time.timeSinceLevelLoad;
-            Register();
             OnPossess();
+            Register();
         }
 
         public virtual void Register()
@@ -400,7 +417,7 @@ namespace Quark.Buffs
         /// <summary>
         /// Returns this Buffs identifier
         /// </summary>
-        public string Identifier
+        public virtual string Identifier
         {
             get { return Name + "@" + Context.Identifier; }
         }
@@ -409,6 +426,7 @@ namespace Quark.Buffs
     /// <summary>
     /// This enumeration dictates how a given Buff should respond in a stacking situation
     /// </summary>
+    [Flags]
     public enum StackBehavior
     {
         /// <summary>
@@ -423,8 +441,13 @@ namespace Quark.Buffs
         IncreaseStacks = 2,
 
         /// <summary>
+        /// In the case of stackign, the old Buff will immediately terminate, and the new Buff will take its place
+        /// </summary>
+        Replace = 4,
+
+        /// <summary>
         /// In the case of stacking, the Buff shouldn't respond.
         /// </summary>
-        Nothing = 4
+        Nothing = 8,
     }
 }

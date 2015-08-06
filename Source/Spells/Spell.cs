@@ -146,7 +146,7 @@ namespace Quark.Spells
         /// Gets a value indicating whether this spell is instant.
         /// </summary>
         /// <value><c>true</c> if this spell is instant; otherwise, <c>false</c>.</value>
-        public bool IsInstant
+        public virtual bool IsInstant
         {
             get
             {
@@ -158,7 +158,7 @@ namespace Quark.Spells
         /// Gets a value indicating whether this spell invokes projectiles.
         /// </summary>
         /// <value><c>true</c> if this instance has projectiles; otherwise, <c>false</c>.</value>
-        public bool IsProjectiled
+        public virtual bool IsProjectiled
         {
             get
             {

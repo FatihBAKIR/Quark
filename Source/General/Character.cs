@@ -276,7 +276,8 @@ namespace Quark
         }
 
         /// <summary>
-        /// If a buff with the given type exists on this Character, it will return the correct instance on the Character, otherwise it will return null.
+        /// If a buff with the given type exists on this Character, 
+        /// it will return the correct instance on the Character, otherwise it will return null.
         /// </summary>
         /// <returns>The buff instance being carried by this Character.</returns>
         /// <param name="buff">Example of the Buff to find. Only types should match.</param>
@@ -285,9 +286,24 @@ namespace Quark
             return _regularBuffs.GetBuff(buff);
         }
 
-        public IBuff GetBuff<T>() where T : class, IBuff
+        /// <summary>
+        /// This method returns the first instance of a buff type attached to this character.
+        /// </summary>
+        /// <typeparam name="T">Type of the buff</typeparam>
+        /// <returns>The instance of the buff</returns>
+        public T GetBuff<T>() where T : class, IBuff
         {
             return _regularBuffs.GetBuff<T>();
+        }
+
+        /// <summary>
+        /// This method returns the collection of a buff type instances attached to this character.
+        /// </summary>
+        /// <typeparam name="T">Type of the collection</typeparam>
+        /// <returns>All instances of the buff</returns>
+        public T[] GetBuffs<T>() where T : class, IBuff
+        {
+            return _regularBuffs.GetBuffs<T>();
         }
 
         public IBuff GetHidden(IBuff hidden)

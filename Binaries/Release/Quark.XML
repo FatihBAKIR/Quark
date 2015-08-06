@@ -823,9 +823,9 @@
             <param name="checkfor">The value to check for</param>
             <returns></returns>
         </member>
-        <member name="M:Quark.Utilities.Utils.AlignVector(UnityEngine.Vector3,UnityEngine.Vector3)">
+        <member name="M:Quark.Utilities.Utils.Align2(UnityEngine.Vector3,UnityEngine.Vector3)">
             <summary>
-            Aligns a vector in the given direction
+            Aligns a vector in the given direction in a two dimensional plane
             </summary>
             <param name="vector">Vector to align</param>
             <param name="align">Direction</param>
@@ -1034,11 +1034,6 @@
             The near enough distance constant which indicates that a missile will consider itself reached to a target point.
             </summary>
         </member>
-        <member name="F:Quark.Projectiles.Projectile.CastRotation">
-            <summary>
-            Rotation of the caster Character when the projectile stage began.
-            </summary>
-        </member>
         <member name="M:Quark.Projectiles.Projectile.Make(UnityEngine.GameObject,Quark.Projectiles.ProjectileController,Quark.Contexts.ICastContext,Quark.TargetUnion)">
             <summary>
             This function creates a new projectile object from a prefab and a controller in a context towards a target.
@@ -1127,10 +1122,12 @@
             </summary>
             <param name="possessor"></param>
         </member>
-        <member name="M:Quark.Buffs.IBuff.Terminate">
+        <member name="M:Quark.Buffs.IBuff.Terminate(System.Boolean)">
             <summary>
             Immediately terminates this Buff.
             Termination assures no other Tick will take place in this instance.
+            
+            <param name="immediate">If this flag is set, the buff will get removed from the character immediately</param>
             </summary>
         </member>
         <member name="M:Quark.Buffs.IBuff.ResetBeginning">
@@ -1166,6 +1163,11 @@
         <member name="P:Quark.Buffs.IBuff.Hidden">
             <summary>
             This property determines whether this Buff should be hidden or not.
+            </summary>
+        </member>
+        <member name="E:Quark.Buffs.IBuff.Terminated">
+            <summary>
+            This event is called when this buff is terminated.
             </summary>
         </member>
         <member name="F:Quark.Buffs.Buff`1.Interval">
@@ -1308,10 +1310,36 @@
             In the case of stacking, the Buff should increase its stack count.
             </summary>
         </member>
+        <member name="F:Quark.Buffs.StackBehavior.Replace">
+            <summary>
+            In the case of stackign, the old Buff will immediately terminate, and the new Buff will take its place
+            </summary>
+        </member>
         <member name="F:Quark.Buffs.StackBehavior.Nothing">
             <summary>
             In the case of stacking, the Buff shouldn't respond.
             </summary>
+        </member>
+        <member name="M:Quark.Buffs.BuffContainer.AttachBuff(Quark.Buffs.IBuff)">
+            <summary>
+            This method attaches a given buff to this collection.
+            If the given buff already exists, then the stacking logic will take place for the buff.
+            </summary>
+            <param name="buff">Buff to attach</param>
+        </member>
+        <member name="M:Quark.Buffs.BuffContainer.GetBuff``1">
+            <summary>
+            This method returns the first instance of a buff type in this collection.
+            </summary>
+            <typeparam name="T">Type of the buff</typeparam>
+            <returns>The instance of the buff</returns>
+        </member>
+        <member name="M:Quark.Buffs.BuffContainer.GetBuffs``1">
+            <summary>
+            This method returns the collection of a buff type instances in this collection.
+            </summary>
+            <typeparam name="T">Type of the collection</typeparam>
+            <returns>All instances of the buff</returns>
         </member>
         <member name="M:Quark.Buffs.BuffContainer.GetBuff(Quark.Buffs.IBuff)">
             <summary>
@@ -1319,6 +1347,14 @@
             </summary>
             <param name="buff">Buff to find by Identifier.</param>
             <returns>Buff instance in the container.</returns>
+        </member>
+        <member name="M:Quark.Buffs.BuffContainer.Remove(System.String)">
+            <summary>
+            This method will remove a buff with a given ID from this collection.
+            
+            <remarks>This method will not check whether the buff already exists or not!</remarks>
+            </summary>
+            <param name="id">Identifier of the buff</param>
         </member>
         <member name="E:Quark.Buffs.BuffContainer.BuffDetached">
             <summary>
@@ -1999,10 +2035,25 @@
         </member>
         <member name="M:Quark.Character.GetBuff(Quark.Buffs.IBuff)">
             <summary>
-            If a buff with the given type exists on this Character, it will return the correct instance on the Character, otherwise it will return null.
+            If a buff with the given type exists on this Character, 
+            it will return the correct instance on the Character, otherwise it will return null.
             </summary>
             <returns>The buff instance being carried by this Character.</returns>
             <param name="buff">Example of the Buff to find. Only types should match.</param>
+        </member>
+        <member name="M:Quark.Character.GetBuff``1">
+            <summary>
+            This method returns the first instance of a buff type attached to this character.
+            </summary>
+            <typeparam name="T">Type of the buff</typeparam>
+            <returns>The instance of the buff</returns>
+        </member>
+        <member name="M:Quark.Character.GetBuffs``1">
+            <summary>
+            This method returns the collection of a buff type instances attached to this character.
+            </summary>
+            <typeparam name="T">Type of the collection</typeparam>
+            <returns>All instances of the buff</returns>
         </member>
         <member name="M:Quark.Character.ValidateHit(Quark.Contexts.IHitContext)">
             <summary>

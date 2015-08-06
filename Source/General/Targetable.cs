@@ -54,8 +54,18 @@ namespace Quark
         {
             if (hit.gameObject.Equals(gameObject))
                 return;
+
             if (hit.gameObject.GetComponent<Targetable>() != null)
+            {
                 OnQuarkCollision(new QuarkCollision(this, hit.gameObject.GetComponent<Targetable>()));
+                return;
+            }
+
+            if (hit.gameObject.GetComponentInParent<Targetable>() != null)
+            {
+                OnQuarkCollision(new QuarkCollision(this, hit.gameObject.GetComponentInParent<Targetable>()));
+                return;
+            }
         }
 
         void OnControllerColliderHit(ControllerColliderHit hit)

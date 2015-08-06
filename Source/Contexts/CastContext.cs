@@ -248,6 +248,8 @@ namespace Quark.Contexts
 
         void PostCasting()
         {
+            Messenger<ICastContext>.Broadcast("Cast.PostCasting", this);
+
             if (!Spell.IsInstant)
                 Messenger.RemoveListener("Update", Casting);
 

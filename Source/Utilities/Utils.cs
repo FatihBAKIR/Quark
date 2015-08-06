@@ -40,12 +40,12 @@ namespace Quark.Utilities
         }
 
         /// <summary>
-        /// Aligns a vector in the given direction
+        /// Aligns a vector in the given direction in a two dimensional plane
         /// </summary>
         /// <param name="vector">Vector to align</param>
         /// <param name="align">Direction</param>
         /// <returns>Aligned vector</returns>
-        public static Vector3 AlignVector(Vector3 vector, Vector3 align)
+        public static Vector3 Align2(Vector3 vector, Vector3 align)
         {
             float angle = Mathf.Atan(align.z / align.x);
 
@@ -53,7 +53,7 @@ namespace Quark.Utilities
 
             float sin = Mathf.Sin(angle);
             float cos = Mathf.Cos(angle);
-
+            
             Vector3 temp = new Vector3
             {
                 x = vector.x * cos - vector.z * sin,
