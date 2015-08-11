@@ -82,13 +82,22 @@ namespace Quark.Contexts
         /// </summary>
         /// <param name="caster">The caster Character object.</param>
         /// <param name="spell">The Spell object to be casted.</param>
-        public CastContext(Character caster, Spell spell)
+        public static CastContext Prepare(Character caster, Spell spell)
+        {
+            return new CastContext(caster, spell);
+        }
+
+        /// <summary>
+        /// Creates a new CastContext instance from a caster Character and a Spell to be casted.
+        /// </summary>
+        /// <param name="caster">The caster Character object.</param>
+        /// <param name="spell">The Spell object to be casted.</param>
+        protected CastContext(Character caster, Spell spell)
             : base(caster.Context)
         {
             Spell = spell;
             Spell.SetContext(this);
             Identifier = Spell.Identifier + "@" + caster.Identifier;
-            Initialize();
         }
 
         public Spell Spell
@@ -136,6 +145,14 @@ namespace Quark.Contexts
                 if (Spell.MinCastDuration <= 0) return 100;
                 return (int)(CastTime * 100 / Spell.MinCastDuration);
             }
+        }
+
+        /// <summary>
+        /// This method begins the casting of this context.
+        /// </summary>
+        public void Cast()
+        {
+            Initialize();
         }
 
         /// <summary>

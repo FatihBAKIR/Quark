@@ -120,12 +120,24 @@
             CastContexts provide state for a Spell cast.
             </summary>
         </member>
+        <member name="M:Quark.Contexts.CastContext.Prepare(Quark.Character,Quark.Spells.Spell)">
+            <summary>
+            Creates a new CastContext instance from a caster Character and a Spell to be casted.
+            </summary>
+            <param name="caster">The caster Character object.</param>
+            <param name="spell">The Spell object to be casted.</param>
+        </member>
         <member name="M:Quark.Contexts.CastContext.#ctor(Quark.Character,Quark.Spells.Spell)">
             <summary>
             Creates a new CastContext instance from a caster Character and a Spell to be casted.
             </summary>
             <param name="caster">The caster Character object.</param>
             <param name="spell">The Spell object to be casted.</param>
+        </member>
+        <member name="M:Quark.Contexts.CastContext.Cast">
+            <summary>
+            This method begins the casting of this context.
+            </summary>
         </member>
         <member name="M:Quark.Contexts.CastContext.Initialize">
             <summary>
