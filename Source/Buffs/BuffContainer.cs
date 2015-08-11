@@ -153,11 +153,11 @@ namespace Quark.Buffs
         void Update()
         {
             _toDispose = new List<string>();
-            foreach (IBuff buff in _buffs.Values)
+            foreach (KeyValuePair<string, IBuff> pair in _buffs)
             {
-                if (buff.ShouldDispose())
+                if (pair.Value.ShouldDispose())
                 {
-                    _toDispose.Add(buff.Identifier);
+                    _toDispose.Add(pair.Key);
                 }
             }
 

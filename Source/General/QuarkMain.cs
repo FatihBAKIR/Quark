@@ -13,8 +13,8 @@ namespace Quark
     {
         public delegate void EmptyDelegate();
 
-        public EmptyDelegate Updated;
-        public EmptyDelegate GameExited;
+        public EmptyDelegate Updated = delegate { };
+        public EmptyDelegate GameExited = delegate { };
 
         /// <summary>
         /// This method is used for initializing this QuarkMain instance.
@@ -99,7 +99,7 @@ namespace Quark
         /// <summary>
         /// This property stores the configuration for this game.
         /// </summary>
-        public QuarkConfig Configuration { get; protected set; } 
+        public QuarkConfig Configuration { get; protected set; }
 
         /// <summary>
         /// A weak reference to the singleton QuarkMain object.
