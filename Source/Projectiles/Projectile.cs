@@ -52,7 +52,7 @@ namespace Quark.Projectiles
         {
             GameObject instantiatedObject = (GameObject)Instantiate(prefab, Vector3.zero, Quaternion.identity);
             Projectile projectileComponent = instantiatedObject.AddComponent<Projectile>();
-            ProjectileContext pContext = new ProjectileContext(context, projectileComponent, target);
+            IProjectileContext pContext = new ProjectileContext(context, projectileComponent, target);
 
             controller.SetContext(pContext);
 
