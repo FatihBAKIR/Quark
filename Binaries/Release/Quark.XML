@@ -137,6 +137,11 @@
             Begin targeting logic
             </summary>
         </member>
+        <member name="E:Quark.Contexts.CastContext.Initialized">
+            <summary>
+            This event is raised when the cast is initialized
+            </summary>
+        </member>
         <member name="T:Quark.Contexts.CastStages">
             <summary>
             This enumeration represents the state of a CastContext.
@@ -1410,7 +1415,7 @@
             Executes the Interruption logic of this Spell without a target.
             </summary>
         </member>
-        <member name="M:Quark.Spells.Spell.OnTravel(UnityEngine.Vector3,Quark.Contexts.ProjectileContext)">
+        <member name="M:Quark.Spells.Spell.OnTravel(UnityEngine.Vector3,Quark.Contexts.IProjectileContext)">
             <summary>
             Executes the Travel logic on thge position of the projectile this stage was triggered from. 
             </summary>

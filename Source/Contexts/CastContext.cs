@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace Quark.Contexts
 {
+    public delegate void CastDelgate(ICastContext context);
+
     /// <summary>
     /// This interface provides basic getters for CastContext compatible classes.
     /// </summary>
@@ -63,6 +65,19 @@ namespace Quark.Contexts
     public class CastContext : Context, ICastContext
     {
         /// <summary>
+        /// This event is raised when the cast is initialized
+        /// </summary>
+        public event CastDelgate Initialized = delegate { };
+        public event CastDelgate TargetingBegan = delegate { };
+        public event CastDelgate TargetingSuccess = delegate { };
+        public event CastDelgate TargetingFail = delegate { };
+        public event CastDelgate CastBegan = delegate { };
+        public event CastDelgate CastTick = delegate { };
+        public event CastDelgate CastSuccess = delegate { };
+        public event CastDelgate CastFail = delegate { };
+        public event CastDelgate Cleared = delegate { };
+
+        /// <summary>
         /// Creates a new CastContext instance from a caster Character and a Spell to be casted.
         /// </summary>
         /// <param name="caster">The caster Character object.</param>
@@ -79,31 +94,31 @@ namespace Quark.Contexts
         public Spell Spell
         {
             get;
-            private set;
+            protected set;
         }
 
         public CastStages Stage
         {
             get;
-            private set;
+            protected set;
         }
 
         public TargetCollection Targets
         {
             get;
-            private set;
+            protected set;
         }
 
         public Vector3 CastBeginPosition
         {
             get;
-            private set;
+            protected set;
         }
 
         public float CastBeginTime
         {
             get;
-            private set;
+            protected set;
         }
 
         public float CastTime
@@ -149,6 +164,7 @@ namespace Quark.Contexts
 
             Targets = new TargetCollection();
 
+            Initialized(this);
             Messenger<ICastContext>.Broadcast("Cast.Initialize", this);
 
             if (Spell.CastOrder == CastOrder.TargetFirst)
@@ -171,7 +187,10 @@ namespace Quark.Contexts
             macro.TargetingSuccess += delegate(TargetCollection targets)
             {
                 Targets.AddRange(targets);
+
                 Messenger<ICastContext>.Broadcast("Cast.TargetingSuccess", this);
+                TargetingSuccess(this);
+
                 PostTargeting();
                 macro = null;
             };
@@ -179,11 +198,15 @@ namespace Quark.Contexts
             macro.TargetingFailed += delegate(TargetingError error)
             {
                 Stage = CastStages.TargetingFailed;
+
+                TargetingFail(this);
                 Messenger<ICastContext, TargetingError>.Broadcast("Cast.TargetingFailed", this, error);
+
                 macro = null;
                 Clear();
             };
 
+            TargetingBegan(this);
             Messenger<ICastContext>.Broadcast("Cast.BeginTargeting", this);
 
             macro.Run();
@@ -215,6 +238,7 @@ namespace Quark.Contexts
                 return;
             }
 
+            CastBegan(this);
             Messenger<ICastContext>.Broadcast("Cast.CastingBegin", this);
 
             Spell.OnCastingBegan();
@@ -232,6 +256,7 @@ namespace Quark.Contexts
             }
 
             Messenger<ICastContext>.Broadcast("Cast.CastingTick", this);
+            CastTick(this);
 
             if (Time.timeSinceLevelLoad > _lastCast + Spell.CastingInterval)
             {
@@ -255,10 +280,12 @@ namespace Quark.Contexts
 
             if (CastPercentage >= 100)
             {
+                CastSuccess(this);
                 Messenger<ICastContext>.Broadcast("Cast.CastSuccess", this);
 
                 // Cast is successful, run the cast success event.
-                CastSuccess();
+                Stage = CastStages.CastSuccess;
+                Spell.OnCastDone();
 
                 if (Spell.CastOrder == CastOrder.TargetFirst)
                     BeginProjectiles();
@@ -267,6 +294,7 @@ namespace Quark.Contexts
             }
             else
             {
+                CastFail(this);
                 Messenger<ICastContext>.Broadcast("Cast.CastInterrupt", this);
 
                 // Cast got interrupted somehow. Run the interruption event.
@@ -274,12 +302,6 @@ namespace Quark.Contexts
             }
 
             Clear();
-        }
-
-        void CastSuccess()
-        {
-            Stage = CastStages.CastSuccess;
-            Spell.OnCastDone();
         }
 
         public void Interrupt()
@@ -302,6 +324,7 @@ namespace Quark.Contexts
         {
             Source.ClearCast(this);
             _interruptConditions = null;
+            Cleared(this);
         }
     }
 
