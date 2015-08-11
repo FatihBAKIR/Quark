@@ -11,6 +11,11 @@ namespace Quark
     /// </summary>
     public class QuarkMain : MonoBehaviour
     {
+        public delegate void EmptyDelegate();
+
+        public EmptyDelegate Updated;
+        public EmptyDelegate GameExited;
+
         /// <summary>
         /// This method is used for initializing this QuarkMain instance.
         /// </summary>
@@ -39,12 +44,18 @@ namespace Quark
             Logger.Debug("QuarkMain::Start");
         }
 
+        void OnApplicationQuit()
+        {
+            GameExited();
+        }
+
         /// <summary>
         /// This method is called every frame from Unity.
         /// We use it to broadcast the Update event.
         /// </summary>
         void Update()
         {
+            Updated();
             Messenger.Broadcast("Update");
         }
 

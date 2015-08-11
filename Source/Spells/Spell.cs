@@ -301,7 +301,7 @@ namespace Quark.Spells
         ///     + Points the projectiles pass from while travelling.
         ///       
         /// </summary>
-        protected virtual EffectCollection<ProjectileContext> TravelEffects { get { return new EffectCollection<ProjectileContext>(); } }
+        protected virtual EffectCollection<IProjectileContext> TravelEffects { get { return new EffectCollection<IProjectileContext>(); } }
 
         /// <summary>
         /// The on-hit effects
@@ -409,7 +409,7 @@ namespace Quark.Spells
         /// Executes the Travel logic on thge position of the projectile this stage was triggered from. 
         /// </summary>
         /// <param name="position">Target of the hit.</param>
-        public virtual void OnTravel(Vector3 position, ProjectileContext context)
+        public virtual void OnTravel(Vector3 position, IProjectileContext context)
         {
             Logger.Debug("Spell.OnTravel");
             TravelEffects.Run(position, context);
