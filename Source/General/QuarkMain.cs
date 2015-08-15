@@ -13,8 +13,10 @@ namespace Quark
     {
         public delegate void EmptyDelegate();
 
-        public EmptyDelegate Updated = delegate { };
-        public EmptyDelegate GameExited = delegate { };
+        public event EmptyDelegate Updated = delegate { };
+        public event EmptyDelegate GameExited = delegate { };
+
+        public static event EmptyDelegate QuarkReady = delegate { };
 
         /// <summary>
         /// This method is used for initializing this QuarkMain instance.
@@ -40,6 +42,7 @@ namespace Quark
             _headRef = new WeakReference(this);
 
             Initialize();
+            QuarkReady();
 
             Logger.Debug("QuarkMain::Start");
         }
