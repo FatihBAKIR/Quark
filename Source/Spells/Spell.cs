@@ -477,15 +477,10 @@ namespace Quark.Spells
         public void CollectProjectile(Projectile projectile)
         {
             Logger.Debug("Collecting Projectile");
-            _onAirMissileCount--;
-            if (_onAirMissileCount == 0)
+            Context.CurrentProjectileCount--;
+            if (Context.CurrentProjectileCount == 0)
                 OnFinal();
         }
-
-        /// <summary>
-        /// This field stores the current travelling missiles originating from this Spell.
-        /// </summary>
-        uint _onAirMissileCount;
 
         /// <summary>
         /// Creates necessary projectiles for this spell
@@ -495,7 +490,7 @@ namespace Quark.Spells
             foreach (TargetUnion target in Context.Targets)
             {
                 Projectile.Make(ProjectileObject, Controller, Context, target);
-                _onAirMissileCount++;
+                Context.CurrentProjectileCount++;
             }
         }
 

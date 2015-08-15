@@ -97,7 +97,7 @@
         </member>
         <member name="P:Quark.Contexts.ICastContext.CastPercentage">
             <summary>
-            Gets the cast done percentage.
+            Gets the cast done percentage, respective to the minimum casting time.
             </summary>
         </member>
         <member name="P:Quark.Contexts.ICastContext.CastTime">
@@ -115,10 +115,27 @@
             This property stores the position this CastContext has transitioned to the Casting stage.
             </summary>
         </member>
+        <member name="P:Quark.Contexts.ICastContext.CurrentProjectileCount">
+            <summary>
+            This property stores the current projectile count of this CastContext.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.ICastContext.TotalProjectileCount">
+            <summary>
+            This property stores the total projectile count of this CastContext
+            </summary>
+        </member>
         <member name="T:Quark.Contexts.CastContext">
             <summary>
             CastContexts provide state for a Spell cast.
             </summary>
+        </member>
+        <member name="M:Quark.Contexts.CastContext.Prepare(Quark.Character,Quark.Spells.Spell)">
+            <summary>
+            Creates a new CastContext instance from a caster Character and a Spell to be casted.
+            </summary>
+            <param name="caster">The caster Character object.</param>
+            <param name="spell">The Spell object to be casted.</param>
         </member>
         <member name="M:Quark.Contexts.CastContext.#ctor(Quark.Character,Quark.Spells.Spell)">
             <summary>
@@ -126,6 +143,11 @@
             </summary>
             <param name="caster">The caster Character object.</param>
             <param name="spell">The Spell object to be casted.</param>
+        </member>
+        <member name="M:Quark.Contexts.CastContext.Cast">
+            <summary>
+            This method begins the casting of this context.
+            </summary>
         </member>
         <member name="M:Quark.Contexts.CastContext.Initialize">
             <summary>
@@ -135,6 +157,11 @@
         <member name="M:Quark.Contexts.CastContext.BeginTargeting">
             <summary>
             Begin targeting logic
+            </summary>
+        </member>
+        <member name="E:Quark.Contexts.CastContext.Initialized">
+            <summary>
+            This event is raised when the cast is initialized
             </summary>
         </member>
         <member name="T:Quark.Contexts.CastStages">
@@ -182,6 +209,21 @@
             The cast has succeeded.
             </summary>
         </member>
+        <member name="T:Quark.Contexts.CastOrder">
+            <summary>
+            This enumeration represents the order of casting of a Spell.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.CastOrder.TargetFirst">
+            <summary>
+            In this ordering, casting will occur after targeting is done.
+            </summary>
+        </member>
+        <member name="F:Quark.Contexts.CastOrder.CastFirst">
+            <summary>
+            In this ordering, casting will occur right after initialization.
+            </summary>
+        </member>
         <member name="T:Quark.Contexts.IContextful">
             <summary>
             This interface provides an abstract way of setting the context of a contextful behaviors.
@@ -224,13 +266,11 @@
         <member name="F:Quark.Contexts.HitValidationResult.ProjectileInvalidated">
             <summary>
             The Projectile Controller invalidated the hit.
-            Projectile should continue its movement.
             </summary>
         </member>
         <member name="F:Quark.Contexts.HitValidationResult.CharacterInvalidated">
             <summary>
             Target Character invalidated the hit.
-            Projectile shouldn't continue moving.
             </summary>
         </member>
         <member name="T:Quark.Contexts.IHitContext">
@@ -315,18 +355,126 @@
             This property stores the point which the hit occured.
             </summary>
         </member>
+        <member name="P:Quark.Contexts.IHitContext.HitOrientation">
+            <summary>
+            This property stores the orientation of the Projectile when the hit occured.
+            </summary>
+        </member>
         <member name="T:Quark.Contexts.HitContext">
             <summary>
             The HitContext is the concrete context for any projectile hit occurence.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Quark.Contexts.HitContext.#ctor(Quark.Contexts.ProjectileContext,Quark.TargetUnion,UnityEngine.Vector3)" -->
+        <!-- Badly formed XML comment ignored for member "M:Quark.Contexts.HitContext.#ctor(Quark.Contexts.IProjectileContext,Quark.TargetUnion,UnityEngine.Vector3)" -->
         <member name="M:Quark.Contexts.ProjectileContext.#ctor(Quark.Contexts.ICastContext,Quark.Projectiles.Projectile,Quark.TargetUnion)">
             <summary>
             Creates a new ProjectileContext from a cast context and a projectile object.
             </summary>
             <param name="parent">Parent cast context.</param>
             <param name="projectile">The projectile object.</param>
+        </member>
+        <member name="T:Quark.Expressions.Arithmetic">
+            <summary>
+            This class provides basic operations on Quark expressions
+            </summary>
+        </member>
+        <member name="M:Quark.Expressions.Arithmetic.Add``1(Quark.Expressions.IExpression{``0},Quark.Expressions.IExpression{``0})">
+            <summary>
+            Returns an expression that adds the values of two expressions
+            </summary>
+            <typeparam name="T">Context requirement of the expression</typeparam>
+            <param name="exp1">First expression</param>
+            <param name="exp2">Second expression</param>
+            <returns>Summing expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.Arithmetic.Sub``1(Quark.Expressions.IExpression{``0},Quark.Expressions.IExpression{``0})">
+            <summary>
+            Returns an expression that subtracts the values of two expressions
+            </summary>
+            <typeparam name="T">Context requirement of the expression</typeparam>
+            <param name="exp1">First expression</param>
+            <param name="exp2">Second expression</param>
+            <returns>Subtracting expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.Arithmetic.Mul``1(Quark.Expressions.IExpression{``0},Quark.Expressions.IExpression{``0})">
+            <summary>
+            Returns an expression that multiplies the values of two expressions
+            </summary>
+            <typeparam name="T">Context requirement of the expression</typeparam>
+            <param name="exp1">First expression</param>
+            <param name="exp2">Second expression</param>
+            <returns>Multiplying expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.Arithmetic.Div``1(Quark.Expressions.IExpression{``0},Quark.Expressions.IExpression{``0})">
+            <summary>
+            Returns an expression that divides the values of two expressions
+            </summary>
+            <typeparam name="T">Context requirement of the expression</typeparam>
+            <param name="exp1">First expression</param>
+            <param name="exp2">Second expression</param>
+            <returns>Dividing expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.Arithmetic.Min``1(Quark.Expressions.IExpression{``0},Quark.Expressions.IExpression{``0})">
+            <summary>
+            Returns an expression that calculates the minimum of two expressions
+            </summary>
+            <typeparam name="T">Context requirement of the expression</typeparam>
+            <param name="exp1">First expression</param>
+            <param name="exp2">Second expression</param>
+            <returns>Minimum expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.Arithmetic.Max``1(Quark.Expressions.IExpression{``0},Quark.Expressions.IExpression{``0})">
+            <summary>
+            Returns an expression that calculates the maximum of two expressions
+            </summary>
+            <typeparam name="T">Context requirement of the expression</typeparam>
+            <param name="exp1">First expression</param>
+            <param name="exp2">Second expression</param>
+            <returns>Maximum expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.IExpression.Calculate">
+            <summary>
+            This method should calculate the expression's value without a target.
+            </summary>
+            <returns>Value of the expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.IExpression.Calculate(UnityEngine.Vector3)">
+            <summary>
+            This method should calculate the expression's value respective with a point target.
+            </summary>
+            <param name="point">The point</param>
+            <returns>Value of the expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.IExpression.Calculate(Quark.Targetable)">
+            <summary>
+            This method should calculate the expression's value respective with a targetable.
+            </summary>
+            <param name="target">The targetable</param>
+            <returns>Value of the expression</returns>
+        </member>
+        <member name="M:Quark.Expressions.IExpression.Calculate(Quark.Character)">
+            <summary>
+            This method should calculate the expression's value respective with a character.
+            </summary>
+            <param name="target"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Quark.Expressions.Expression`1">
+            <summary>
+            This class should calculate a float value depending on the context and the given target.
+            </summary>
+            <typeparam name="T">Context requirement of the expression.</typeparam>
+        </member>
+        <member name="T:Quark.Expressions.Constant">
+            <summary>
+            A constant symbol for expressions
+            </summary>
+        </member>
+        <member name="M:Quark.Expressions.Constant.#ctor(System.Single)">
+            <summary>
+            Initializes a new constant expression instance
+            </summary>
+            <param name="constant">Constant value</param>
         </member>
         <member name="E:Quark.Targetable.QuarkCollision">
             <summary>
@@ -403,6 +551,17 @@
             This method changes the target of this Controller instance and the Projectile that's bound with it.
             </summary>
             <param name="newTarget">The new target.</param>
+        </member>
+        <member name="M:Quark.Projectiles.ProjectileController.OnMiss">
+            <summary>
+            This method is called when this projectile misses.
+            </summary>
+        </member>
+        <member name="M:Quark.Projectiles.ProjectileController.OnHit(Quark.Contexts.IHitContext)">
+            <summary>
+            This method is called when this projectile hits a target.
+            </summary>
+            <param name="hit">Hit context.</param>
         </member>
         <member name="P:Quark.Projectiles.ProjectileController.Context">
             <summary>
@@ -702,9 +861,9 @@
             <param name="checkfor">The value to check for</param>
             <returns></returns>
         </member>
-        <member name="M:Quark.Utilities.Utils.AlignVector(UnityEngine.Vector3,UnityEngine.Vector3)">
+        <member name="M:Quark.Utilities.Utils.Align2(UnityEngine.Vector3,UnityEngine.Vector3)">
             <summary>
-            Aligns a vector in the given direction
+            Aligns a vector in the given direction in a two dimensional plane
             </summary>
             <param name="vector">Vector to align</param>
             <param name="align">Direction</param>
@@ -913,12 +1072,7 @@
             The near enough distance constant which indicates that a missile will consider itself reached to a target point.
             </summary>
         </member>
-        <member name="F:Quark.Projectiles.Projectile.CastRotation">
-            <summary>
-            Rotation of the caster Character when the projectile stage began.
-            </summary>
-        </member>
-        <member name="M:Quark.Projectiles.Projectile.Make(UnityEngine.GameObject,Quark.Projectiles.ProjectileController,Quark.Contexts.CastContext,Quark.TargetUnion)">
+        <member name="M:Quark.Projectiles.Projectile.Make(UnityEngine.GameObject,Quark.Projectiles.ProjectileController,Quark.Contexts.ICastContext,Quark.TargetUnion)">
             <summary>
             This function creates a new projectile object from a prefab and a controller in a context towards a target.
             
@@ -930,6 +1084,18 @@
             <param name="target">Target of the Projectile instance.</param>
             <returns>The new Projectile instance.</returns>
         </member>
+        <member name="F:Quark.Projectiles.Projectile._lastTravel">
+            <summary>
+            This field stores the position of the Projectile when the OnTravel event was raised the last time.
+            </summary>
+        </member>
+        <member name="F:Quark.Projectiles.Projectile._previousPosition">
+            <summary>
+            This field stores the position of the Projectile before the controller is called this frame.
+            
+            Used for determining the last movement vector upon hitting.
+            </summary>
+        </member>
         <member name="P:Quark.Projectiles.Projectile.Controller">
             <summary>
             The Controller of this projectile object.
@@ -938,6 +1104,11 @@
         <member name="P:Quark.Projectiles.Projectile.Context">
             <summary>
             The Context of this projectile.
+            </summary>
+        </member>
+        <member name="P:Quark.Projectiles.Projectile.LastMovement">
+            <summary>
+            This property calculates the latest position change of this Projectile.
             </summary>
         </member>
         <member name="M:Quark.Buffs.IBuff.ShouldDispose">
@@ -989,10 +1160,12 @@
             </summary>
             <param name="possessor"></param>
         </member>
-        <member name="M:Quark.Buffs.IBuff.Terminate">
+        <member name="M:Quark.Buffs.IBuff.Terminate(System.Boolean)">
             <summary>
             Immediately terminates this Buff.
             Termination assures no other Tick will take place in this instance.
+            
+            <param name="immediate">If this flag is set, the buff will get removed from the character immediately</param>
             </summary>
         </member>
         <member name="M:Quark.Buffs.IBuff.ResetBeginning">
@@ -1028,6 +1201,11 @@
         <member name="P:Quark.Buffs.IBuff.Hidden">
             <summary>
             This property determines whether this Buff should be hidden or not.
+            </summary>
+        </member>
+        <member name="E:Quark.Buffs.IBuff.Terminated">
+            <summary>
+            This event is called when this buff is terminated.
             </summary>
         </member>
         <member name="F:Quark.Buffs.Buff`1.Interval">
@@ -1170,10 +1348,36 @@
             In the case of stacking, the Buff should increase its stack count.
             </summary>
         </member>
+        <member name="F:Quark.Buffs.StackBehavior.Replace">
+            <summary>
+            In the case of stackign, the old Buff will immediately terminate, and the new Buff will take its place
+            </summary>
+        </member>
         <member name="F:Quark.Buffs.StackBehavior.Nothing">
             <summary>
             In the case of stacking, the Buff shouldn't respond.
             </summary>
+        </member>
+        <member name="M:Quark.Buffs.BuffContainer.AttachBuff(Quark.Buffs.IBuff)">
+            <summary>
+            This method attaches a given buff to this collection.
+            If the given buff already exists, then the stacking logic will take place for the buff.
+            </summary>
+            <param name="buff">Buff to attach</param>
+        </member>
+        <member name="M:Quark.Buffs.BuffContainer.GetBuff``1">
+            <summary>
+            This method returns the first instance of a buff type in this collection.
+            </summary>
+            <typeparam name="T">Type of the buff</typeparam>
+            <returns>The instance of the buff</returns>
+        </member>
+        <member name="M:Quark.Buffs.BuffContainer.GetBuffs``1">
+            <summary>
+            This method returns the collection of a buff type instances in this collection.
+            </summary>
+            <typeparam name="T">Type of the collection</typeparam>
+            <returns>All instances of the buff</returns>
         </member>
         <member name="M:Quark.Buffs.BuffContainer.GetBuff(Quark.Buffs.IBuff)">
             <summary>
@@ -1182,12 +1386,20 @@
             <param name="buff">Buff to find by Identifier.</param>
             <returns>Buff instance in the container.</returns>
         </member>
+        <member name="M:Quark.Buffs.BuffContainer.Remove(System.String)">
+            <summary>
+            This method will remove a buff with a given ID from this collection.
+            
+            <remarks>This method will not check whether the buff already exists or not!</remarks>
+            </summary>
+            <param name="id">Identifier of the buff</param>
+        </member>
         <member name="E:Quark.Buffs.BuffContainer.BuffDetached">
             <summary>
             This event is raised whenever a Buff was detached from this container.
             </summary>
         </member>
-        <member name="M:Quark.Spells.Spell.SetContext(Quark.Contexts.CastContext)">
+        <member name="M:Quark.Spells.Spell.SetContext(Quark.Contexts.ICastContext)">
             <summary>
             Sets the CastContext this Spell is being casted in.
             </summary>
@@ -1236,7 +1448,7 @@
             Executes the Interruption logic of this Spell without a target.
             </summary>
         </member>
-        <member name="M:Quark.Spells.Spell.OnTravel(UnityEngine.Vector3,Quark.Contexts.ProjectileContext)">
+        <member name="M:Quark.Spells.Spell.OnTravel(UnityEngine.Vector3,Quark.Contexts.IProjectileContext)">
             <summary>
             Executes the Travel logic on thge position of the projectile this stage was triggered from. 
             </summary>
@@ -1263,7 +1475,7 @@
             <param name="targetable">Target of the hit.</param>
             <param name="context">The context for this hit.</param>
         </member>
-        <member name="M:Quark.Spells.Spell.OnMiss(Quark.Contexts.ProjectileContext)">
+        <member name="M:Quark.Spells.Spell.OnMiss(Quark.Contexts.IProjectileContext)">
             <summary>
             Executes the Miss logic for this Spell.
             </summary>
@@ -1279,14 +1491,9 @@
             </summary>
             <param name="projectile">Projectile to collect.</param>
         </member>
-        <member name="F:Quark.Spells.Spell._onAirMissileCount">
-            <summary>
-            This field stores the current travelling missiles originating from this Spell.
-            </summary>
-        </member>
         <member name="M:Quark.Spells.Spell.CreateProjectiles">
             <summary>
-            Invokes necessary projectiles for this spell
+            Creates necessary projectiles for this spell
             </summary>
         </member>
         <member name="M:Quark.Spells.Spell.IsTagged(System.String)">
@@ -1303,6 +1510,23 @@
             <value>
             The duration of the cast.
             </value>
+        </member>
+        <member name="P:Quark.Spells.Spell.CastOrder">
+            <summary>
+            This property stores the cast order type of this Spell.
+            </summary>
+        </member>
+        <member name="P:Quark.Spells.Spell.MinCastDuration">
+            <summary>
+            This property stores the least amount of time in seconds for a cast of this Spell to be considered successful.
+            </summary>
+        </member>
+        <member name="P:Quark.Spells.Spell.MaxCastDuration">
+            <summary>
+            This property stores the maximum amount of casting time in seconds for this Spell.
+            
+            <remarks>Setting this property to 0 makes this spell a variable casted Spell.</remarks>
+            </summary>
         </member>
         <member name="P:Quark.Spells.Spell.CastingInterval">
             <summary>
@@ -1445,6 +1669,9 @@
                 + Target Targetables
                 + Target Points
                 + Void
+            
+            Notice:
+                In the CastFirst ordering, only the void overload of Apply will be called.
             
             </summary>
         </member>
@@ -1841,10 +2068,32 @@
         </member>
         <member name="M:Quark.Character.GetBuff(Quark.Buffs.IBuff)">
             <summary>
-            If a buff with the given type exists on this Character, it will return the correct instance on the Character, otherwise it will return null.
+            If a buff with the given type exists on this Character, 
+            it will return the correct instance on the Character, otherwise it will return null.
             </summary>
             <returns>The buff instance being carried by this Character.</returns>
             <param name="buff">Example of the Buff to find. Only types should match.</param>
+        </member>
+        <member name="M:Quark.Character.GetBuff``1">
+            <summary>
+            This method returns the first instance of a buff type attached to this character.
+            </summary>
+            <typeparam name="T">Type of the buff</typeparam>
+            <returns>The instance of the buff</returns>
+        </member>
+        <member name="M:Quark.Character.GetBuffs``1">
+            <summary>
+            This method returns the collection of a buff type instances attached to this character.
+            </summary>
+            <typeparam name="T">Type of the collection</typeparam>
+            <returns>All instances of the buff</returns>
+        </member>
+        <member name="M:Quark.Character.GetHidden``1">
+            <summary>
+            This method returns the first instance of a hidden buff type attached to this character.
+            </summary>
+            <typeparam name="T">Type of the buff</typeparam>
+            <returns>The instance of the buff</returns>
         </member>
         <member name="M:Quark.Character.ValidateHit(Quark.Contexts.IHitContext)">
             <summary>
@@ -2006,54 +2255,6 @@
             <remarks>This function will not preserve any event listener or the current state of the states</remarks>
             </summary>
             <returns>A new collection</returns>
-        </member>
-        <member name="T:Quark.Symbol">
-            <summary>
-            This class is the building block of expressions.
-            
-            It can be an interaction, constant or other custom calculation such as another expression.
-            </summary>
-        </member>
-        <member name="T:Quark.ConstantSymbol">
-            <summary>
-            This class represents only a constant value.
-            </summary>
-        </member>
-        <member name="T:Quark.InteractionSymbol">
-            <summary>
-            This class represents an attribute interaction of a given source.
-            
-            It depends either on the caster or target depending on the source, 
-            and the value it yields is the interaction result.
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "T:Quark.Expression" -->
-        <member name="M:Quark.Expression.Add(System.Single)">
-            <summary>
-            Adds a constant symbol to this expression.
-            </summary>
-            <param name="constant">Constant.</param>
-        </member>
-        <member name="M:Quark.Expression.Add(Quark.Symbol)">
-            <summary>
-            Adds an arbitrary symbol to this expression.
-            </summary>
-            <param name="symbol">Symbol.</param>
-        </member>
-        <member name="M:Quark.Expression.Add(Quark.Source,System.String,System.Single)">
-            <summary>
-            Adds an attribute interaction to this expression.
-            </summary>
-            <param name="source">Origin character.</param>
-            <param name="tag">Attribute or stat tag.</param>
-            <param name="multiplier">Multiplier.</param>
-        </member>
-        <member name="M:Quark.Expression.Execute(Quark.Character,Quark.Character)">
-            <summary>
-            Executes the expression and returns the calculated value.
-            </summary>
-            <param name="caster">Caster.</param>
-            <param name="target">Target.</param>
         </member>
     </members>
 </doc>

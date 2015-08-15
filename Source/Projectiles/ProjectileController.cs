@@ -155,6 +155,19 @@ namespace Quark.Projectiles
                 return Utils.Distance2(Projectile.transform.position, TargetPoint) <= Projectile.NearEnough;
             }
         }
+        
+        /// <summary>
+        /// This method is called when this projectile misses.
+        /// </summary>
+        public virtual void OnMiss()
+        {}
+
+        /// <summary>
+        /// This method is called when this projectile hits a target.
+        /// </summary>
+        /// <param name="hit">Hit context.</param>
+        public virtual void OnHit(IHitContext hit)
+        {}
 
         /// <summary>
         /// Gets the time in seconds since the projectile was created.

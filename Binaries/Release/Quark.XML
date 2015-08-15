@@ -115,6 +115,16 @@
             This property stores the position this CastContext has transitioned to the Casting stage.
             </summary>
         </member>
+        <member name="P:Quark.Contexts.ICastContext.CurrentProjectileCount">
+            <summary>
+            This property stores the current projectile count of this CastContext.
+            </summary>
+        </member>
+        <member name="P:Quark.Contexts.ICastContext.TotalProjectileCount">
+            <summary>
+            This property stores the total projectile count of this CastContext
+            </summary>
+        </member>
         <member name="T:Quark.Contexts.CastContext">
             <summary>
             CastContexts provide state for a Spell cast.
@@ -541,6 +551,17 @@
             This method changes the target of this Controller instance and the Projectile that's bound with it.
             </summary>
             <param name="newTarget">The new target.</param>
+        </member>
+        <member name="M:Quark.Projectiles.ProjectileController.OnMiss">
+            <summary>
+            This method is called when this projectile misses.
+            </summary>
+        </member>
+        <member name="M:Quark.Projectiles.ProjectileController.OnHit(Quark.Contexts.IHitContext)">
+            <summary>
+            This method is called when this projectile hits a target.
+            </summary>
+            <param name="hit">Hit context.</param>
         </member>
         <member name="P:Quark.Projectiles.ProjectileController.Context">
             <summary>
@@ -1469,11 +1490,6 @@
             Collects a projectile which were created by this spell
             </summary>
             <param name="projectile">Projectile to collect.</param>
-        </member>
-        <member name="F:Quark.Spells.Spell._onAirMissileCount">
-            <summary>
-            This field stores the current travelling missiles originating from this Spell.
-            </summary>
         </member>
         <member name="M:Quark.Spells.Spell.CreateProjectiles">
             <summary>

@@ -83,7 +83,7 @@ namespace Quark.Contexts
             TravelBeginRotation = Source.transform.rotation.eulerAngles;
             TravelBeginPosition = Source.transform.position;
             TravelBeginTime = Time.timeSinceLevelLoad;
-            Identifier = "projectile@" + parent.Identifier;
+            Identifier = "p" + parent.TotalProjectileCount + "@" + parent.Identifier;
         }
 
         public Projectile Projectile { get; protected set; }
@@ -137,40 +137,40 @@ namespace Quark.Contexts
 
         public virtual void OnHit(TargetUnion target)
         {
-            if (target.Type != TargetType.Point)
+            IHitContext hit = new HitContext(this, target, Projectile.transform.position);
+            HitValidationResult validation = hit.Validate();
+            if (validation == HitValidationResult.Valid)
             {
-                IHitContext hit = new HitContext(this, target, Projectile.transform.position);
-                HitValidationResult validation = hit.Validate();
-                if (validation == HitValidationResult.Valid)
+                switch (target.Type)
                 {
-                    switch (target.Type)
-                    {
-                        case TargetType.Point:
-                            Spell.OnHit(target.Point, hit);
-                            break;
-                        case TargetType.Targetable:
-                            Spell.OnHit(target.Targetable, hit);
-                            break;
-                        case TargetType.Character:
-                            Spell.OnHit(target.Character, hit);
-                            break;
-                    }
-
-                    if ((Target.Type != TargetType.Point &&
-                        target.AsTargetable().Equals(Target.AsTargetable())) ||
-                        (Spell.TargetForm == TargetForm.Singular))
-                    {
-                        if (HitCount == 0)
-                            Spell.OnMiss(this);
-
-                        Collect();
-                    }
-
-                    HitCount++;
+                    case TargetType.Point:
+                        Spell.OnHit(target.Point, hit);
+                        break;
+                    case TargetType.Targetable:
+                        Spell.OnHit(target.Targetable, hit);
+                        break;
+                    case TargetType.Character:
+                        Spell.OnHit(target.Character, hit);
+                        break;
                 }
+
+                Projectile.Controller.OnHit(hit);
+
+                if ((Target.Type != TargetType.Point &&
+                     target.AsTargetable().Equals(Target.AsTargetable())) ||
+                    (Spell.TargetForm == TargetForm.Singular))
+                {
+                    if (HitCount == 0)
+                    {
+                        Projectile.Controller.OnMiss();
+                        Spell.OnMiss(this);
+                    }
+
+                    Collect();
+                }
+
+                HitCount++;
             }
-            else
-                Collect();
         }
 
         void Collect()
@@ -181,7 +181,7 @@ namespace Quark.Contexts
 
         public virtual void OnTravel()
         {
-            Spell.OnTravel(Projectile.transform.position, this);     
+            Spell.OnTravel(Projectile.transform.position, this);
         }
 
         public int HitCount { get; set; }
@@ -193,6 +193,16 @@ namespace Quark.Contexts
         public float CastTime { get { return ((ICastContext)Parent).CastTime; } }
         public float CastBeginTime { get { return ((ICastContext)Parent).CastBeginTime; } }
         public Vector3 CastBeginPosition { get { return ((ICastContext)Parent).CastBeginPosition; } }
+        public int CurrentProjectileCount
+        {
+            get { return ((ICastContext)Parent).CurrentProjectileCount; }
+            set { ((ICastContext)Parent).CurrentProjectileCount = value; }
+        }
+        public int TotalProjectileCount
+        {
+            get { return ((ICastContext)Parent).TotalProjectileCount; }
+            set { ((ICastContext)Parent).TotalProjectileCount = value; }
+        }
         public void Interrupt() { ((ICastContext)Parent).Interrupt(); }
         public void Clear()
         {

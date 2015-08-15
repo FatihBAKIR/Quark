@@ -48,6 +48,16 @@ namespace Quark.Contexts
         Vector3 CastBeginPosition { get; }
 
         /// <summary>
+        /// This property stores the current projectile count of this CastContext.
+        /// </summary>
+        int CurrentProjectileCount { get; set; }
+
+        /// <summary>
+        /// This property stores the total projectile count of this CastContext
+        /// </summary>
+        int TotalProjectileCount { get; set; }
+
+        /// <summary>
         /// Interrupts this cast context.
         /// Can only cancel the casts in the Casting stage.
         /// </summary>
@@ -123,6 +133,10 @@ namespace Quark.Contexts
             get;
             protected set;
         }
+
+        public int CurrentProjectileCount { get; set; }
+
+        public int TotalProjectileCount { get; set; }
 
         public float CastBeginTime
         {
