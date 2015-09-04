@@ -296,10 +296,11 @@ namespace Quark.Contexts
             }
         }
 
+        private bool _outerInterrupt = false;
         bool CheckInterrupt()
         {
             _interruptConditions.SetContext(this);
-            return _interruptConditions.Check() || Spell.CheckInterrupt();
+            return _interruptConditions.Check() || Spell.CheckInterrupt() || _outerInterrupt;
         }
 
         void PostCasting()
@@ -329,7 +330,8 @@ namespace Quark.Contexts
                 Messenger<ICastContext>.Broadcast("Cast.CastInterrupt", this);
 
                 // Cast got interrupted somehow. Run the interruption event.
-                Interrupt();
+                Stage = CastStages.CastFail;
+                Spell.OnInterrupt();
             }
 
             Clear();
@@ -337,8 +339,7 @@ namespace Quark.Contexts
 
         public void Interrupt()
         {
-            Stage = CastStages.CastFail;
-            Spell.OnInterrupt();
+            _outerInterrupt = true;
         }
 
         void BeginProjectiles()
