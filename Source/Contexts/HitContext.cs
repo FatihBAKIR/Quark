@@ -59,6 +59,11 @@ namespace Quark.Contexts
         Vector3 HitOrientation { get; }
 
         /// <summary>
+        /// This property stores the last position change of the Projectile before the hit occurs.
+        /// </summary>
+        Vector3 LastChange { get; }
+
+        /// <summary>
         /// This method should validate whether the context represents a valid hit.
         /// </summary>
         /// <returns>Whether the hit is valid or not.</returns>
@@ -82,6 +87,7 @@ namespace Quark.Contexts
             HitPosition = hitPosition;
             HitTarget = target;
             HitOrientation = parent.Projectile.LastMovement.normalized;
+            LastChange = parent.Projectile.LastMovement;
             Identifier = "hit@" + parent.Identifier;
         }
 
@@ -90,6 +96,8 @@ namespace Quark.Contexts
         public Vector3 HitPosition { get; private set; }
 
         public Vector3 HitOrientation { get; private set; }
+
+        public Vector3 LastChange { get; private set; }
 
         public HitValidationResult Validate()
         {

@@ -69,10 +69,11 @@ namespace Quark.Projectiles
         /// </summary>
         public virtual void Control()
         {
+            Vector3 previous = Projectile.transform.position;
             switch (Type)
             {
                 case ControlType.Movement:
-                    Projectile.transform.Translate(CalculateMovement);
+                    Projectile.transform.Translate(CalculateMovement, Space.World);
                     break;
                 case ControlType.Absolute:
                     Projectile.transform.position = 
@@ -80,6 +81,7 @@ namespace Quark.Projectiles
                         + Context.TravelBeginPosition;
                     break;
             }
+            Projectile.transform.rotation = Quaternion.LookRotation(Projectile.transform.position - previous);
         }
 
         /// <summary>

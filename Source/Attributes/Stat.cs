@@ -35,13 +35,13 @@ namespace Quark.Attributes
 
         public void Manipulate(float amount)
         {
-            float temp = _lostValue;
+            float previous = _lostValue;
 
             _lostValue -= amount;
             _lostValue = System.Math.Max(0, _lostValue);
             _lostValue = System.Math.Min(Maximum, _lostValue);
 
-            OnManipulation(_lostValue - temp);
+            OnManipulation(_lostValue - previous);
         }
 
         public void ClearEvents()
@@ -52,6 +52,9 @@ namespace Quark.Attributes
 
         protected void OnManipulation(float amount)
         {
+            if (amount == 0)
+                return;
+
             Logger.Debug("Stat::OnManipulation");
 
             Messenger<Character, Stat, float>.Broadcast("Manipulated", Owner, this, amount);

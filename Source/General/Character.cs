@@ -316,6 +316,16 @@ namespace Quark
             return _hiddenBuffs.GetBuff<T>();
         }
 
+        /// <summary>
+        /// This method returns the collection of a hidden buff type instances attached to this character.
+        /// </summary>
+        /// <typeparam name="T">Type of the buff</typeparam>
+        /// <returns>The instance of the buff</returns>
+        public T[] GetHiddens<T>() where T : class, IBuff
+        {
+            return _hiddenBuffs.GetBuffs<T>();
+        }
+
         public IBuff GetHidden(IBuff hidden)
         {
             return _hiddenBuffs.GetBuff(hidden);
