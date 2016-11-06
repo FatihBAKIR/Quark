@@ -79,6 +79,27 @@ namespace Quark.Projectiles
             _collided = new Dictionary<int, bool>();
         }
 
+        void OnTriggerEnter2D(Collider2D c)
+        {
+            // Unity calls OnTriggerEnter for every collider on the hit object.
+            // We store the hit objects in a dictionary every frame to 
+            // mistakenly processing one hit more than once.
+            if (_collided.ContainsKey(c.gameObject.GetInstanceID()))
+                return;
+
+            Targetable hit = c.gameObject.GetComponent<Targetable>();
+
+            if (hit == null) // Hit object wasn't a Quark object.
+                return;
+
+            if (hit is Character)
+                Context.OnHit(new TargetUnion(hit as Character));
+            else
+                Context.OnHit(new TargetUnion(hit));
+
+            _collided.Add(c.gameObject.GetInstanceID(), true);
+        }
+
         void OnTriggerEnter(Collider c)
         {
             // Unity calls OnTriggerEnter for every collider on the hit object.

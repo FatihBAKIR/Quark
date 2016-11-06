@@ -68,7 +68,7 @@ namespace Quark
 
         void OnQuarkCollision(QuarkCollision collision)
         {
-            Messenger<QuarkCollision>.Broadcast("QuarkCollision", collision);
+            //Messenger<QuarkCollision>.Broadcast("QuarkCollision", collision);
             QuarkCollision(collision);
         }
 

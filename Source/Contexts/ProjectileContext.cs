@@ -186,7 +186,7 @@ namespace Quark.Contexts
 
         public int HitCount { get; set; }
 
-        public Spell Spell { get { return ((ICastContext)Parent).Spell; } }
+        public ProjectiledSpell Spell { get { return ((ICastContext)Parent).Spell; } }
         public CastStages Stage { get { return ((ICastContext)Parent).Stage; } }
         public TargetCollection Targets { get { return ((ICastContext)Parent).Targets; } }
         public int CastPercentage { get { return ((ICastContext)Parent).CastPercentage; } }

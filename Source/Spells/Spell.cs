@@ -9,7 +9,160 @@ using UnityEngine;
 
 namespace Quark.Spells
 {
-    public class Spell : ITagged, Identifiable
+
+    public abstract class ProjectiledSpell : Spell
+    {
+        /// <summary>
+        /// This field determines the interval of the OnTravel logic to run while a projectile belonging to this Spell is traveling.
+        /// </summary>
+        /// <value>
+        /// Interval in distance units.
+        /// </value> 
+        public virtual float TravelingInterval { get; protected set; }
+
+
+        /// <summary>
+        /// The traveling effects
+        /// Effects within this list are applied while the projectiles of this Spell are traveling
+        /// 
+        /// Possible Targets:
+        ///     + Points the projectiles pass from while travelling.
+        ///       
+        /// </summary>
+        protected virtual EffectCollection<ProjectileContext> TravelEffects { get { return new EffectCollection<ProjectileContext>(); } }
+
+        /// <summary>
+        /// The on-hit effects
+        /// Effects within this list are applied when a successful hit occurs.
+        /// 
+        /// Possible Targets:
+        ///     + Target Characters
+        ///     + Target Targetables
+        ///     + Target Points
+        ///     + Void
+        /// 
+        /// </summary>
+        protected virtual EffectCollection<IHitContext> HitEffects { get { return new EffectCollection<IHitContext>(); } }
+
+        /// <summary>
+        /// The spell miss effects
+        /// Effects within this list are applied when a projectile gets destroyed without hitting any characters.
+        /// 
+        /// Possible Targets:
+        ///     + Void
+        /// 
+        /// </summary>
+        protected virtual EffectCollection<IProjectileContext> MissEffects { get { return new EffectCollection<IProjectileContext>(); } }
+
+
+        /// <summary>
+        /// This property stores the GameObject for the projectiles of this Spell.
+        /// If this property returns null, the Projectile stage of this Spell will be skipped.
+        /// Necessary components will be added by Quark upon instantiation on the projectiles.
+        /// </summary>
+        protected abstract GameObject ProjectileObject
+        {
+            get;
+        }
+
+        /// <summary>
+        /// This property stores the ProjectileController for the projectiles of this Spell.
+        /// </summary>
+        protected abstract ProjectileController Controller
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this spell invokes projectiles.
+        /// </summary>
+        /// <value><c>true</c> if this instance has projectiles; otherwise, <c>false</c>.</value>
+        public bool IsProjectiled
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Collects a projectile which were created by this spell
+        /// </summary>
+        /// <param name="projectile">Projectile to collect.</param>
+        public void CollectProjectile(Projectile projectile)
+        {
+            Logger.Debug("Collecting Projectile");
+            Context.ProjectilesOnAir--;
+            if (Context.ProjectilesOnAir == 0)
+                OnFinal();
+        }
+
+        /// <summary>
+        /// Creates necessary projectiles for this spell
+        /// </summary>
+        public virtual void CreateProjectiles()
+        {
+            foreach (TargetUnion target in Context.Targets)
+            {
+                Projectile.Make(ProjectileObject, Controller, Context, target);
+                Context.ProjectilesOnAir++;
+            }
+        }
+
+        /// <summary>
+        /// Executes the Travel logic on thge position of the projectile this stage was triggered from. 
+        /// </summary>
+        /// <param name="position">Target of the hit.</param>
+        public virtual void OnTravel(Vector3 position, ProjectileContext context)
+        {
+            Logger.Debug("Spell.OnTravel");
+            TravelEffects.Run(position, context);
+        }
+
+        /// <summary>
+        /// Executes the Hit logic on the given point for this Spell.
+        /// </summary>
+        /// <param name="position">Target of the hit.</param>>
+        /// <param name="context">The context for this hit.</param>
+        public virtual void OnHit(Vector3 position, IHitContext context)
+        {
+            Logger.Debug("Spell.OnHit");
+            HitEffects.Run(position, context);
+        }
+
+        /// <summary>
+        /// Executes the Hit logic on the given Character for this Spell.
+        /// </summary>
+        /// <param name="character">Target of the hit.</param>>
+        /// <param name="context">The context for this hit.</param>
+        public virtual void OnHit(Character character, IHitContext context)
+        {
+            Logger.Debug("Spell.OnHit");
+            HitEffects.Run(character, context);
+        }
+
+        /// <summary>
+        /// Executes the Hit logic on the given Targetable for this Spell.
+        /// </summary>
+        /// <param name="targetable">Target of the hit.</param>
+        /// <param name="context">The context for this hit.</param>
+        public virtual void OnHit(Targetable targetable, IHitContext context)
+        {
+            Logger.Debug("Spell.OnHit");
+            HitEffects.Run(targetable, context);
+        }
+
+        /// <summary>
+        /// Executes the Miss logic for this Spell.
+        /// </summary>
+        public virtual void OnMiss(IProjectileContext context)
+        {
+            Logger.Debug("Spell.OnMiss");
+            MissEffects.Run(context);
+        }
+    }
+
+    public abstract class Spell : Identifiable
     {
 #if DEBUG
         ~Spell()
@@ -17,19 +170,6 @@ namespace Quark.Spells
             Logger.GC("Spell::dtor");
         }
 #endif
-
-        /// <summary>
-        /// Gets or Sets the duration of the cast.
-        /// </summary>
-        /// <value>
-        /// The duration of the cast.
-        /// </value>
-        [Obsolete("CastDuration is deprecated. Use MaxCastDuration or MinCastDuration instead.", true)]
-        public virtual float CastDuration
-        {
-            get { return MaxCastDuration; }
-            set { MaxCastDuration = value; }
-        }
 
         /// <summary>
         /// This property stores the cast order type of this Spell.
@@ -54,8 +194,7 @@ namespace Quark.Spells
         /// </summary>
         public virtual float MaxCastDuration
         {
-            get;
-            set;
+            get;  set;
         }
 
         /// <summary>
@@ -65,14 +204,6 @@ namespace Quark.Spells
         /// Interval in seconds.
         /// </value>
         public virtual float CastingInterval { get; protected set; }
-
-        /// <summary>
-        /// This field determines the interval of the OnTravel logic to run while a projectile belonging to this Spell is traveling.
-        /// </summary>
-        /// <value>
-        /// Interval in distance units.
-        /// </value> 
-        public virtual float TravelingInterval { get; protected set; }
 
         /// <summary>
         /// Name of the Spell
@@ -110,37 +241,7 @@ namespace Quark.Spells
         /// Gets the target macro of this Spell
         /// </summary>
         /// <value>The target macro.</value>
-        public virtual TargetMacro TargetMacro
-        {
-            get
-            {
-                return new TargetMacro();
-            }
-        }
-
-        /// <summary>
-        /// This property stores the GameObject for the projectiles of this Spell.
-        /// If this property returns null, the Projectile stage of this Spell will be skipped.
-        /// Necessary components will be added by Quark upon instantiation on the projectiles.
-        /// </summary>
-        protected virtual GameObject ProjectileObject
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// This property stores the ProjectileController for the projectiles of this Spell.
-        /// </summary>
-        protected virtual ProjectileController Controller
-        {
-            get
-            {
-                return new ProjectileController();
-            }
-        }
+        public abstract TargetMacro TargetMacro { get; }
 
         /// <summary>
         /// Gets a value indicating whether this spell is instant.
@@ -151,18 +252,6 @@ namespace Quark.Spells
             get
             {
                 return MaxCastDuration <= 0;
-            }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this spell invokes projectiles.
-        /// </summary>
-        /// <value><c>true</c> if this instance has projectiles; otherwise, <c>false</c>.</value>
-        public bool IsProjectiled
-        {
-            get
-            {
-                return ProjectileObject != null;
             }
         }
 
@@ -208,7 +297,7 @@ namespace Quark.Spells
         {
             ConditionCollection<ICastContext> interruptConditions = InterruptConditions;
             interruptConditions.SetContext(Context);
-            return interruptConditions.Check(Context.Source);
+            return interruptConditions.Check();
         }
 
         /// <summary>
@@ -294,39 +383,6 @@ namespace Quark.Spells
         protected virtual EffectCollection<ICastContext> InterruptEffects { get { return new EffectCollection<ICastContext>(); } }
 
         /// <summary>
-        /// The traveling effects
-        /// Effects within this list are applied while the projectiles of this Spell are traveling
-        /// 
-        /// Possible Targets:
-        ///     + Points the projectiles pass from while travelling.
-        ///       
-        /// </summary>
-        protected virtual EffectCollection<ProjectileContext> TravelEffects { get { return new EffectCollection<ProjectileContext>(); } }
-
-        /// <summary>
-        /// The on-hit effects
-        /// Effects within this list are applied when a successful hit occurs.
-        /// 
-        /// Possible Targets:
-        ///     + Target Characters
-        ///     + Target Targetables
-        ///     + Target Points
-        ///     + Void
-        /// 
-        /// </summary>
-        protected virtual EffectCollection<IHitContext> HitEffects { get { return new EffectCollection<IHitContext>(); } }
-
-        /// <summary>
-        /// The spell miss effects
-        /// Effects within this list are applied when a projectile gets destroyed without hitting any characters.
-        /// 
-        /// Possible Targets:
-        ///     + Void
-        /// 
-        /// </summary>
-        protected virtual EffectCollection<IProjectileContext> MissEffects { get { return new EffectCollection<IProjectileContext>(); } }
-
-        /// <summary>
         /// The finalizing effects
         /// Effects within this list are applied just before the spell gets collected by the GC.
         /// 
@@ -406,58 +462,6 @@ namespace Quark.Spells
         }
 
         /// <summary>
-        /// Executes the Travel logic on thge position of the projectile this stage was triggered from. 
-        /// </summary>
-        /// <param name="position">Target of the hit.</param>
-        public virtual void OnTravel(Vector3 position, ProjectileContext context)
-        {
-            Logger.Debug("Spell.OnTravel");
-            TravelEffects.Run(position, context);
-        }
-
-        /// <summary>
-        /// Executes the Hit logic on the given point for this Spell.
-        /// </summary>
-        /// <param name="position">Target of the hit.</param>>
-        /// <param name="context">The context for this hit.</param>
-        public virtual void OnHit(Vector3 position, IHitContext context)
-        {
-            Logger.Debug("Spell.OnHit");
-            HitEffects.Run(position, context);
-        }
-
-        /// <summary>
-        /// Executes the Hit logic on the given Character for this Spell.
-        /// </summary>
-        /// <param name="character">Target of the hit.</param>>
-        /// <param name="context">The context for this hit.</param>
-        public virtual void OnHit(Character character, IHitContext context)
-        {
-            Logger.Debug("Spell.OnHit");
-            HitEffects.Run(character, context);
-        }
-
-        /// <summary>
-        /// Executes the Hit logic on the given Targetable for this Spell.
-        /// </summary>
-        /// <param name="targetable">Target of the hit.</param>
-        /// <param name="context">The context for this hit.</param>
-        public virtual void OnHit(Targetable targetable, IHitContext context)
-        {
-            Logger.Debug("Spell.OnHit");
-            HitEffects.Run(targetable, context);
-        }
-
-        /// <summary>
-        /// Executes the Miss logic for this Spell.
-        /// </summary>
-        public virtual void OnMiss(IProjectileContext context)
-        {
-            Logger.Debug("Spell.OnMiss");
-            MissEffects.Run(context);
-        }
-
-        /// <summary>
         /// Executes the ClearEffects then purges itself from the Cast context it is associated with
         /// </summary>
         public virtual void OnFinal()
@@ -468,53 +472,6 @@ namespace Quark.Spells
             SetContext(null);
         }
 
-        #endregion
-
-        /// <summary>
-        /// Collects a projectile which were created by this spell
-        /// </summary>
-        /// <param name="projectile">Projectile to collect.</param>
-        public void CollectProjectile(Projectile projectile)
-        {
-            Logger.Debug("Collecting Projectile");
-            _onAirMissileCount--;
-            if (_onAirMissileCount == 0)
-                OnFinal();
-        }
-
-        /// <summary>
-        /// This field stores the current travelling missiles originating from this Spell.
-        /// </summary>
-        uint _onAirMissileCount;
-
-        /// <summary>
-        /// Creates necessary projectiles for this spell
-        /// </summary>
-        public virtual void CreateProjectiles()
-        {
-            foreach (TargetUnion target in Context.Targets)
-            {
-                Projectile.Make(ProjectileObject, Controller, Context, target);
-                _onAirMissileCount++;
-            }
-        }
-
-        #region Tagging
-
-        /// <summary>
-        /// This property stores the static tags of this Spell.
-        /// </summary>
-        public StaticTags Tags { get; protected set; }
-
-        /// <summary>
-        /// This method determines whether this Spell is tagged with a certain string or not.
-        /// </summary>
-        /// <param name="tag">The string to check.</param>
-        /// <returns>Whether this spell is tagged or not.</returns>
-        public bool IsTagged(string tag)
-        {
-            return Tags.Has(tag);
-        }
         #endregion
     }
 }

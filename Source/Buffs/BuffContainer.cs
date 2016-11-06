@@ -15,7 +15,6 @@ namespace Quark.Buffs
         {
             _owner = owner;
             _buffs = new Dictionary<string, IBuff>();
-            Messenger.AddListener("Update", Update);
         }
 
         public IList<IBuff> Buffs
@@ -25,7 +24,6 @@ namespace Quark.Buffs
 
         public void Dispose()
         {
-            Messenger.RemoveListener("Update", Update);
             _owner = null;
 
             foreach (IBuff buff in _buffs.Values)

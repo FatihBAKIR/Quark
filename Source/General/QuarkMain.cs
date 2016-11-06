@@ -45,44 +45,8 @@ namespace Quark
         /// </summary>
         void Update()
         {
-            Messenger.Broadcast("Update");
-        }
 
-        private readonly List<Daemon> _daemons = new List<Daemon>();
-
-        /// <summary>
-        /// Finds a daemon by its type.
-        /// </summary>
-        /// <typeparam name="T">Daemon type to find</typeparam>
-        /// <returns>Active daemon. If the daemon is not present, it is null.</returns>
-        public T GetDaemon<T>() where T : Daemon
-        {
-            foreach (Daemon daemon in _daemons)
-            {
-                if (daemon is T)
-                    return (T)daemon;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Adds a new daemon to the game.
-        /// </summary>
-        /// <param name="daemon">Daemon to add</param>
-        public void AddDaemon(Daemon daemon)
-        {
-            _daemons.Add(daemon);
-            daemon.Register();
-        }
-
-        /// <summary>
-        /// Terminates the given daemon, and removes it from the game.
-        /// </summary>
-        /// <param name="daemon">Daemon to remove</param>
-        public void TerminateDaemon(Daemon daemon)
-        {
-            daemon.Terminate();
-            _daemons.Remove(daemon);
+            //Somehow call Update stuff
         }
 
         /// <summary>

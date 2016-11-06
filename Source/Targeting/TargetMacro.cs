@@ -192,11 +192,11 @@ namespace Quark.Targeting
     public enum TargetForm
     {
         /// <summary>
-        /// May hit multiple characters
+        /// May not hit multiple characters
         /// </summary>
         Singular,
         /// <summary>
-        /// May not hit multiple characters
+        /// May hit multiple characters
         /// </summary>
         Plural
     }

@@ -25,6 +25,7 @@
     <DocumentationFile>..\Binaries\Debug\Quark.XML</DocumentationFile>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -48,7 +49,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Contexts\BuffContext.cs" />
     <Compile Include="Contexts\CastContext.cs" />
     <Compile Include="Contexts\Context.cs" />
     <Compile Include="Contexts\HitContext.cs" />
@@ -62,7 +62,6 @@
     <Compile Include="Utilities\AssemblyInfo.cs" />
     <Compile Include="Utilities\Delegates.cs" />
     <Compile Include="Utilities\Logger.cs" />
-    <Compile Include="Utilities\Messenger.cs" />
     <Compile Include="Utilities\Utils.cs" />
     <Compile Include="Attributes\Attribute.cs" />
     <Compile Include="Attributes\AttributeCollection.cs" />
@@ -86,7 +85,6 @@
     <Compile Include="General\Tagging.cs" />
     <Compile Include="General\Interaction.cs" />
     <Compile Include="General\Expression.cs" />
-    <Compile Include="General\Daemon.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -45,6 +45,8 @@ namespace Quark.Contexts
         /// </summary>
         Vector3 CastBeginPosition { get; }
 
+        int ProjectilesOnAir { get; set; }
+
         /// <summary>
         /// Interrupts this cast context.
         /// Can only cancel the casts in the Casting stage.
@@ -123,6 +125,8 @@ namespace Quark.Contexts
             }
         }
 
+        public int ProjectilesOnAir { get; set; }
+
         /// <summary>
         /// This method executes the initialization logic of this CastContext and the Spell being casted.
         /// </summary>
@@ -132,24 +136,23 @@ namespace Quark.Contexts
 
             if (!Source.CanCast(Spell))
             {
-                Messenger<ICastContext>.Broadcast("CasterBusy", this);
+                //Messenger<ICastContext>.Broadcast("CasterBusy", this);
                 return;
             }
 
             if (!Spell.CanInvoke())
             {
-                Messenger<ICastContext>.Broadcast("CannotCast", this);
+                //Messenger<ICastContext>.Broadcast("CannotCast", this);
                 return;
             }
 
             Source.AddCast(this);
-            Source.Context.AddChild(this); // Add this CastContext to the children of the Caster's Context.
 
             Spell.OnInvoke();
 
             Targets = new TargetCollection();
 
-            Messenger<ICastContext>.Broadcast("Cast.Initialize", this);
+            //Messenger<ICastContext>.Broadcast("Cast.Initialize", this);
 
             if (Spell.CastOrder == CastOrder.TargetFirst)
                 BeginTargeting();
@@ -171,7 +174,7 @@ namespace Quark.Contexts
             macro.TargetingSuccess += delegate(TargetCollection targets)
             {
                 Targets.AddRange(targets);
-                Messenger<ICastContext>.Broadcast("Cast.TargetingSuccess", this);
+                //Messenger<ICastContext>.Broadcast("Cast.TargetingSuccess", this);
                 PostTargeting();
                 macro = null;
             };
@@ -179,12 +182,12 @@ namespace Quark.Contexts
             macro.TargetingFailed += delegate(TargetingError error)
             {
                 Stage = CastStages.TargetingFailed;
-                Messenger<ICastContext, TargetingError>.Broadcast("Cast.TargetingFailed", this, error);
+                //Messenger<ICastContext, TargetingError>.Broadcast("Cast.TargetingFailed", this, error);
                 macro = null;
                 Clear();
             };
 
-            Messenger<ICastContext>.Broadcast("Cast.BeginTargeting", this);
+            //Messenger<ICastContext>.Broadcast("Cast.BeginTargeting", this);
 
             macro.Run();
         }
@@ -194,9 +197,9 @@ namespace Quark.Contexts
             Spell.OnTargetingDone();
 
             if (Spell.CastOrder == CastOrder.TargetFirst)
+            {
                 PreCasting();
-            else
-                BeginProjectiles();
+            }
         }
 
         private ConditionCollection<ICastContext> _interruptConditions;
@@ -215,12 +218,12 @@ namespace Quark.Contexts
                 return;
             }
 
-            Messenger<ICastContext>.Broadcast("Cast.CastingBegin", this);
+            //Messenger<ICastContext>.Broadcast("Cast.CastingBegin", this);
 
             Spell.OnCastingBegan();
             _interruptConditions = Source.InterruptConditions.DeepCopy();  // Store the interrupt conditions on a member field...
 
-            Messenger.AddListener("Update", Casting);
+            //Messenger.AddListener("Update", Casting);
         }
 
         void Casting()
@@ -231,7 +234,7 @@ namespace Quark.Contexts
                 return;
             }
 
-            Messenger<ICastContext>.Broadcast("Cast.CastingTick", this);
+            //Messenger<ICastContext>.Broadcast("Cast.CastingTick", this);
 
             if (Time.timeSinceLevelLoad > _lastCast + Spell.CastingInterval)
             {
@@ -248,24 +251,24 @@ namespace Quark.Contexts
 
         void PostCasting()
         {
-            if (!Spell.IsInstant)
-                Messenger.RemoveListener("Update", Casting);
+            //if (!Spell.IsInstant)
+            //    Messenger.RemoveListener("Update", Casting);
 
             if (CastPercentage >= 100)
             {
-                Messenger<ICastContext>.Broadcast("Cast.CastSuccess", this);
+                //Messenger<ICastContext>.Broadcast("Cast.CastSuccess", this);
 
                 // Cast is successful, run the cast success event.
                 CastSuccess();
 
-                if (Spell.CastOrder == CastOrder.TargetFirst)
-                    BeginProjectiles();
-                else
+                if (Spell.CastOrder != CastOrder.TargetFirst)
+                {
                     BeginTargeting();
+                }
             }
             else
             {
-                Messenger<ICastContext>.Broadcast("Cast.CastInterrupt", this);
+                //Messenger<ICastContext>.Broadcast("Cast.CastInterrupt", this);
 
                 // Cast got interrupted somehow. Run the interruption event.
                 Interrupt();

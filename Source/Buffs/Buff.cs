@@ -309,12 +309,12 @@ namespace Quark.Buffs
 
         public virtual void Register()
         {
-            Messenger.AddListener("Update", Tick);
+            //Messenger.AddListener("Update", Tick);
         }
 
         public virtual void Deregister()
         {
-            Messenger.RemoveListener("Update", Tick);
+            //Messenger.RemoveListener("Update", Tick);
         }
 
         public virtual void OnPossess()
