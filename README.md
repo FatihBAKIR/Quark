@@ -17,9 +17,9 @@ public class BoomSpell : Spell
 		}
 	}
 
-	protected override EffectCollection TargetingDoneEffects {
+	protected override EffectCollection<ICastContext> TargetingDoneEffects {
 		get {
-			return new EffectCollection {
+			return new EffectCollection<ICastContext> {
 				new DamageEffect (10)
 			};
 		}

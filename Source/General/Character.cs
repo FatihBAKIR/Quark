@@ -354,13 +354,13 @@ namespace Quark
 
         void OnBuffAttached(IBuff buff)
         {
-            Messenger<Character, IBuff>.Broadcast("Character.BuffAttached", this, buff);
+            //Messenger<Character, IBuff>.Broadcast("Character.BuffAttached", this, buff);
             BuffAttached(this, buff);
         }
 
         void OnBuffDetached(IBuff buff)
         {
-            Messenger<Character, IBuff>.Broadcast("Character.BuffDetached", this, buff);
+            //Messenger<Character, IBuff>.Broadcast("Character.BuffDetached", this, buff);
             BuffDetached(this, buff);
         }
 
@@ -368,13 +368,13 @@ namespace Quark
         {
             Logger.Debug("Character::OnStatManipulated");
 
-            Messenger<Character, Stat, float>.Broadcast("Character.StatManipulated", this, stat, change);
+            //Messenger<Character, Stat, float>.Broadcast("Character.StatManipulated", this, stat, change);
             StatManipulated(this, stat, change);
         }
 
         void OnCharacterDestruction()
         {
-            Messenger<Character>.Broadcast("Character.CharacterDestroyed", this);
+            //Messenger<Character>.Broadcast("Character.CharacterDestroyed", this);
             CharacterDestroyed(this);
         }
 

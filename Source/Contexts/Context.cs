@@ -37,17 +37,6 @@ namespace Quark.Contexts
         /// This property stores the parent Context of this Context instance.
         /// </summary>
         IContext Parent { get; set; }
-
-        /// <summary>
-        /// This method adds the given context as this Context instances child.
-        /// </summary>
-        /// <param name="child">The child context.</param>
-        void AddChild(IContext child);
-
-        /// <summary>
-        /// This property gets the children Contexts of this context.
-        /// </summary>
-        IEnumerable<IContext> Children { get; }
     }
 
     /// <summary>

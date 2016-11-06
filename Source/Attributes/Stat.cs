@@ -57,7 +57,7 @@ namespace Quark.Attributes
 
             Logger.Debug("Stat::OnManipulation");
 
-            Messenger<Character, Stat, float>.Broadcast("Manipulated", Owner, this, amount);
+            //Messenger<Character, Stat, float>.Broadcast("Manipulated", Owner, this, amount);
             Manipulated(Owner, this, amount);
         }
         
