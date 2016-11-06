@@ -41,7 +41,7 @@ namespace Quark.Contexts
     /// <summary>
     /// This interface provides basic properties of a hit context.
     /// </summary>
-    public interface IHitContext : IProjectileContext
+    public interface IHitContext : IContext
     {
         /// <summary>
         /// This property stores the target the hit occured.
@@ -91,6 +91,12 @@ namespace Quark.Contexts
             Identifier = "hit@" + parent.Identifier;
         }
 
+        public IProjectileContext Parent {
+            get {
+                return base.Parent as IProjectileContext;
+            }
+        }
+
         public TargetUnion HitTarget { get; private set; }
 
         public Vector3 HitPosition { get; private set; }
@@ -112,7 +118,7 @@ namespace Quark.Contexts
             if (!hitObject.IsTargetable)
                 return HitValidationResult.NotTargetable;
 
-            if (!Projectile.Controller.Validate(hitObject))
+            if (!Parent.Projectile.Controller.Validate(hitObject))
                 return HitValidationResult.ProjectileInvalidated;
 
             if (hitObject is Character && !(hitObject as Character).ValidateHit(this))
@@ -121,116 +127,9 @@ namespace Quark.Contexts
             return HitValidationResult.Valid;
         }
 
-        public Spell Spell
+        public static implicit operator ProjectileContext(HitContext d)
         {
-            get { return ((IProjectileContext)Parent).Spell; }
-        }
-
-        public CastStages Stage
-        {
-            get { return ((IProjectileContext)Parent).Stage; }
-        }
-
-        public TargetCollection Targets
-        {
-            get { return ((IProjectileContext)Parent).Targets; }
-        }
-
-        public int CastPercentage
-        {
-            get { return ((IProjectileContext)Parent).CastPercentage; }
-        }
-
-        public float CastTime
-        {
-            get { return ((IProjectileContext)Parent).CastTime; }
-        }
-
-        public float CastBeginTime
-        {
-            get { return ((IProjectileContext)Parent).CastBeginTime; }
-        }
-
-        public Vector3 CastBeginPosition
-        {
-            get { return ((IProjectileContext)Parent).CastBeginPosition; }
-        }
-
-        public int CurrentProjectileCount
-        {
-            get { return ((IProjectileContext)Parent).CurrentProjectileCount; }
-            set { ((IProjectileContext)Parent).CurrentProjectileCount = value; }
-        }
-        public int TotalProjectileCount
-        {
-            get { return ((IProjectileContext)Parent).TotalProjectileCount; }
-            set { ((IProjectileContext)Parent).TotalProjectileCount = value; }
-        }
-        public Projectile Projectile
-        {
-            get { return ((IProjectileContext)Parent).Projectile; }
-        }
-
-        public float TravelTime
-        {
-            get { return ((IProjectileContext)Parent).TravelTime; }
-        }
-
-        public float TravelDistance
-        {
-            get { return ((IProjectileContext)Parent).TravelDistance; }
-        }
-
-        public TargetUnion Target
-        {
-            get { return ((IProjectileContext)Parent).Target; }
-            set { ((IProjectileContext)Parent).Target = value; }
-        }
-
-        public Vector3 TravelBeginRotation
-        {
-            get { return ((IProjectileContext)Parent).TravelBeginRotation; }
-        }
-
-        public Vector3 TravelBeginPosition
-        {
-            get { return ((IProjectileContext)Parent).TravelBeginPosition; }
-        }
-
-        public float TravelBeginTime
-        {
-            get { return ((IProjectileContext)Parent).TravelBeginTime; }
-        }
-
-        public Vector3 TargetOffset
-        {
-            get { return ((IProjectileContext)Parent).TargetOffset; }
-        }
-
-        public void OnHit(TargetUnion target)
-        {
-            ((IProjectileContext)Parent).OnHit(target);
-        }
-
-        public void OnTravel()
-        {
-            ((IProjectileContext)Parent).OnTravel();
-        }
-
-        public int HitCount
-        {
-            get { return ((IProjectileContext)Parent).HitCount; }
-            set { ((IProjectileContext)Parent).HitCount = value; }
-        }
-
-        public void Interrupt()
-        {
-            ((IProjectileContext)Parent).Interrupt();
-        }
-
-        public void Clear()
-        {
-            ((IProjectileContext)Parent).Clear();
+            return d.Parent as ProjectileContext;
         }
     }
 }

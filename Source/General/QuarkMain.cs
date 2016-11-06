@@ -39,13 +39,15 @@ namespace Quark
             Logger.Debug("QuarkMain::Start");
         }
 
+        public List<Action> OnUpdate = new List<Action>();
+
         /// <summary>
         /// This method is called every frame from Unity.
         /// We use it to broadcast the Update event.
         /// </summary>
         void Update()
         {
-
+            OnUpdate.ForEach(f => f());
             //Somehow call Update stuff
         }
 

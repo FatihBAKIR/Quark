@@ -223,6 +223,7 @@ namespace Quark.Contexts
             Spell.OnCastingBegan();
             _interruptConditions = Source.InterruptConditions.DeepCopy();  // Store the interrupt conditions on a member field...
 
+            QuarkMain.GetInstance().OnUpdate.Add(Casting);
             //Messenger.AddListener("Update", Casting);
         }
 
@@ -251,8 +252,11 @@ namespace Quark.Contexts
 
         void PostCasting()
         {
-            //if (!Spell.IsInstant)
-            //    Messenger.RemoveListener("Update", Casting);
+            if (!Spell.IsInstant)
+            {
+                //Messenger.RemoveListener("Update", Casting);
+                QuarkMain.GetInstance().OnUpdate.Remove(Casting);
+            }
 
             if (CastPercentage >= 100)
             {
@@ -291,8 +295,8 @@ namespace Quark.Contexts
 
         void BeginProjectiles()
         {
-            if (Spell.IsProjectiled)
-                Spell.CreateProjectiles();
+            if (Spell is ProjectiledSpell)
+                ((ProjectiledSpell)Spell).CreateProjectiles();
             else
                 Spell.OnFinal();
 

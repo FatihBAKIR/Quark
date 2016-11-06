@@ -8,8 +8,10 @@ namespace Quark.Contexts
     /// <summary>
     /// This interface provides the basis properties of a context for a projectile.
     /// </summary>
-    public interface IProjectileContext : ICastContext
+    public interface IProjectileContext : IContext
     {
+        ProjectiledSpell Spell { get; }
+
         /// <summary>
         /// The projectile object of this context.
         /// </summary>
@@ -77,14 +79,27 @@ namespace Quark.Contexts
         public ProjectileContext(ICastContext parent, Projectile projectile, TargetUnion target)
             : base(parent)
         {
-            Parent = parent;
+            base.Parent = parent;
             Projectile = projectile;
             Target = target;
             TravelBeginRotation = Source.transform.rotation.eulerAngles;
             TravelBeginPosition = Source.transform.position;
             TravelBeginTime = Time.timeSinceLevelLoad;
-            Identifier = "p" + parent.TotalProjectileCount + "@" + parent.Identifier;
+            Identifier = "p" + Parent.ProjectilesOnAir + "@" + Parent.Identifier;
         }
+
+        public ICastContext Parent
+        {
+            get {
+                return base.Parent as ICastContext;
+            }
+        }
+
+        public ProjectiledSpell Spell {
+            get {
+                return Parent.Spell as ProjectiledSpell;
+            }
+         }
 
         public Projectile Projectile { get; protected set; }
 
@@ -186,27 +201,9 @@ namespace Quark.Contexts
 
         public int HitCount { get; set; }
 
-        public ProjectiledSpell Spell { get { return ((ICastContext)Parent).Spell; } }
-        public CastStages Stage { get { return ((ICastContext)Parent).Stage; } }
-        public TargetCollection Targets { get { return ((ICastContext)Parent).Targets; } }
-        public int CastPercentage { get { return ((ICastContext)Parent).CastPercentage; } }
-        public float CastTime { get { return ((ICastContext)Parent).CastTime; } }
-        public float CastBeginTime { get { return ((ICastContext)Parent).CastBeginTime; } }
-        public Vector3 CastBeginPosition { get { return ((ICastContext)Parent).CastBeginPosition; } }
-        public int CurrentProjectileCount
+        public static implicit operator CastContext(ProjectileContext d)
         {
-            get { return ((ICastContext)Parent).CurrentProjectileCount; }
-            set { ((ICastContext)Parent).CurrentProjectileCount = value; }
-        }
-        public int TotalProjectileCount
-        {
-            get { return ((ICastContext)Parent).TotalProjectileCount; }
-            set { ((ICastContext)Parent).TotalProjectileCount = value; }
-        }
-        public void Interrupt() { ((ICastContext)Parent).Interrupt(); }
-        public void Clear()
-        {
-            ((ICastContext)Parent).Clear();
+            return d.Parent as CastContext;
         }
     }
 }

@@ -9,7 +9,6 @@ using UnityEngine;
 
 namespace Quark.Spells
 {
-
     public abstract class ProjectiledSpell : Spell
     {
         /// <summary>
@@ -20,6 +19,17 @@ namespace Quark.Spells
         /// </value> 
         public virtual float TravelingInterval { get; protected set; }
 
+        /// <summary>
+        /// Gets the target form of this spell
+        /// </summary>
+        /// <value>The target form.</value>
+        public virtual TargetForm TargetForm
+        {
+            get
+            {
+                return TargetForm.Singular;
+            }
+        }
 
         /// <summary>
         /// The traveling effects
@@ -172,6 +182,20 @@ namespace Quark.Spells
 #endif
 
         /// <summary>
+        /// The CastContext this Spell is being casetd in.
+        /// </summary>
+        protected ICastContext Context { get; private set; }
+
+        /// <summary>
+        /// Sets the CastContext this Spell is being casted in.
+        /// </summary>
+        /// <param name="context">The CastContext.</param>
+        public virtual void SetContext(ICastContext context)
+        {
+            Context = context;
+        }
+
+        /// <summary>
         /// This property stores the cast order type of this Spell.
         /// </summary>
         public virtual CastOrder CastOrder { get; set; }
@@ -226,18 +250,6 @@ namespace Quark.Spells
         }
 
         /// <summary>
-        /// Gets the target form of this spell
-        /// </summary>
-        /// <value>The target form.</value>
-        public virtual TargetForm TargetForm
-        {
-            get
-            {
-                return TargetForm.Singular;
-            }
-        }
-
-        /// <summary>
         /// Gets the target macro of this Spell
         /// </summary>
         /// <value>The target macro.</value>
@@ -253,20 +265,6 @@ namespace Quark.Spells
             {
                 return MaxCastDuration <= 0;
             }
-        }
-
-        /// <summary>
-        /// The CastContext this Spell is being casetd in.
-        /// </summary>
-        protected ICastContext Context { get; private set; }
-
-        /// <summary>
-        /// Sets the CastContext this Spell is being casted in.
-        /// </summary>
-        /// <param name="context">The CastContext.</param>
-        public virtual void SetContext(ICastContext context)
-        {
-            Context = context;
         }
 
         /// <summary>
